@@ -1,5 +1,5 @@
 -- manage trees en-masse in your scene
--- ver 0.9
+-- ver 1.0
 tStats = #()
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
@@ -19,16 +19,22 @@ rollout manage3 "manage3" width:104 height:440
 	checkbutton btn_leaves "leaves" pos:[24,280] width:56 height:24 toolTip:"leaves on/off"
 	pickButton btn_terrain "source terrain" pos:[8,320] width:88 height:24 message:"" toolTip:"select source terrain"
 	button btn_distribute "distribute" pos:[16,352] width:72 height:24 toolTip:"distribute trees along terrain"
+	
+	-- assign random seed
 	on btn_seed pressed do
 	(
 	select3 ()
 	for n = 1 to selection.count do selection[n].seed = random 1 1000000
 	)
+	
+	-- make trees unique
 	on btn_unique pressed do
 	(
 	select3 ()
 	instancemgr.makeobjectsunique $ #individual
 	)
+	
+	-- define source tree for new instance array
 	on btn_i_src picked sourceObj do
 	(
 	select3 ()
@@ -36,11 +42,15 @@ rollout manage3 "manage3" width:104 height:440
 	targetObj[1] = sourceObj
 	select (for o in objects where classof o == foliage collect o)
 	)
+	
+	-- re-instance unique trees with source tree
 	on btn_i_exe pressed do
 	(
 	select3 ()
 	for o in selection do o.baseobject = targetObj[1].baseobject
 	)
+	
+	-- assign random height
 	on btn_height pressed do
 	(
 	select3 ()
@@ -49,16 +59,22 @@ rollout manage3 "manage3" width:104 height:440
 	for n = 1 to selection.count do selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 	print (tStats[1])
 	)
+	
+	-- assign random density
 	on btn_density pressed do
 	(
 	select3 ()
 	for n = 1 to selection.count do selection[n].density = random 0.0 1.0
 	)
+	
+	-- assign random rotation
 	on btn_rot pressed do
 	(
 	select3 ()
 	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
 	)
+	
+	-- alpha & omega: hit once randomize everything
 	on btn_omega pressed do
 	(
 	select3 ()
@@ -70,12 +86,16 @@ rollout manage3 "manage3" width:104 height:440
 		selection[n].density = random 0.0 1.0
 		)
 	)
+	
+	-- leaves switch off / on, i.e. for AO rendering
 	on btn_leaves changed state do
 	(
 	select3 ()
 	if state == true then $.showleaves = off
 	else if state == false then $.showleaves = on
 	)
+	
+	-- pick source terrain i.e. environment geometry
 	on btn_terrain picked sourceTerrain do
 	(
 	if superclassof sourceTerrain == geometryclass then 
@@ -87,6 +107,8 @@ rollout manage3 "manage3" width:104 height:440
 	)
 	else messagebox ("select geometry")	
 	)
+	
+	-- distribute trees along terrain verts
 	on btn_distribute pressed  do
 	(
 	select3 ()
