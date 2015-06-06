@@ -1,6 +1,7 @@
 -- manage trees en-masse in your scene
 -- ver 1.0
 tStats = #()
+sTerrain = undefined
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
 rollout m3 "m3" width:104 height:440
@@ -46,7 +47,8 @@ rollout m3 "m3" width:104 height:440
 	on btn_height pressed do -- assign random height
 	(
 	select3 ()
-	oHeight = $[1].height
+	if selection.count > 1 then oHeight = $[1].height
+	else oHeight = $.height
 	if tStats[1] == undefined do tStats[1] = oHeight
 	for n = 1 to selection.count do selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 	print (tStats[1])
@@ -68,6 +70,9 @@ rollout m3 "m3" width:104 height:440
 		(
 		instancemgr.makeobjectsunique $ #individual
 		rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
+		if selection.count > 1 then oHeight = $[1].height
+		else oHeight = $.height
+		if tStats[1] == undefined do tStats[1] = oHeight
 		selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 		selection[n].density = random 0.0 1.0
 		if sTerrain != undefined do for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
@@ -103,7 +108,7 @@ rollout m3 "m3" width:104 height:440
 	on btn_distribute pressed do -- distribute trees along terrain verts
 	(
 	select3 ()
-	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
+	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
 	)
 )
 createdialog m3
