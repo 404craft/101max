@@ -108,6 +108,8 @@ rollout m3 "m3" width:104 height:440
 	on btn_distribute pressed do -- distribute trees along terrain verts
 	(
 	select3 ()
+	nTimes = sTerrain.verts.count - selection.count
+	if nTimes > 0 do for i = 1 to nTimes + 1 do instance $[1]
 	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
 	)
 )
