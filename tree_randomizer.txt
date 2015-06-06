@@ -3,7 +3,7 @@
 tStats = #()
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
-rollout manage3 "manage3" width:104 height:440
+rollout m3 "m3" width:104 height:440
 (
 	local targetObj = #()
 	label lbl_top "manage3" pos:[32,4] width:48 height:17
@@ -12,46 +12,38 @@ rollout manage3 "manage3" width:104 height:440
 	pickbutton btn_i_src "source tree" pos:[8,104] width:88 height:24 toolTip:"select source tree"
 	button btn_i_exe "connect" pos:[16,136] width:72 height:24 toolTip:"re-instance selected trees to source tree"
 	button btn_height "height" pos:[24,176] width:56 height:24 toolTip:"select foliage and assign random height"
-	label lbl_bottom "ver 0.9" pos:[35,421] width:37 height:14
+	label lbl_bottom "v 1.0" pos:[40,422] width:32 height:14
 	button btn_density "density" pos:[24,240] width:56 height:24 enabled:true toolTip:"select foliage and assign random density"
 	button btn_rot "rotate" pos:[24,208] width:56 height:24 toolTip:"select foliage and assign random rotation"
-	button btn_omega "omega" pos:[24,392] width:56 height:24
+	button btn_omega "omega" pos:[24,392] width:56 height:24 toolTip:"randomize everything with a single click"
 	checkbutton btn_leaves "leaves" pos:[24,280] width:56 height:24 toolTip:"leaves on/off"
-	pickButton btn_terrain "source terrain" pos:[8,320] width:88 height:24 message:"" toolTip:"select source terrain"
+	pickbutton btn_terrain "source terrain" pos:[8,320] width:88 height:24 message:"" toolTip:"select source terrain"
 	button btn_distribute "distribute" pos:[16,352] width:72 height:24 toolTip:"distribute trees along terrain"
-	
-	-- assign random seed
-	on btn_seed pressed do
+	on btn_seed pressed do -- assign random seed
 	(
 	select3 ()
 	for n = 1 to selection.count do selection[n].seed = random 1 1000000
 	)
-	
-	-- make trees unique
-	on btn_unique pressed do
+		
+	on btn_unique pressed do -- make trees unique
 	(
 	select3 ()
 	instancemgr.makeobjectsunique $ #individual
 	)
 	
-	-- define source tree of the new instance array
-	on btn_i_src picked sourceObj do
+	on btn_i_src picked sourceObj do -- define source tree of the new instance array
 	(
 	select3 ()
 	btn_i_src.text = sourceObj.name
 	targetObj[1] = sourceObj
 	select (for o in objects where classof o == foliage collect o)
 	)
-	
-	-- re-instance unique trees with source tree
-	on btn_i_exe pressed do
+	on btn_i_exe pressed do -- re-instance unique trees with source tree
 	(
 	select3 ()
 	for o in selection do o.baseobject = targetObj[1].baseobject
 	)
-	
-	-- assign random height
-	on btn_height pressed do
+	on btn_height pressed do -- assign random height
 	(
 	select3 ()
 	oHeight = $[1].height
@@ -59,23 +51,17 @@ rollout manage3 "manage3" width:104 height:440
 	for n = 1 to selection.count do selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 	print (tStats[1])
 	)
-	
-	-- assign random density
-	on btn_density pressed do
+	on btn_density pressed do -- assign random density
 	(
 	select3 ()
 	for n = 1 to selection.count do selection[n].density = random 0.0 1.0
 	)
-	
-	-- assign random rotation
-	on btn_rot pressed do
+	on btn_rot pressed do -- assign random rotation
 	(
 	select3 ()
 	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
 	)
-	
-	-- alpha & omega: hit once randomize everything
-	on btn_omega pressed do
+	on btn_omega pressed do -- alpha & omega: hit once randomize everything
 	(
 	select3 ()
 		for n = 1 to selection.count do 
@@ -84,19 +70,16 @@ rollout manage3 "manage3" width:104 height:440
 		rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
 		selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 		selection[n].density = random 0.0 1.0
+		if sTerrain != undefined do for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
 		)
 	)
-	
-	-- leaves switch off / on, i.e. for AO rendering
-	on btn_leaves changed state do
+	on btn_leaves changed state do -- leaves switch off / on, i.e. for AO rendering
 	(
 	select3 ()
 	if state == true then $.showleaves = off
 	else if state == false then $.showleaves = on
 	)
-	
-	-- pick source terrain i.e. environment geometry
-	on btn_terrain picked sourceTerrain do
+	on btn_terrain picked sourceTerrain do -- pick source terrain i.e. environment geometry
 	(
 	if superclassof sourceTerrain == geometryclass then 
 	(
@@ -107,12 +90,10 @@ rollout manage3 "manage3" width:104 height:440
 	)
 	else messagebox ("select geometry")	
 	)
-	
-	-- distribute trees along terrain verts
-	on btn_distribute pressed  do
+	on btn_distribute pressed do -- distribute trees along terrain verts
 	(
 	select3 ()
 	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
 	)
 )
-createdialog manage3
+createdialog m3
