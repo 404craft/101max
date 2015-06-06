@@ -1,7 +1,12 @@
 -- adjust round corners scene-wide
 for n in scenematerials where n != undefined do
 (
-	rndVar = 0.75 /*adjust here*/
+	rndVar = 0.75 /*adjust softness here*/
+	
+	-- multiply by Material ID Channel Value i.e. 1 - rough, 7 - soft, 15 - very soft
+	/*if n.effectschannel == 0 do n.effectsChannel = 1
+	rndVar = rndVar * n.effectschannel*/
+	
 	case classof n of
 	(
 		autodesk_material: 
