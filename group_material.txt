@@ -3,10 +3,10 @@
 -- select your material editor slot range 1-2 to 1-24
 
 mUpper = 2
-rollout aMaterial "mat" width:96 height:168
+rollout radMat "radMat" width:96 height:168
 (
 	checkbutton btn_mode "mode" pos:[8,32] width:80 height:31 toolTip:"assign same material to all group members?"
-	label lbl_top "matRad" pos:[30,5] width:80 height:18
+	label lbl_top "radMat" pos:[30,5] width:80 height:18
 	button btn_exe "execute" pos:[8,112] width:80 height:32 toolTip:"confirm operation"
 	spinner btn_spn "" pos:[16,80] width:64 height:16 range:[2,24,2] type:#integer scale:0.1
 	on btn_mode changed state do
@@ -43,4 +43,4 @@ rollout aMaterial "mat" width:96 height:168
 	)
 )
 
-createdialog aMaterial
+createdialog radMat
