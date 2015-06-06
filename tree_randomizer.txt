@@ -78,15 +78,15 @@ rollout m3 "m3" width:104 height:440
 	select3 ()
 		if state == true then 
 		(
-		try($.showleaves = off)catch()
-		try($.showflowers = off)catch()
-		try($.showfruit = off)catch()
+		try($.showleaves = off
+		$.showflowers = off
+		$.showfruit = off)catch()
 		)
 		else if state == false then 
 		(
-		try($.showleaves = on)catch()
-		try($.showflowers = on)catch()
-		try($.showfruit = on)catch()
+		try($.showleaves = on
+		$.showflowers = on
+		$.showfruit = on)catch()
 		)
 	)
 	on btn_terrain picked sourceTerrain do -- pick source terrain i.e. environment geometry
