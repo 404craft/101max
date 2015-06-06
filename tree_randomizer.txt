@@ -1,52 +1,79 @@
 -- manage trees en-masse in your scene
 -- ver 0.9
+tStats = #()
 
-oHeight = $[1].height
-tStats = #(oHeight)
-if tStats[1] == undefined do tStats[1] = oHeight
-		
-rollout treemanager "3m" width:99 height:294
+fn select3 = select (for o in selection where classof o == foliage collect o)
+select3 ()
+rollout manage3 "manage3" width:104 height:376
 (
 	local targetObj = #()
-	label lbl1 "tree manager" pos:[15,7] width:67 height:17
-	button btn_seed "seed" pos:[24,65] width:49 height:19 toolTip:"random seed"
-	button btn_unique "make unique" pos:[8,28] width:82 height:26 toolTip:"make all trees unique"
-	pickbutton btn_i_src "instance source" pos:[6,98] width:86 height:21 toolTip:"mother tree"
-	button btn_i_exe "re-instance" pos:[10,122] width:79 height:26 toolTip:"re-instance selected trees"
-	button btn_height "random height" pos:[4,235] width:91 height:29 toolTip:"random tree height based on initial height"
-	label lbl6 "ver 0.9" pos:[29,274] width:41 height:14
-	button btn_density "density" pos:[9,206] width:80 height:23 enabled:true toolTip:"random density"
-	button btn_rot "rotate" pos:[26,177] width:50 height:23
+	label lbl_top "manage3" pos:[32,4] width:48 height:17
+	button btn_seed "seed" pos:[24,64] width:56 height:24 toolTip:"select foliage and assign random seed"
+	button btn_unique "make unique" pos:[8,32] width:88 height:24 toolTip:"select trees and make them unique"
+	pickbutton btn_i_src "instance source" pos:[8,104] width:88 height:24 toolTip:"select source tree"
+	button btn_i_exe "connect" pos:[16,136] width:72 height:24 toolTip:"re-instance selected trees to source tree"
+	button btn_height "height" pos:[24,176] width:56 height:24 toolTip:"select foliage and assign random height"
+	label lbl_bottom "ver 0.9" pos:[35,356] width:37 height:14
+	button btn_density "density" pos:[24,240] width:56 height:24 enabled:true toolTip:"select foliage and assign random density"
+	button btn_rot "rotate" pos:[24,208] width:56 height:24 toolTip:"select foliage and assign random rotation"
+	button btn_omega "omega" pos:[24,320] width:56 height:24
+	checkbutton btn_leaves "leaves" pos:[24,280] width:56 height:24 toolTip:"leaves on/off"
 	on btn_seed pressed do
 	(
+	select3 ()
 	for n = 1 to selection.count do selection[n].seed = random 1 1000000
 	)
 	on btn_unique pressed do
 	(
+	select3 ()
 	instancemgr.makeobjectsunique $ #individual
 	)
 	on btn_i_src picked sourceObj do
-	(	
+	(
+	select3 ()
 	btn_i_src.text = sourceObj.name
-	select sourceObj
 	targetObj[1] = sourceObj
+	select (for o in objects where classof o == foliage collect o)
 	)
 	on btn_i_exe pressed do
 	(
-	for o in selection where classof o == foliage do o.baseobject = targetObj[1].baseobject
+	select3 ()
+	for o in selection do o.baseobject = targetObj[1].baseobject
 	)
 	on btn_height pressed do
 	(
+	select3 ()
+	oHeight = $[1].height
+	if tStats[1] == undefined do tStats[1] = oHeight
 	for n = 1 to selection.count do selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
-		print (oHeight)
+	print (tStats[1])
 	)
 	on btn_density pressed do
 	(
+	select3 ()
 	for n = 1 to selection.count do selection[n].density = random 0.0 1.0
 	)
-	on btn_rot pressed  do
+	on btn_rot pressed do
 	(
+	select3 ()
 	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
 	)
+	on btn_omega pressed do
+	(
+	select3 ()
+		for n = 1 to selection.count do 
+		(
+		instancemgr.makeobjectsunique $ #individual
+		rotate selection[n] (eulerangles 0 0 (random 0 (2*n)))
+		selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
+		selection[n].density = random 0.0 1.0
+		)
+	)
+	on btn_leaves changed state do
+	(
+	select3 ()
+	if state == true then $.showleaves = off
+	else if state == false then $.showleaves = on
+	)
 )
-createdialog treemanager
+createdialog manage3
