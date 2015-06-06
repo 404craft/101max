@@ -76,8 +76,18 @@ rollout m3 "m3" width:104 height:440
 	on btn_leaves changed state do -- leaves switch off / on, i.e. for AO rendering
 	(
 	select3 ()
-	if state == true then $.showleaves = off
-	else if state == false then $.showleaves = on
+		if state == true then 
+		(
+		try($.showleaves = off)catch()
+		try($.showflowers = off)catch()
+		try($.showfruit = off)catch()
+		)
+		else if state == false then 
+		(
+		try($.showleaves = on)catch()
+		try($.showflowers = on)catch()
+		try($.showfruit = on)catch()
+		)
 	)
 	on btn_terrain picked sourceTerrain do -- pick source terrain i.e. environment geometry
 	(
