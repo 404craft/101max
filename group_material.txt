@@ -4,4 +4,4 @@ for p in selection where isgrouphead p do
 groupmaterial = meditmaterials [random 1 3] /*material editor slot 1 to material editor slot 3*/
 for c in p where isgroupmember c do c.material = groupmaterial
 )
--- for n in selection do n.material = meditmaterials [random 1 3] assigns random material to each individual member of a group
+-- for n in selection do n.material = meditmaterials [random 1 3] assigns a different random material to each individual member of a group
