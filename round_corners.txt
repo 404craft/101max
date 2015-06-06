@@ -1,0 +1,28 @@
+-- adjust round corners scene-wide
+for n in scenematerials where n != undefined do
+(
+	rndVar = 0.75 /*adjust here*/
+	case classof n of
+	(
+		autodesk_material: 
+		(
+			n.Round_Corners_Enable = on
+			n.round_corners_source = rndVar
+		)
+		
+		arch___design__mi:
+		(
+			n.opts_round_corners_on = on
+			n.opts_round_corners_radius = rndVar
+		)
+		
+	    vraymtl:
+		(
+			if n.texmap_bump == undefined do n.texmap_bump = vrayedgestex ()
+			n.texmap_bump.widthtype = 0
+			n.texmap_bump.thickness = rndVar
+		)
+		
+		default: print ("invalid")
+	)
+)
