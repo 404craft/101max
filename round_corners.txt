@@ -26,3 +26,4 @@ for n in scenematerials where n != undefined do
 		default: print ("invalid")
 	)
 )
+-- cannot adjust round corners globally
