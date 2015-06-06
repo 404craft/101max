@@ -34,7 +34,7 @@ rollout manage3 "manage3" width:104 height:440
 	instancemgr.makeobjectsunique $ #individual
 	)
 	
-	-- define source tree for new instance array
+	-- define source tree of the new instance array
 	on btn_i_src picked sourceObj do
 	(
 	select3 ()
