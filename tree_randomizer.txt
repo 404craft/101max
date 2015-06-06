@@ -1,23 +1,24 @@
 -- manage trees en-masse in your scene
 -- ver 0.9
 tStats = #()
-
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
-rollout manage3 "manage3" width:104 height:376
+rollout manage3 "manage3" width:104 height:440
 (
 	local targetObj = #()
 	label lbl_top "manage3" pos:[32,4] width:48 height:17
 	button btn_seed "seed" pos:[24,64] width:56 height:24 toolTip:"select foliage and assign random seed"
 	button btn_unique "make unique" pos:[8,32] width:88 height:24 toolTip:"select trees and make them unique"
-	pickbutton btn_i_src "instance source" pos:[8,104] width:88 height:24 toolTip:"select source tree"
+	pickbutton btn_i_src "source tree" pos:[8,104] width:88 height:24 toolTip:"select source tree"
 	button btn_i_exe "connect" pos:[16,136] width:72 height:24 toolTip:"re-instance selected trees to source tree"
 	button btn_height "height" pos:[24,176] width:56 height:24 toolTip:"select foliage and assign random height"
-	label lbl_bottom "ver 0.9" pos:[35,356] width:37 height:14
+	label lbl_bottom "ver 0.9" pos:[35,421] width:37 height:14
 	button btn_density "density" pos:[24,240] width:56 height:24 enabled:true toolTip:"select foliage and assign random density"
 	button btn_rot "rotate" pos:[24,208] width:56 height:24 toolTip:"select foliage and assign random rotation"
-	button btn_omega "omega" pos:[24,320] width:56 height:24
+	button btn_omega "omega" pos:[24,392] width:56 height:24
 	checkbutton btn_leaves "leaves" pos:[24,280] width:56 height:24 toolTip:"leaves on/off"
+	pickButton btn_terrain "source terrain" pos:[8,320] width:88 height:24 message:"" toolTip:"select source terrain"
+	button btn_distribute "distribute" pos:[16,352] width:72 height:24 toolTip:"distribute trees along terrain"
 	on btn_seed pressed do
 	(
 	select3 ()
@@ -74,6 +75,22 @@ rollout manage3 "manage3" width:104 height:376
 	select3 ()
 	if state == true then $.showleaves = off
 	else if state == false then $.showleaves = on
+	)
+	on btn_terrain picked sourceTerrain do
+	(
+	if superclassof sourceTerrain == geometryclass then 
+	(
+	resetxform sourceTerrain
+	convertto sourceTerrain editable_poly
+	btn_terrain.text = sourceTerrain.name
+	global sTerrain = sourceTerrain
+	)
+	else messagebox ("select geometry")	
+	)
+	on btn_distribute pressed  do
+	(
+	select3 ()
+	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
 	)
 )
 createdialog manage3
