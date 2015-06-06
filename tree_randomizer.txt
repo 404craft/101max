@@ -1,0 +1,47 @@
+-- manage trees en-masse in your scene
+-- ver 0.9
+
+oHeight = $[1].height
+tStats = #(oHeight)
+if tStats[1] == undefined do tStats[1] = oHeight
+		
+rollout treemanager "3m" width:100 height:239
+(
+	local targetObj = #()
+	label lbl1 "tree manager" pos:[15,7] width:67 height:17
+	button btn1 "seed" pos:[24,65] width:49 height:19 toolTip:"random seed"
+	button btn2 "make unique" pos:[8,28] width:82 height:26 toolTip:"make all trees unique"
+	pickbutton btn3 "instance source" pos:[7,98] width:86 height:21 toolTip:"mother tree"
+	button btn4 "re-instance" pos:[10,121] width:79 height:26 toolTip:"re-instance selected trees"
+	button btn10 "random height" pos:[4,181] width:91 height:29 toolTip:"random tree height based on initial height"
+	label lbl6 "ver 0.9" pos:[28,211] width:41 height:14
+	button btn26 "density" pos:[9,153] width:80 height:23 enabled:true toolTip:"random density"
+	on btn1 pressed do
+	(
+	for n = 1 to selection.count do selection[n].seed = random 1 1000000
+	)
+	on btn2 pressed do
+	(
+	instancemgr.makeobjectsunique $ #individual
+	)
+	on btn3 picked sourceObj do
+	(	
+	btn3.text = sourceObj.name
+	select sourceObj
+	targetObj[1] = sourceObj
+	)
+	on btn4 pressed do
+	(
+	for o in selection where classof o == foliage do o.baseobject = targetObj[1].baseobject
+	)
+	on btn10 pressed do
+	(
+	for n = 1 to selection.count do selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
+		print (oHeight)
+	)
+	on btn26 pressed  do
+	(
+	for n = 1 to selection.count do selection[n].density = random 0.0 1.0
+	)
+)
+createdialog treemanager
