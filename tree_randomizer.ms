@@ -1,4 +1,5 @@
 -- manage trees en-masse in your scene
+-- distribute trees along target verts
 
 tStats = #()
 sTerrain = undefined
@@ -125,6 +126,9 @@ rollout m3 "m3" width:104 height:448
 		)
 		select (join iTree sTree)
 		for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
+		sTree = undefined
+		iTree = undefined
+		nTree = undefined
 		)
 		else messagebox ("geometry exceeds " +gLimit as string)
 	)
