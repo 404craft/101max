@@ -1,34 +1,50 @@
 -- adjust round corners scene-wide
-for n in scenematerials where n != undefined do
+-- iterate through multi/sub-object material list
+
+fn manageMaterial n rndVar =
 (
-	rndVar = 0.75 /*adjust softness here*/
-	
 	-- multiply by Material ID Channel Value i.e. 1 - rough, 7 - soft, 15 - very soft
-	/*if n.effectschannel == 0 do n.effectsChannel = 1
-	rndVar = rndVar * n.effectschannel*/
+	rndVar = rndVar * n.effectschannel
 	
-	case classof n of
+	if n.effectsChannel != 0 do
 	(
-		autodesk_material: 
+		case classof n of
 		(
-			n.Round_Corners_Enable = on
-			n.round_corners_source = rndVar
+			autodesk_material: 
+			(
+				n.Round_Corners_Enable = on
+				n.round_corners_source = rndVar
+			)
+			
+			arch___design__mi:
+			(
+				n.opts_round_corners_on = on
+				n.opts_round_corners_radius = rndVar
+			)
+			
+			vraymtl:
+			(
+				if n.texmap_bump == undefined do n.texmap_bump = vrayedgestex ()
+				n.texmap_base_bump_on = true
+				n.texmap_bump.widthtype = 0
+				n.texmap_bump.thickness = rndVar
+			)
+			
+			vRaycarpaintmtl:
+			(
+				if n.texmap_base_bump == undefined do n.texmap_base_bump = vrayedgestex ()
+				n.texmap_base_bump_on = true
+				n.texmap_base_bump.widthtype = 0
+				n.texmap_base_bump.thickness = rndVar
+			)
+			
+			default: print ("invalid")
 		)
-		
-		arch___design__mi:
-		(
-			n.opts_round_corners_on = on
-			n.opts_round_corners_radius = rndVar
-		)
-		
-	    vraymtl:
-		(
-			if n.texmap_bump == undefined do n.texmap_bump = vrayedgestex ()
-			n.texmap_bump.widthtype = 0
-			n.texmap_bump.thickness = rndVar
-		)
-		
-		default: print ("invalid")
 	)
 )
--- cannot adjust round corners globally
+
+for m in scenematerials where m != undefined do
+(
+	if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] 0.75
+	manageMaterial m 0.75
+)
