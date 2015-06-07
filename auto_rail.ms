@@ -1,4 +1,5 @@
 -- align an object with line anchor points
+-- i.e. draw a line / handrail, create another line / post, add in normal spl on top of handrail modifier stack to even out distribution of knots, with post line selected click assign
 
 rollout auto_rail "a-rail" width:112 height:120
 (
