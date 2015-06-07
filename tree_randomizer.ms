@@ -111,16 +111,19 @@ rollout m3 "m3" width:104 height:448
 	)
 	on btn_distribute pressed do -- distribute trees along terrain verts
 	(
-		local gLimit = 256
+		local gLimit = 512
 		if sTerrain.verts.count < gLimit then
 		(
 		select3 ()
 		nTimes = sTerrain.verts.count - selection.count
+		sTree = $ as array
+		iTree = #()
 		if nTimes > 0 do for i = 1 to nTimes do 
 		(
-		instance $[1]
-		-- selectmore $[i] sort this out
+		nTree = instance $[1]
+		append iTree nTree
 		)
+		select (join iTree sTree)
 		for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
 		)
 		else messagebox ("geometry exceeds " +gLimit as string)
