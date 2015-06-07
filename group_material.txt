@@ -33,12 +33,10 @@ rollout radMat "radMat" width:96 height:168
 	)
 	on btn_spn buttondown do
 	(
-	mUpper -= 1
 	mUpper = btn_spn.value
 	)
 	on btn_spn buttonup do
 	(
-	mUpper += 1
 	mUpper = btn_spn.value
 	)
 )
