@@ -13,7 +13,7 @@ rollout auto_rail "a-rail" width:112 height:120
 	label lbl_bottom "@101craft" pos:[31,100] width:56 height:16
 	on btn_pick_line picked oPath do
 	(
-		if classof oPath == line then 
+		if classof oPath == line OR classof oPath == SplineShape then 
 		(
 		btn_pick_line.text = oPath.name
 		global sPath = oPath
@@ -24,11 +24,13 @@ rollout auto_rail "a-rail" width:112 height:120
 	on btn_assign pressed do
 	(
 	nTimes = (numknots sPath) - selection.count
-	sPost = $ as array
+	if selection.count > 1 then sPost = $ as array
+		else sPost = $
 	iPost = #()
 	if nTimes > 0 do for i = 1 to nTimes do
 	(
-	nPost = instance $[1]
+		if selection.count > 1 then nPost = instance $[1]
+			else nPost = instance $
 	append iPost nPost
 	)
 	select (join iPost sPost)
