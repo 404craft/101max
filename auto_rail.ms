@@ -1,5 +1,8 @@
 -- align an object with line anchor points
--- i.e. draw a line / handrail, create another line / post, add in normal spl on top of handrail modifier stack to even out distribution of knots, with post line selected click assign
+-- instructions: draw the main line - handrail,
+   create another line - post,
+   add in "normalize spl" to the handrail modifier stack to even out the distribution of knots, 
+   with post selected click assign to distribute along knots
 
 rollout auto_rail "a-rail" width:112 height:120
 (
