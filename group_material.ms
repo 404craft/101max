@@ -1,6 +1,6 @@
 -- assign random material uniformly to all group members
 -- assign a different random material to each individual member of the same group
--- select your material editor slot range 1-2 to 1-24
+-- define source materials by defining material editor slot ranges 1-2 to 1-24
 
 mUpper = 2
 rollout radMat "radMat" width:96 height:168
