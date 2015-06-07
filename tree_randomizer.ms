@@ -1,10 +1,10 @@
 -- manage trees en-masse in your scene
--- ver 1.0
+
 tStats = #()
 sTerrain = undefined
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
-rollout m3 "m3" width:104 height:440
+rollout m3 "m3" width:104 height:448
 (
 	local targetObj = #()
 	label lbl_top "manage3" pos:[32,4] width:48 height:17
@@ -13,7 +13,7 @@ rollout m3 "m3" width:104 height:440
 	pickbutton btn_i_src "source tree" pos:[8,104] width:88 height:24 toolTip:"select source tree"
 	button btn_i_exe "connect" pos:[16,136] width:72 height:24 toolTip:"re-instance selected trees to source tree"
 	button btn_height "height" pos:[24,176] width:56 height:24 toolTip:"select foliage and assign random height"
-	label lbl_bottom "v 1.0" pos:[40,422] width:32 height:14
+	label lbl_bottom "@101craft" pos:[26,428] width:52 height:14
 	button btn_density "density" pos:[24,240] width:56 height:24 enabled:true toolTip:"select foliage and assign random density"
 	button btn_rot "rotate" pos:[24,208] width:56 height:24 toolTip:"select foliage and assign random rotation"
 	button btn_omega "omega" pos:[24,392] width:56 height:24 toolTip:"randomize everything with a single click"
@@ -42,7 +42,7 @@ rollout m3 "m3" width:104 height:440
 	on btn_i_exe pressed do -- re-instance unique trees with source tree
 	(
 	select3 ()
-	for o in selection do o.baseobject = targetObj[1].baseobject
+	if targetObj[1] != undefined do for o in selection do o.baseobject = targetObj[1].baseobject
 	)
 	on btn_height pressed do -- assign random height
 	(
@@ -98,8 +98,12 @@ rollout m3 "m3" width:104 height:440
 	(
 	if superclassof sourceTerrain == geometryclass then 
 	(
-	resetxform sourceTerrain
-	convertto sourceTerrain editable_poly
+		if classof sourceTerrain != editable_poly do 
+		(
+		resetxform sourceTerrain
+		convertto sourceTerrain editable_poly
+		)
+	print (sourceTerrain.verts.count)
 	btn_terrain.text = sourceTerrain.name
 	global sTerrain = sourceTerrain
 	)
@@ -107,10 +111,19 @@ rollout m3 "m3" width:104 height:440
 	)
 	on btn_distribute pressed do -- distribute trees along terrain verts
 	(
-	select3 ()
-	nTimes = sTerrain.verts.count - selection.count
-	if nTimes > 0 do for i = 1 to nTimes + 1 do instance $[1]
-	for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
+		local gLimit = 256
+		if sTerrain.verts.count < gLimit then
+		(
+		select3 ()
+		nTimes = sTerrain.verts.count - selection.count
+		if nTimes > 0 do for i = 1 to nTimes do 
+		(
+		instance $[1]
+		-- selectmore $[i] sort this out
+		)
+		for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
+		)
+		else messagebox ("geometry exceeds " +gLimit as string)
 	)
 )
 createdialog m3
