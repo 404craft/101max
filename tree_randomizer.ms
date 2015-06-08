@@ -117,14 +117,18 @@ rollout m3 "m3" width:104 height:448
 		(
 		select3 ()
 		nTimes = sTerrain.verts.count - selection.count
-		sTree = $ as array
+		-- err
+		if selection.count > 1 then sTree = $ as array
+		        else sTree = $
 		iTree = #()
 		if nTimes > 0 do for i = 1 to nTimes do 
 		(
-		nTree = instance $[1]
-		append iTree nTree
+		-- err
+		if selection.count > 1 then nTree = instance $[1]
+			else nTree = instance $
+		append iTree nTree -- err
 		)
-		select (join iTree sTree)
+		select (join iTree sTree) -- err
 		for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
 		sTree = undefined
 		iTree = undefined
