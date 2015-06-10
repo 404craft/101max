@@ -3,7 +3,7 @@
 -- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
 
-rollout spectrum "spectrum" width:176 height:336
+rollout spectrum "spectrum" width:176 height:344
 (
 	button sp_btn_execute "execute" pos:[40,272] width:96 height:24
 	label lbl_point_01 "point_01" pos:[16,8] width:144 height:16
@@ -16,19 +16,21 @@ rollout spectrum "spectrum" width:176 height:336
 	button sp_btn_points "select" pos:[40,48] width:96 height:24
 	spinner sp_distance "" pos:[48,80] width:80 height:16 range:[1,100,0] type:#float
 	label sp_lbl_factor "scale factor" pos:[62,105] width:112 height:16
-	label sp_lbl_distance "distance" pos:[66,306] width:120 height:15
+	label sp_lbl_distance "distance" pos:[66,304] width:120 height:15
+	label lbl40 "@101craft" pos:[58,324] width:53 height:16
 	
 	global tDis
 	global sFac
+
 	on sp_btn_execute pressed do
 	(
 	scale $ [$.scale.x *sFac,$.scale.y*sFac,$.scale.z*sFac]
 	)
 	on sp_listbox doubleClicked sel do
-	(
+		(
 	)
 	on sp_chk_mode changed state do
-	(
+		(
 	)
 	on sp_btn_append pressed do
 	(
@@ -42,6 +44,7 @@ rollout spectrum "spectrum" width:176 height:336
 	v2 = sArr[2]
 	tDis = sp_distance.value
 	vDis = distance $.verts[v1].pos $.verts[v2].pos
+	print(tDis)
 	sFac = (tDis / vDis)
 	sp_lbl_factor.text = sFac  as string
 	sp_lbl_distance.text = vDis as string
