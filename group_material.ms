@@ -2,6 +2,7 @@
 -- assign a different random material to each individual member of the same group
 -- define source materials by defining material editor slot ranges 1-2 to 1-24
 -- i.e. use this script to apply a random material to hundreds of /groups of objects/
+-- limited functionality plugin
 
 mUpper = 2
 rollout radMat "radMat" width:88 height:144
