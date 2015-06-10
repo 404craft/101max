@@ -19,8 +19,10 @@ rollout spectrum "spectrum" width:176 height:336
 	label sp_lbl_distance "distance" pos:[66,306] width:120 height:15
 	
 	global tDis
+	global sFac
 	on sp_btn_execute pressed do
 	(
+	scale $ [$.scale.x *sFac,$.scale.y*sFac,$.scale.z*sFac]
 	)
 	on sp_listbox doubleClicked sel do
 	(
@@ -39,7 +41,8 @@ rollout spectrum "spectrum" width:176 height:336
 	v2 = sArr[2]
 	tDis = sp_distance.value
 	vDis = distance $.verts[v1].pos $.verts[v2].pos
-	sp_lbl_factor.text = (vDis / tDis)  as string
+	sFac = (tDis / vDis)
+	sp_lbl_factor.text = sFac  as string
 	sp_lbl_distance.text = vDis as string
 	iV1 = $.verts[v1].pos
 	iV2 = $.verts[v2].pos
