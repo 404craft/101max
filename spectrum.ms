@@ -14,23 +14,25 @@ rollout spectrum "spectrum" width:176 height:344
 	checkbutton sp_chk_mode "local" pos:[40,240] width:96 height:24
 	button sp_btn_append "append" pos:[40,128] width:96 height:24
 	button sp_btn_points "select" pos:[40,48] width:96 height:24
-	spinner sp_distance "" pos:[48,80] width:80 height:16 range:[1,100,0] type:#float
+	spinner sp_distance "" pos:[48,80] width:80 height:16 range:[1,100,1] type:#float
 	label sp_lbl_factor "scale factor" pos:[62,105] width:112 height:16
 	label sp_lbl_distance "distance" pos:[66,304] width:120 height:15
-	label lbl40 "@101craft" pos:[58,324] width:53 height:16
+	label sp_lbl_101 "@101craft" pos:[58,324] width:53 height:16
 	
 	global tDis
 	global sFac
-
+	global oSiz
+	
 	on sp_btn_execute pressed do
 	(
-	scale $ [$.scale.x *sFac,$.scale.y*sFac,$.scale.z*sFac]
+-- 	sFac = (tDis / vDis)
+	$.scale = $.scale * sFac
 	)
 	on sp_listbox doubleClicked sel do
-		(
+	(
 	)
 	on sp_chk_mode changed state do
-		(
+	(
 	)
 	on sp_btn_append pressed do
 	(
@@ -38,20 +40,24 @@ rollout spectrum "spectrum" width:176 height:344
 	)
 	on sp_btn_points pressed do
 	(
-	sArr = for i in $.selectedVerts collect i.index
-	print(sArr)
-	v1 = sArr[1]
-	v2 = sArr[2]
-	tDis = sp_distance.value
-	vDis = distance $.verts[v1].pos $.verts[v2].pos
-	print(tDis)
-	sFac = (tDis / vDis)
-	sp_lbl_factor.text = sFac  as string
-	sp_lbl_distance.text = vDis as string
-	iV1 = $.verts[v1].pos
-	iV2 = $.verts[v2].pos
-	lbl_point_01.text = iV1 as string
-	lbl_point_02.text = iV2 as string
+		if selection.count != 0 then
+		(
+		if oSiz == undefined do oSiz = $.scale
+		sArr = for i in $.selectedVerts collect i.index
+		print(sArr)
+		v1 = sArr[1]
+		v2 = sArr[2]
+		tDis = sp_distance.value
+		vDis = distance $.verts[v1].pos $.verts[v2].pos
+		sFac = (tDis / vDis)
+		sp_lbl_factor.text = sFac  as string
+		sp_lbl_distance.text = vDis as string
+		iV1 = $.verts[v1].pos
+		iV2 = $.verts[v2].pos
+		lbl_point_01.text = iV1 as string
+		lbl_point_02.text = iV2 as string
+		)
+		else messagebox("select two points in a mesh")
 	)
 	on sp_distance changed val do
 	(
