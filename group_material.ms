@@ -4,7 +4,8 @@
 -- i.e. use this script to apply a random material to hundreds of /groups of objects/
 -- limited functionality plugin
 
-mUpper = 2
+global mUpper
+
 rollout radMat "radMat" width:88 height:144
 (
 	checkbutton btn_mode "mode" pos:[8,32] width:72 height:24 toolTip:"assign same material to all group members?"
@@ -21,13 +22,15 @@ rollout radMat "radMat" width:88 height:144
 	(
 		if btn_mode.state == true then
 		(
+			for n in selection do n.material = meditmaterials [random 1 mUpper]
+				
 			for p in selection where isgrouphead p do
 			(
+			mUpper = btn_spn.value
 			groupmaterial = meditmaterials [random 1 mUpper] /*material editor slot 1 to material editor slot 3*/
 			for c in p where isgroupmember c do c.material = groupmaterial
 			)
 		)
-		
 		else for n in selection do n.material = meditmaterials [random 1 mUpper]
 	)
 	on btn_spn changed val do
@@ -43,5 +46,4 @@ rollout radMat "radMat" width:88 height:144
 	mUpper = btn_spn.value
 	)
 )
-
 createdialog radMat
