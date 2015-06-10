@@ -1,6 +1,6 @@
 -- compute distance between two points of an object (i.e. an object is not to scale)
 -- define target distance / real scale of the object
--- scale an object locally or rescale entire scene
+-- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
 
 rollout spectrum "spectrum" width:176 height:336
