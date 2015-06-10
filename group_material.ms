@@ -4,12 +4,13 @@
 -- i.e. use this script to apply a random material to hundreds of /groups of objects/
 
 mUpper = 2
-rollout radMat "radMat" width:96 height:168
+rollout radMat "radMat" width:88 height:144
 (
-	checkbutton btn_mode "mode" pos:[8,32] width:80 height:31 toolTip:"assign same material to all group members?"
-	label lbl_top "radMat" pos:[30,5] width:80 height:18
-	button btn_exe "execute" pos:[8,112] width:80 height:32 toolTip:"confirm operation"
-	spinner btn_spn "" pos:[16,80] width:64 height:16 range:[2,24,2] type:#integer scale:0.1
+	checkbutton btn_mode "mode" pos:[8,32] width:72 height:24 toolTip:"assign same material to all group members?"
+	label lbl_top "radMat" pos:[28,6] width:80 height:18
+	button btn_exe "execute" pos:[8,88] width:72 height:24 toolTip:"confirm operation"
+	spinner btn_spn "" pos:[8,64] width:72 height:16 range:[2,24,2] type:#integer scale:0.1
+	label lbl_bottom "@101craft" pos:[17,125] width:54 height:17
 	on btn_mode changed state do
 	(
 		if state == true then btn_mode.text = "group"
