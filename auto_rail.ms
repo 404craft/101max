@@ -4,6 +4,7 @@
    create another line - post,
    add in "normalize spl" to the handrail modifier stack to even out the distribution of knots, 
    with post selected click assign to distribute along knots
+-- limited functionality plugin
 
 rollout auto_rail "a-rail" width:112 height:120
 (
