@@ -32,6 +32,7 @@ rollout spectrum "spectrum" width:176 height:336
 	)
 	on sp_btn_append pressed do
 	(
+	messagebox("unavailable")
 	)
 	on sp_btn_points pressed do
 	(
