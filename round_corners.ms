@@ -1,5 +1,7 @@
 -- adjust round corners scene-wide
 -- iterate through multi/sub-object material list
+-- limited functionality plugin
+
 rVal = 0.0
 
 fn manageMaterial n rndVar =
