@@ -1,5 +1,5 @@
 -- compute distance between two points of an object (i.e. an object is not to scale)
--- define target distance / real scale of the object
+-- define target distance / real measurements of the object
 -- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
 
