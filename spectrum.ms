@@ -3,36 +3,43 @@
 -- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
 
-rollout spectrum "spectrum" width:176 height:344
+-- compute distance between two points of an object (i.e. an object is not to scale)
+-- define target distance / real measurements of the object
+-- auto-rescale an object locally or auto-rescale entire scene
+-- limited functionality plugin
+
+rollout spectrum "spectrum" width:176 height:376
 (
-	button sp_btn_execute "execute" pos:[40,272] width:96 height:24
+	button sp_btn_execute "execute" pos:[40,328] width:96 height:24
 	label lbl_point_01 "point_01" pos:[16,8] width:144 height:16
 	label lbl_point_02 "point_02" pos:[16,24] width:144 height:16
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
-	listbox sp_listbox "" pos:[40,160] width:98 height:5
+	listbox sp_listbox "" pos:[40,216] width:98 height:5
 	button btn5 "Button" pos:[86,281] width:0 height:0
-	checkbutton sp_chk_mode "local" pos:[40,240] width:96 height:24
-	button sp_btn_append "append" pos:[40,128] width:96 height:24
+	checkbutton sp_chk_mode "local" pos:[40,296] width:96 height:24
+	button sp_btn_append "append" pos:[40,184] width:96 height:24
 	button sp_btn_points "select" pos:[40,48] width:96 height:24
 	spinner sp_distance "" pos:[48,80] width:80 height:16 range:[1,100,1] type:#float
-	label sp_lbl_factor "scale factor" pos:[62,105] width:112 height:16
-	label sp_lbl_distance "distance" pos:[66,304] width:120 height:15
-	label sp_lbl_101 "@101craft" pos:[58,324] width:53 height:16
+	label sp_lbl_factor "scale factor" pos:[62,121] width:112 height:16
+	label sp_lbl_distance "distance" pos:[66,102] width:120 height:15
+	label sp_lbl_101 "@101craft" pos:[58,357] width:53 height:16
 	
 	global tDis
 	global sFac
 	global oSiz
 	
+	label sp_lbl_scale_curr "current scale" pos:[62,141] width:112 height:16
+	label sp_lbl_scale_tar "target scale" pos:[62,162] width:112 height:16
 	on sp_btn_execute pressed do
 	(
--- 	sFac = (tDis / vDis)
+	-- 	sFac = (tDis / vDis)
 	$.scale = $.scale * sFac
 	)
 	on sp_listbox doubleClicked sel do
-	(
+		(
 	)
 	on sp_chk_mode changed state do
-	(
+		(
 	)
 	on sp_btn_append pressed do
 	(
