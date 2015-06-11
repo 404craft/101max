@@ -30,36 +30,34 @@ rollout spectrum "spectrum" width:104 height:408
      global fDis
      global sFac
 	 global oSel
+	 global lArray = #()
 
 	label sp_lbl_scale_curr "current scale" pos:[25,141] width:114 height:16
 	button sp_btn_resetX "resetX" pos:[8,312] width:88 height:16
 	button sp_btn_scale_res "original scale" pos:[8,336] width:88 height:16
 	checkbutton sp_chk_tape "tape off" pos:[8,32] width:88 height:16
 	label sp_lbl_top "spectrum" pos:[30,6] width:64 height:16
-	pickButton sp_btn_append "append list" pos:[8,184] width:88 height:16
+	pickbutton sp_btn_append "append list" pos:[8,184] width:88 height:16
+	
 	on sp_btn_execute pressed do
 	(
 	-- 	print(sFac)
 	-- 	print($.scale.x*sFac)
 	-- 	scale $ [$.scale.x*sFac,$.scale.x*sFac,$.scale.x*sFac]
 	saveScale()
-	$.scale = $.scale *sFac
-	)
-	
-	on sp_btn_append picked obj do
+	if sp_chk_mode.state == true then
 	(
-		if selection.count == 1 then
-		(
-		oSel = obj
-		sp_listbox.items = append sp_listbox.items (oSel as string)
-		)
-		else messagebox ("select one item")
+		for o = 1 to lArray.count do lArray[o].scale = lArray[o].scale * sFac
 	)
-	
+	else $.scale = $.scale *sFac
+	)
 	on sp_listbox doubleClicked sel do
 	(
 		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
-			sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
+		(
+		deleteitem lArray sp_listbox.selection
+		sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
+		)
 	)
 	on sp_chk_mode changed state do
 	(
@@ -107,8 +105,20 @@ rollout spectrum "spectrum" width:104 height:408
 	)
 	on sp_btn_scale_res pressed do
 	(
-	 for n = 1 to selection.count do n.scale = getuserprop selection[n]
-	"oScale"
+		for n = 1 to selection.count do 
+		(
+		if (getuserprop selection[n] "oScale") != undefined do selection[n].scale = getuserprop selection[n] "oScale"
+		)
+	)
+	on sp_chk_tape changed state do
+	(
+	actionMan.executeAction 0 "40472"
+	)
+	on sp_btn_append picked obj do
+	(
+		oSel = obj
+		sp_listbox.items = append sp_listbox.items (oSel as string)
+		appendifunique lArray oSel
 	)
 )
 createdialog spectrum
