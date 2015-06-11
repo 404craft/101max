@@ -2,8 +2,11 @@
 -- define target distance / real measurements of the object
 -- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
-for o in (selection as array) where (getuserprop o "oScale" ==
-undefined) do setuserprop o "oScale" o.scale
+
+for n = 1 to selection.count do
+(
+	if getuserprop selection[n] "oScale" == undefined do setuserprop selection[n] "oScale" selection[n].scale
+)
 
 rollout spectrum "spectrum" width:104 height:408
 (
@@ -33,12 +36,13 @@ rollout spectrum "spectrum" width:104 height:408
 	label sp_lbl_top "spectrum" pos:[30,6] width:64 height:16
 	on sp_btn_execute pressed do
 	(
-	print(sFac)
-	print($.scale.x*sFac)
-	scale $ [$.scale.x*sFac,$.scale.x*sFac,$.scale.x*sFac]
+-- 	print(sFac)
+-- 	print($.scale.x*sFac)
+-- 	scale $ [$.scale.x*sFac,$.scale.x*sFac,$.scale.x*sFac]
+	$.scale = $.scale *sFac
 	)
 	on sp_listbox doubleClicked sel do
-		(
+	(
 	)
 	on sp_chk_mode changed state do
 	(
@@ -53,9 +57,7 @@ rollout spectrum "spectrum" width:104 height:408
 	(
 	    if selection.count != 0 then
 	    (
-	    if oSiz == undefined do oSiz = $.scale
 	    sArr = for i in $.selectedVerts collect i.index
-	    print(sArr)
 	    v1 = sArr[1]
 	    v2 = sArr[2]
 	    tDis = sp_distance.value
@@ -64,10 +66,7 @@ rollout spectrum "spectrum" width:104 height:408
 	    sp_lbl_factor.text = sFac  as string
 	    sp_lbl_distance.text = vDis as string
 		sp_lbl_scale_curr.text = $.scale as string
-	    iV1 = $.verts[v1].pos
-	    iV2 = $.verts[v2].pos
-		
-	    print(iV1); print(iV2); print(tDis);print(sFac)
+		print(tDis);print(sFac)
 	    )
 	    else messagebox("select two points in a mesh")
 	)
@@ -85,12 +84,11 @@ rollout spectrum "spectrum" width:104 height:408
 	)
 	on sp_btn_resetX pressed do
 	(
-	    local n
-	    if selection.count > 1 then n = $[1]
-	        else n = $
-	    c = classof n
-	    resetxform n
-	    convertto n c
+		for n = 1 to selection.count where superclassof selection[n] == geometryclass do
+			(
+				resetxform selection[n]
+				convertto selection[n] editable_poly
+			)
 	)
 	on sp_btn_scale_res pressed do
 	(
