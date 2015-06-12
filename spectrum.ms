@@ -7,8 +7,12 @@ fn saveScale =
 (
 	for n = 1 to selection.count do
 	(
-		--if getuserprop selection[n] "oScale" == undefined do setuserprop selection[n] "oScale" selection[n].scale
-		setuserprop selection[n] "oScale" selection[n].scale
+		if getuserprop selection[n] "oScale_x" == undefined do
+		(
+		setuserprop selection[n] "oScale_x" selection[n].scale.x
+		setuserprop selection[n] "oScale_y" selection[n].scale.y
+		setuserprop selection[n] "oScale_z" selection[n].scale.z
+		)
 	)
 )
 
@@ -69,19 +73,23 @@ rollout spectrum "spectrum" width:104 height:408
 		saveScale()
 	    if selection.count != 0 then
 	    (
-	    sArr = for i in $.selectedVerts collect i.index
-	    v1 = sArr[1]
-	    v2 = sArr[2]
-	    tDis = sp_distance.value
-	    vDis = distance $.verts[v1].pos $.verts[v2].pos
-	    sFac = (tDis / vDis)
-	    sp_lbl_factor.text = sFac  as string
-	    sp_lbl_distance.text = vDis as string
-		sp_lbl_scale_curr.text = $.scale as string
-		print(tDis);print(sFac)
-		saveScale()
+			if $.mesh.selectedVerts.count == 2 then
+			(
+			sArr = for i in $.mesh.selectedVerts collect i.index
+			v1 = sArr[1]
+			v2 = sArr[2]
+			tDis = sp_distance.value
+			vDis = distance $.mesh.verts[v1].pos $.mesh.verts[v2].pos
+			sFac = (tDis / vDis)
+			sp_lbl_factor.text = sFac  as string
+			sp_lbl_distance.text = vDis as string
+			sp_lbl_scale_curr.text = $.scale as string
+			print(tDis);print(sFac)
+			saveScale()
+			)
+			else messagebox("select two points in a mesh")
 	    )
-	    else messagebox("select two points in a mesh")
+	    else messagebox("select an object")
 	)
 	on sp_distance changed val do
 	(
@@ -105,9 +113,14 @@ rollout spectrum "spectrum" width:104 height:408
 	)
 	on sp_btn_scale_res pressed do
 	(
-		for n = 1 to selection.count do 
-		(
-		if (getuserprop selection[n] "oScale") != undefined do selection[n].scale = getuserprop selection[n] "oScale"
+  		for n = 1 to selection.count do 
+  		(
+ 			if (getuserprop selection[n] "oScale_x") != undefined do 
+  			(
+				selection[n].scale.x = (getuserprop selection[n] "oScale_x") as float
+				selection[n].scale.y = (getuserprop selection[n] "oScale_y") as float
+				selection[n].scale.z = (getuserprop selection[n] "oScale_z") as float
+    		)
 		)
 	)
 	on sp_chk_tape changed state do
