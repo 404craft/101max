@@ -2,14 +2,14 @@
 -- iterate through multi/sub-object material list
 -- limited functionality plugin
 
-rVal = 0.0
+global rVal
+global aMod
 
 fn manageMaterial n rndVar =
 (
 	-- multiply by Material ID Channel Value i.e. 1 - rough, 7 - soft, 15 - very soft
-	rndVar = rndVar * n.effectschannel
-	
-	if n.effectsChannel != 0 do
+	if aMod == true do rndVar = rndVar * n.effectschannel
+	if rndVar != 0 do
 	(
 		case classof n of
 		(
@@ -46,33 +46,48 @@ fn manageMaterial n rndVar =
 	)
 )
 
-rollout softMat "softMat" width:96 height:136
+rollout softMat "softMat" width:96 height:128
 (
-	label lbl_top "softMat" pos:[27,8] width:40 height:15
-	button btn_apply "apply" pos:[8,64] width:80 height:38 toolTip:"apply round corners globally"
-	label lbl_bottom "@101craft" pos:[22,114] width:54 height:16
-	spinner btn_spn "" pos:[16,32] width:64 height:16 range:[0,10,0] scale:0.01
+	label sm_lbl_top "softMat" pos:[27,8] width:40 height:15
+	button sm_btn_apply "apply" pos:[8,80] width:80 height:16 toolTip:"apply round corners globally"
+	label sm_lbl_bottom "@101craft" pos:[22,106] width:54 height:16
+	spinner sm_spn_val "" pos:[16,32] width:64 height:16 range:[0,10,0] scale:0.01
+	checkbutton sm_chk_mode "mode" pos:[8,56] width:80 height:16
 	
 	
-	on btn_apply pressed do
+	on sm_btn_apply pressed do
 	(
+		rVal = sm_spn_val.value
 		for m in scenematerials where m != undefined do
 		(
 		if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] rVal
 		manageMaterial m rVal
 		)
 	)
-	on btn_spn changed val do
+	on sm_spn_val changed val do
 	(
-	rVal = btn_spn.value
+	rVal = sm_spn_val.value
 	)
-	on btn_spn buttondown do
+	on sm_spn_val buttondown do
 	(
-	rVal = btn_spn.value
+	rVal = sm_spn_val.value
 	)
-	on btn_spn buttonup do
+	on sm_spn_val buttonup do
 	(
-	rVal = btn_spn.value
+	rVal = sm_spn_val.value
+	)
+	on sm_chk_mode changed state do
+	(
+		if state == true then 
+		(
+		sm_chk_mode.text = "mat ID on"
+		aMod = true
+		)
+		else
+		(
+		sm_chk_mode.text = "mat ID off"
+		aMod = false
+		)
 	)
 )
 createdialog softMat
