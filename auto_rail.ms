@@ -1,10 +1,5 @@
 -- aligns an object with line anchor points
 -- useful for making handrails with splines for instance
--- instructions: draw the main line - handrail,
-   create another line - post,
-   add in "normalize spl" to the handrail modifier stack to even out the distribution of knots, 
-   or use /divide/ function to create additional anchor points,
-   with post selected click assign to distribute along knots
 -- limited functionality plugin
 
 rollout auto_rail "a-rail" width:88 height:177
