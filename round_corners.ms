@@ -1,5 +1,6 @@
 -- adjust round corners scene-wide
 -- iterate through multi/sub-object material list
+-- /optional/ use material ID channel value to define material's softness
 -- limited functionality plugin
 
 rollout softMat "softMat" width:96 height:128
