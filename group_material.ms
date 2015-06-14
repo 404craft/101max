@@ -8,8 +8,8 @@ rollout radMat "radMat" width:88 height:146
 (
 	checkbutton rm_chk_mode "mode" pos:[8,32] width:72 height:24 toolTip:"assign same material to all group members?"
 	label rm_lbl_top "radMat" pos:[28,6] width:80 height:18
-	button rm_btn_exe "execute" pos:[8,88] width:72 height:24 toolTip:"confirm operation"
-	spinner rm_spn_range "" pos:[8,64] width:72 height:16 range:[2,24,2] type:#integer scale:0.1
+	button rm_btn_exe "assign" pos:[8,88] width:72 height:24 toolTip:"confirm operation"
+	spinner rm_spn_range "1 - " pos:[16,64] width:64 height:16 range:[2,24,2] type:#integer scale:0.1
 	label rm_lbl_bottom "@101craft" pos:[17,125] width:54 height:17
 	on rm_chk_mode changed state do
 	(
