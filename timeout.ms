@@ -1,5 +1,5 @@
--render diffuse then AO
--limited usability
+-render diffuse then ambient occlusion via material override in mental ray
+-limited usability plugin
 
 rollout timeout "timeout" width:128 height:136
 (
