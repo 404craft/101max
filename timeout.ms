@@ -30,6 +30,12 @@ rollout timeout "timeout" width:128 height:136
 		mr = renderers.current
 		if mr != mental_ray_renderer() do mr = mental_ray_renderer()
 		mr = renderers.current
+		oM = mental_ray ()
+		oM.name = "mr_ao"
+		oM.surface = Ambient_Reflective_Occlusion__3dsmax ()
+		oM.surface.name = "ao_map"
+		oM.Surface.Samples = 128
+		if mr.Override_Material == undefined do mr.Override_Material = oM
 		max hold;
 		ot_btn_hold.text = "fetch";
 		s = true;
