@@ -41,12 +41,12 @@ rollout timeout "timeout" width:128 height:136
 		s = true;
 		mr.FinalGatherEnable2 = on;
 		mr.Enable_Material_Override = off;
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D" + "_" + ".tga");
+		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D01" + "_" + ".tga");
 		delete lights
 		mr.MaximumSamples = 1
 		mr.FinalGatherEnable2 = off;
 		mr.Enable_Material_Override = on;
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "AO" + "_" + ".tga");
+		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "AO1" + "_" + ".tga");
 		c = undefined
 		ot_btn_cam.text = "<camera>"
 		)
