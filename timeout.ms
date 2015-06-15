@@ -23,30 +23,6 @@ rollout timeout "timeout" width:128 height:136
 		)
 		else messagebox ("select a camera")
 	)
-	on ot_spn_fframe changed val do
-	(
-		
-		)
-	on ot_spn_fframe buttondown do
-	(
-		
-		)
-	on ot_spn_fframe buttonup do
-	(
-		
-		)
-	on ot_spn_lframe changed val do
-	(
-		
-		)
-	on ot_spn_lframe buttondown do
-	(
-		
-		)
-	on ot_spn_lframe buttonup do
-	(
-		
-		)
 	on ot_btn_render pressed do
 	(
 		if c != undefined then
