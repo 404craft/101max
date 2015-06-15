@@ -7,9 +7,9 @@ rollout timeout "timeout" width:128 height:136
 	global s;
 	
 	pickbutton ot_btn_cam "<camera>" pos:[10,24] width:112 height:16
-	spinner ot_spn_fframe "" pos:[8,48] width:56 height:16 range:[-1000,1000,0] type:#integer
-	spinner ot_spn_lframe "" pos:[64,48] width:56 height:16 range:[-1000,1000,0] type:#integer
-	label lbl1 "timeOut" pos:[46,4] width:64 height:16
+	spinner ot_spn_fframe "" pos:[8,48] width:56 height:16 range:[-16777216,16777216,0] type:#integer
+	spinner ot_spn_lframe "" pos:[64,48] width:56 height:16 range:[-16777216,16777216,0] type:#integer
+	label lbl1 "timeOut" pos:[45,4] width:64 height:16
 	label lbl2 "Label" pos:[72,56] width:0 height:0
 	label ot_lbl_bottom "@101craft" pos:[39,116] width:53 height:13
 	button ot_btn_render "render" pos:[32,96] width:64 height:16
