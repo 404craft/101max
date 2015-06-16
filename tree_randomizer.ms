@@ -32,12 +32,12 @@ rollout m3 "m3" width:160 height:296
 	spinner m3_spn_seed "" pos:[64,128] width:88 height:16 range:[0,16777216,0] type:#integer scale:0.1
 	spinner m3_spn_dens "" pos:[64,104] width:88 height:16 range:[0,1,0]
 	
-	checkbox m3_show_chk_01 "Checkbox" pos:[60,228] width:8 height:8 state:true
-	checkbox m3_show_chk_02 "Checkbox" pos:[76,228] width:8 height:8 state:true
-	checkbox m3_show_chk_03 "Checkbox" pos:[92,228] width:8 height:8 state:true
-	checkbox m3_show_chk_04 "Checkbox" pos:[108,228] width:8 height:8 state:true
-	checkbox m3_show_chk_05 "Checkbox" pos:[124,228] width:8 height:8 state:true
-	checkbox m3_show_chk_06 "Checkbox" pos:[140,228] width:8 height:8 state:true
+	checkbox m3_show_chk_01 "Checkbox" pos:[60,228] width:8 height:8 state:true checked:true
+	checkbox m3_show_chk_02 "Checkbox" pos:[76,228] width:8 height:8 state:true checked:true
+	checkbox m3_show_chk_03 "Checkbox" pos:[92,228] width:8 height:8 state:true checked:true
+	checkbox m3_show_chk_04 "Checkbox" pos:[108,228] width:8 height:8 state:true checked:true
+	checkbox m3_show_chk_05 "Checkbox" pos:[124,228] width:8 height:8 state:true checked:true
+	checkbox m3_show_chk_06 "Checkbox" pos:[140,228] width:8 height:8 state:true checked:true
 	
 	button m3_btn_vcm "VCM" pos:[8,248] width:48 height:16 toolTip:"viewport canopy mode"
 	button m3_btn_lod "LOD" pos:[8,272] width:48 height:16 toolTip:"level-of-detail"
@@ -49,6 +49,7 @@ rollout m3 "m3" width:160 height:296
 	select3 ()
 	instancemgr.makeobjectsunique $ #individual
 	)
+	
 	on m3_btn_ins_src picked sourceObj do -- define source tree of the new instance array
 	(
 	select3 ()
@@ -56,6 +57,7 @@ rollout m3 "m3" width:160 height:296
 	targetObj[1] = sourceObj
 	select (for o in objects where classof o == foliage collect o)
 	)
+	
 	on m3_btn_ins_exe pressed do -- re-instance unique trees with source tree
 	(
 	select3 ()
@@ -79,16 +81,7 @@ rollout m3 "m3" width:160 height:296
 	on m3_spn_height changed val do
 	(
 	tStats[1] = m3_spn_height.value
-	oHeight = m3_spn_height.value
 	for n = 1 to selection.count do selection[n].height = m3_spn_height.value
-	)
-	on m3_spn_height buttondown do
-	(
-	oHeight = m3_spn_height.value
-	)
-	on m3_spn_height buttonup do
-	(
-	oHeight = m3_spn_height.value
 	)
 	
 	
@@ -103,16 +96,7 @@ rollout m3 "m3" width:160 height:296
 	)
 	on m3_spn_dens changed val do
 	(
-	oDens = m3_spn_dens.value
 	for n = 1 to selection.count do selection[n].density = m3_spn_dens.value
-	)
-	on m3_spn_dens buttondown do
-	(
-	oDens = m3_spn_dens.value
-	)
-	on m3_spn_dens buttonup do
-	(
-	oDens = m3_spn_dens.value
 	)
 	
 	on m3_btn_seed pressed do -- assign random seed
@@ -142,22 +126,8 @@ rollout m3 "m3" width:160 height:296
 	on m3_btn_rotate pressed do -- assign random rotation
 	(
 	select3 ()
-	oRotate = m3_spn_rotate.value
-	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 oRotate as integer))
+	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 m3_spn_rotate.value as integer))
 	)
-	on m3_spn_rotate changed val do
-	(
-	oRotate = m3_spn_rotate.value
-	)
-	on m3_spn_rotate buttondown do
-	(
-	oRotate = m3_spn_rotate.value
-	)
-	on m3_spn_rotate buttonup do
-	(
-	oRotate = m3_spn_rotate.value
-	)
-	
 	
 	on m3_btn_prune pressed  do
 	(
@@ -169,18 +139,8 @@ rollout m3 "m3" width:160 height:296
 	)
 	on m3_spn_prune changed val do
 	(
-	oPrune = m3_spn_prune.value
 	for n = 1 to selection.count do selection[n].pruning = m3_spn_prune.value
-	)
-	on m3_spn_prune buttondown do
-	(
-	oPrune = m3_spn_prune.value
-	)
-	on m3_spn_prune buttonup do
-	(
-	oPrune = m3_spn_prune.value
-	)
-	
+	)	
 	
 	on m3_btn_omega pressed do -- alpha & omega: hit once randomize everything
 	(
@@ -191,6 +151,7 @@ rollout m3 "m3" width:160 height:296
 	
 		if selection.count > 1 then oHeight = $[1].height
 		else oHeight = $.height
+		
 		if tStats[1] == undefined do tStats[1] = oHeight
 		selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
 
@@ -200,8 +161,7 @@ rollout m3 "m3" width:160 height:296
 		selection[n].seed = random 1 16777216
 		m3_spn_seed.value = selection[n].seed
 		
-		oRotate = m3_spn_rotate.value
-		rotate selection[n] (eulerangles 0 0 (random 0 oRotate as integer))
+		rotate selection[n] (eulerangles 0 0 (random 0m3_spn_rotate.value as integer))
 			
 		if sTerrain != undefined do for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
 		)
@@ -274,13 +234,12 @@ rollout m3 "m3" width:160 height:296
 		resetxform sourceTerrain
 		convertto sourceTerrain editable_poly
 		)
-	print (sourceTerrain.verts.count)
 	m3_btn_dis_src.text = sourceTerrain.name
 	sTerrain = sourceTerrain
 	)
 	else
 	(
-		if classof sourceTerrain == line OR classof sourceTerrain == SplineShape then 
+		if classof sourceTerrain == line OR classof sourceTerrain == splineshape then 
 		(
 		m3_btn_dis_src.text = sourceTerrain.name
 		sTerrain = sourceTerrain
@@ -325,9 +284,9 @@ rollout m3 "m3" width:160 height:296
 				else messagebox ("geometry exceeds " +gLimit as string)
 			)
 			
-			if superclassof sTerrain == shape then
+			else if superclassof sTerrain == shape then
 			(
-			nTimes = (numknots sPath) - selection.count
+			nTimes = (numknots sTerrain) - selection.count
 			if selection.count > 1 then sPost = $ as array
 				else sPost = $
 			iPost = #()
@@ -346,20 +305,7 @@ rollout m3 "m3" width:160 height:296
 		)
 		else messagebox ("select terrain")
 	)
-	on m3_spn_dis_dens changed val do
-	(
-	oDis = m3_spn_dis_dens.value
-	)
-	on m3_spn_dis_dens buttondown do
-	(
-	oDis = m3_spn_dis_dens.value
-	)
-	on m3_spn_dis_dens buttonup do
-	(
-	oDis = m3_spn_dis_dens.value
-	)
-	
-	
+
 	on m3_btn_vcm pressed  do
 	(
 	if selection.count > 1 then vSwitch = $[1].CanopyMode
