@@ -27,7 +27,7 @@ rollout m3 "m3" width:160 height:296
 	button m3_btn_dis_exe "distribute" pos:[80,176] width:72 height:16 toolTip:"distribute trees along terrain"
 		
 	spinner m3_spn_height "" pos:[64,32] width:88 height:16 range:[0,10000,0]
-	spinner m3_spn_rotate "" pos:[64,56] width:88 height:16 range:[0,359,45] type:#float
+	spinner m3_spn_rotate "" pos:[64,56] width:88 height:16 range:[0,359,45]
 	button m3_btn_prune "prune" pos:[8,80] width:48 height:16
 	spinner m3_spn_prune "" pos:[64,80] width:88 height:16 range:[-0.1,1,-0.1]
 	spinner m3_spn_seed "" pos:[64,128] width:88 height:16 range:[0,16777216,0] type:#integer scale:0.1
