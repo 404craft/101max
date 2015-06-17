@@ -11,6 +11,7 @@ select3 ()
 rollout m3 "m3" width:160 height:296
 (
 	local targetObj = #()
+	
 	label m3_lbl_top "manage3" pos:[10,8] width:48 height:16
 	button m3_btn_seed "seed" pos:[8,128] width:48 height:16 toolTip:"select foliage and assign random seed"
 	button m3_btn_unique "make unique" pos:[65,8] width:88 height:16 toolTip:"select trees and make them unique"
@@ -56,6 +57,12 @@ rollout m3 "m3" width:160 height:296
 	m3_btn_ins_src.text = sourceObj.name
 	targetObj[1] = sourceObj
 	select (for o in objects where classof o == foliage collect o)
+		
+	m3_spn_height.value = sourceObj.height
+	m3_spn_dens.value = sourceObj.density
+	m3_spn_prune.value = sourceObj.pruning
+	m3_spn_seed.value = sourceObj.seed
+	m3_spn_rotate.value = sourceObj.rotation.z		
 	)
 	
 	on m3_btn_ins_exe pressed do -- re-instance unique trees with source tree
@@ -68,10 +75,9 @@ rollout m3 "m3" width:160 height:296
 	on m3_btn_height pressed do -- assign random height
 	(
 	select3 ()
-	if selection.count > 1 then oHeight = $[1].height
-	else oHeight = $.height
-	m3_spn_height.value = oHeight
-	if tStats[1] == undefined do tStats[1] = oHeight
+	if selection.count > 1 then m3_spn_height.value = $[1].height
+	else m3_spn_height.value = $.height
+	if tStats[1] == undefined do tStats[1] = m3_spn_height.value
 		for n = 1 to selection.count do
 		(
 		selection[n].height = random (tStats[1] / 2.0) (tStats[1] * 1.5)
@@ -99,6 +105,7 @@ rollout m3 "m3" width:160 height:296
 	for n = 1 to selection.count do selection[n].density = m3_spn_dens.value
 	)
 	
+	
 	on m3_btn_seed pressed do -- assign random seed
 	(
 	select3 ()
@@ -110,16 +117,7 @@ rollout m3 "m3" width:160 height:296
 	)
 	on m3_spn_seed changed val do
 	(
-	oSeed = m3_spn_seed.value
 	for n = 1 to selection.count do selection[n].seed = m3_spn_seed.value
-	)
-	on m3_spn_seed buttondown do
-	(
-	oSeed = m3_spn_seed.value
-	)
-	on m3_spn_seed buttonup do
-	(
-	oSeed = m3_spn_seed.value
 	)
 	
 	
@@ -128,6 +126,7 @@ rollout m3 "m3" width:160 height:296
 	select3 ()
 	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 m3_spn_rotate.value as integer))
 	)
+	
 	
 	on m3_btn_prune pressed  do
 	(
