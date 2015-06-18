@@ -35,7 +35,7 @@ rollout spectrum "spectrum" width:104 height:408
      global sFac
 	 global oSel
 	 global lArray = #()
-
+	 global cArray = #()
 	label sp_lbl_scale_curr "current scale" pos:[25,141] width:114 height:16
 	button sp_btn_resetX "resetX" pos:[8,312] width:88 height:16
 	button sp_btn_scale_res "original scale" pos:[8,336] width:88 height:16
@@ -51,7 +51,10 @@ rollout spectrum "spectrum" width:104 height:408
 	saveScale()
 	if sp_chk_mode.state == true then
 	(
-		for o = 1 to lArray.count do lArray[o].scale = lArray[o].scale * sFac
+			for o = 1 to lArray.count do 
+			(
+			lArray[o].scale = lArray[o].scale * sFac
+			)
 	)
 	else $.scale = $.scale *sFac
 	)
@@ -84,7 +87,6 @@ rollout spectrum "spectrum" width:104 height:408
 			sp_lbl_factor.text = sFac  as string
 			sp_lbl_distance.text = vDis as string
 			sp_lbl_scale_curr.text = $.scale as string
-			print(tDis);print(sFac)
 			saveScale()
 			)
 			else messagebox("select two points in a mesh")
@@ -132,6 +134,8 @@ rollout spectrum "spectrum" width:104 height:408
 		oSel = obj
 		sp_listbox.items = append sp_listbox.items (oSel as string)
 		appendifunique lArray oSel
+		for n in oSel do appendifunique cArray n.children
+		print(cArray)
 	)
 )
 createdialog spectrum
