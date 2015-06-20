@@ -32,7 +32,6 @@ rollout timeout "timeout" width:128 height:160
 	(
 		if c != undefined then
 		(
-		mr = renderers.current
 		if mr != mental_ray_renderer() do renderers.current = mental_ray_renderer()
 		mr = renderers.current
 		oM = mental_ray ()
