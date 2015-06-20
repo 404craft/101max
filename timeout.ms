@@ -3,10 +3,9 @@
 
 rollout timeout "timeout" width:128 height:160
 (
-	global c;
-	global s;
-	global numSeg = 4;
-	global mr = renderers.current;
+	global c
+	global s
+	global numSeg = 4
 	
 	pickbutton ot_btn_cam "<camera>" pos:[10,24] width:112 height:16
 	spinner ot_spn_fframe "" pos:[8,48] width:56 height:16 range:[-1.67772e+007,1.67772e+007,0] type:#integer
@@ -32,27 +31,29 @@ rollout timeout "timeout" width:128 height:160
 	(
 		if c != undefined then
 		(
-		if mr != mental_ray_renderer() do renderers.current = mental_ray_renderer()
+		mr = renderers.current
+		if mr != mental_ray_renderer() do mr = mental_ray_renderer()
 		mr = renderers.current
 		oM = mental_ray ()
 		oM.name = "mr_ao"
 		oM.surface = Ambient_Reflective_Occlusion__3dsmax ()
 		oM.surface.name = "ao_map"
 		oM.Surface.Samples = 128
-		if mr.Override_Material == undefined do mr.Override_Material = oM
-		max hold;
-		ot_btn_hold.text = "fetch";
-		s = true;
-		mr.FinalGatherEnable2 = on;
-		mr.Enable_Material_Override = off;
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D01" + "_" + ".tga") progressbar: true;
-		delete lights
+		s = true
+		mr.FinalGatherEnable2 = true
+		mr.FGProjectionModeNumSegments = numSeg
+		mr.Enable_Material_Override = false
+		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D01" + "_" + ".tga") progressbar: true
+		-- render ao
+		lights.enabled = off
 		mr.MaximumSamples = 1
-		mr.FinalGatherEnable2 = off;
-		mr.Enable_Material_Override = on;
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "AO1" + "_" + ".tga") progressbar: true;
+		mr.FinalGatherEnable2 = false
+		mr.Enable_Material_Override = true
+		if mr.Override_Material == undefined do mr.Override_Material = oM
+		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "AO1" + "_" + ".tga") progressbar: true
 		c = undefined
 		ot_btn_cam.text = "<camera>"
+		lights.enabled = on
 		if ot_ckb_power.state == true then doscommand "shutdown /s /f"
 		else shelllaunch "explorer" (getdir #image)
 		)
@@ -112,16 +113,11 @@ rollout timeout "timeout" width:128 height:160
 		(
 			ot_ckb_config.text = "high"
 			numSeg = 16
-			mr = renderers.current
-			try(mr.FGProjectionModeNumSegments = numSeg)catch()
-			print(numSeg)
 		)
 		else
 		(
 			ot_ckb_config.text = "low"
 			numSeg = 4
-			mr = renderers.current
-			try(mr.FGProjectionModeNumSegments = 4)catch()
 		)
 	)
 )
