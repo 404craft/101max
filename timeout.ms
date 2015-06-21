@@ -4,8 +4,9 @@
 rollout timeout "timeout" width:128 height:160
 (
 	global c
-	global s
 	global numSeg = 4
+	global mProject = 0
+	global iMode = 0
 	
 	pickbutton ot_btn_cam "<camera>" pos:[10,24] width:112 height:16
 	spinner ot_spn_fframe "" pos:[8,48] width:56 height:16 range:[-1.67772e+007,1.67772e+007,0] type:#integer
@@ -31,16 +32,18 @@ rollout timeout "timeout" width:128 height:160
 	(
 		if c != undefined then
 		(
+		if classof renderers.current != mental_ray_renderer do renderers.current = mental_ray_renderer()
 		mr = renderers.current
-		if mr != mental_ray_renderer() do mr = mental_ray_renderer()
-		mr = renderers.current
+		-- generic override mat
 		oM = mental_ray ()
 		oM.name = "mr_ao"
 		oM.surface = Ambient_Reflective_Occlusion__3dsmax ()
 		oM.surface.name = "ao_map"
 		oM.Surface.Samples = 128
-		s = true
+
 		mr.FinalGatherEnable2 = true
+		mr.FGProjectionMode = mProject
+		mr.IlluminationCacheMode = iMode
 		mr.FGProjectionModeNumSegments = numSeg
 		mr.Enable_Material_Override = false
 		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D01" + "_" + ".tga") progressbar: true
@@ -81,30 +84,34 @@ rollout timeout "timeout" width:128 height:160
 	)
 	on ot_ckb_mode changed state do
 	(
-		if ot_ckb_mode.state == true then 
+		if classof renderers.current != mental_ray_renderer do renderers.current = mental_ray_renderer()
+		mr = renderers.current
+		mr.FinalGatherEnable2 = true
+		case ot_ckb_mode.state of
 		(
-			try
+		true:
 			(
-			mr.FGProjectionMode = 1
-			mr.FGProjectionModeNumSegments = numSeg
-			mr.IlluminationCacheMode = 1
-			)
-			catch()
 			ot_ckb_mode.text = "movie"
 			ot_ckb_config.enabled = true
-		)
-		else
-		(
-			ot_ckb_mode.text = "still"
-			ot_ckb_config.text = "low"
-			ot_ckb_config.state = false
-			ot_ckb_config.enabled = false
-			numSeg = 4
-			try
-			(
-			mr.FGProjectionMode = 0
-			mr.IlluminationCacheMode = 0
-			)catch()
+			mProject = 1
+			mr.FGProjectionMode = mProject
+			iMode = 1
+		    mr.IlluminationCacheMode = iMode
+			mr.FGProjectionModeNumSegments = numSeg
+			)
+		default:
+               (
+			   ot_ckb_mode.text = "still"
+			   ot_ckb_config.text = "low"
+			   ot_ckb_config.state = false
+			   ot_ckb_config.enabled = false
+			   numSeg = 4
+			   mProject = 0
+			   mr.FGProjectionMode = mProject
+			   iMode = 0
+			   mr.IlluminationCacheMode = iMode
+			   )
+		
 		)
 	)
 	on ot_ckb_config changed state do
@@ -113,11 +120,13 @@ rollout timeout "timeout" width:128 height:160
 		(
 			ot_ckb_config.text = "high"
 			numSeg = 16
+			mr.FGProjectionModeNumSegments = numSeg
 		)
 		else
 		(
 			ot_ckb_config.text = "low"
 			numSeg = 4
+			mr.FGProjectionModeNumSegments = numSeg
 		)
 	)
 )
