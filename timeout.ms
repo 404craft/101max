@@ -7,6 +7,8 @@ rollout timeout "timeout" width:128 height:160
 	global numSeg = 4
 	global mProject = 0
 	global iMode = 0
+	global fframe
+	global lframe
 	
 	pickbutton ot_btn_cam "<camera>" pos:[10,24] width:112 height:16
 	spinner ot_spn_fframe "" pos:[8,48] width:56 height:16 range:[-1.67772e+007,1.67772e+007,0] type:#integer
@@ -46,14 +48,24 @@ rollout timeout "timeout" width:128 height:160
 		mr.IlluminationCacheMode = iMode
 		mr.FGProjectionModeNumSegments = numSeg
 		mr.Enable_Material_Override = false
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "D01" + "_" + ".tga") progressbar: true
+			
+		fframe = ot_spn_fframe.value
+		lframe = ot_spn_lframe.value
+			
+		if ot_spn_fframe.value > ot_spn_lframe.value do 
+		(
+		fframe = ot_spn_lframe.value
+		lframe = ot_spn_fframe.value
+		)
+		
+		render camera: c fromframe: fframe toframe: lframe outputFile:(c.name + "D01" + "_" + ".tga") progressbar: true
 		-- render ao
 		lights.enabled = off
 		mr.MaximumSamples = 1
 		mr.FinalGatherEnable2 = false
 		mr.Enable_Material_Override = true
 		if mr.Override_Material == undefined do mr.Override_Material = oM
-		render camera: c fromframe: ot_spn_fframe.value toframe: ot_spn_lframe.value outputFile:(c.name + "AO1" + "_" + ".tga") progressbar: true
+		render camera: c fromframe: fframe toframe: lframe outputFile:(c.name + "AO1" + "_" + ".tga") progressbar: true
 		c = undefined
 		ot_btn_cam.text = "<camera>"
 		lights.enabled = on
