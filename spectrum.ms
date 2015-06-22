@@ -19,16 +19,38 @@ fn saveScale =
 	)
 )
 
+fn updateSpn spn =
+(
+	if spn == 0 then
+	(
+		if spectrum.sp_spn_target.enabled == true do
+		(
+		tDis = spectrum.sp_spn_target.value
+		print ("target distance:" + tDis as string)
+		sFac = (tDis / tvDis)
+		print ("scale factor:" + tDis as string + " " +tvDis as string + " (" + sFac as string +")")
+		)
+	)
+	else
+	(
+	sDis = spectrum.sp_spn_source.value
+	iUnt = (svDis / sDis)
+	)
+)
+
 rollout spectrum "spectrum" width:160 height:160
 (
-	global tDis
-	global cDis
-	global fDis
-	global sFac
-	global oSel
-	global oTar
-	global oSrc
-	global iUnt
+	global oTar --target object
+	global tDis --target distance
+	global tvDis --current target vertex distance
+	global sFac --scale factor
+	
+	global oSrc --source object
+	global sDis --source distance
+	global svDis  --current source vertex distance
+	global iUnt --imaginary / custom unit
+	
+	global oSel --appended item
 	global lArray = #()
 	global cArray = #()
 	
@@ -38,14 +60,14 @@ rollout spectrum "spectrum" width:160 height:160
 	button btn5 "Button" pos:[86,281] width:0 height:0
 	checkbutton sp_chk_mode "mode" pos:[88,72] width:64 height:16
 	button sp_btn_target "target" pos:[8,32] width:72 height:16
-	spinner sp_spn_target "" pos:[8,48] width:72 height:16 range:[1,100,1] type:#float
+	spinner sp_spn_target "" pos:[8,48] width:72 height:16 type:#float enabled:false range:[0,16777216,0]
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
 	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16
 	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset to original scale"
 	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16
 	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16
 	button sp_btn_source "source" pos:[88,32] width:64 height:16
-	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false
+	spinner sp_spn_source "" pos:[88,48] width:64 height:16 type:#float enabled:false range:[0,16777216,0]
 	
 	on sp_btn_execute pressed do
 	(
@@ -87,20 +109,21 @@ rollout spectrum "spectrum" width:160 height:160
 	on sp_btn_target pressed do
 	(
 		saveScale()
-	    if selection.count != 0 then
+	    if selection.count != 0 AND oTar == undefined then
 	    (
 			if $ != oSrc then
 			(
 				if $.mesh.selectedVerts.count == 2 then
 				(
+				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
 				oTar = $
 				tArr = for i in $.mesh.selectedVerts collect i.index
 				t1 = tArr[1]
 				t2 = tArr[2]
 				tDis = sp_spn_target.value
-				cDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
-				sFac = (tDis / cDis)
+				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
+				sFac = (tDis / tvDis)
 				saveScale()
 				)
 				else messagebox("select two points in a mesh")
@@ -111,18 +134,15 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	on sp_spn_target changed val do
 	(
-	tDis = sp_spn_target.value
-	sFac = (tDis / vDis)
+	updateSpn 0
 	)
 	on sp_spn_target buttondown do
 	(
-		tDis = sp_spn_target.value
-		sFac = (tDis / vDis)
+    updateSpn 0
 		)
 	on sp_spn_target buttonup do
 	(
-		tDis = sp_spn_target.value
-		sFac = (tDis / vDis)
+	updateSpn 0
 		)
 	on sp_btn_resetX pressed do
 	(
@@ -171,9 +191,9 @@ rollout spectrum "spectrum" width:160 height:160
 				s1 = sArr[1]
 				s2 = sArr[2]
 				sDis = sp_spn_source.value
-				cDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
+				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
 				-- 1 imaginary or custom unit
-				iUnt = (cDis / sDis)
+				iUnt = (svDis / sDis)
 				saveScale()
 				)
 				else messagebox("select two points in a mesh")
@@ -187,6 +207,18 @@ rollout spectrum "spectrum" width:160 height:160
 		sp_spn_source.enabled = false
 		)
 		if selection.count == 0 AND oSrc == undefined do messagebox("select an object")
+	)
+	on sp_spn_source changed val do
+	(
+	updateSpn 1
+	)
+	on sp_spn_source buttondown  do
+	(
+	updateSpn 1
+	)
+	on sp_spn_source buttonup  do
+	(
+	updateSpn 1
 	)
 )
 createdialog spectrum
