@@ -19,16 +19,16 @@ fn saveScale =
 	)
 )
 
-rollout spectrum "spectrum" width:160 height:192
+rollout spectrum "spectrum" width:160 height:160
 (
-	button sp_btn_execute "execute" pos:[88,24] width:64 height:16
+	button sp_btn_execute "execute" pos:[88,8] width:64 height:16
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
-	listbox sp_listbox "" pos:[8,120] width:72 height:4
+	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	button btn5 "Button" pos:[86,281] width:0 height:0
-	checkbutton sp_chk_mode "mode" pos:[88,96] width:64 height:16
-	button sp_btn_target "target" pos:[8,48] width:72 height:16
-	spinner sp_spn_target "" pos:[8,64] width:72 height:16 range:[1,100,1] type:#float
-	label sp_lbl_101 "@101craft" pos:[96,168] width:53 height:16
+	checkbutton sp_chk_mode "mode" pos:[88,72] width:64 height:16
+	button sp_btn_target "target" pos:[8,32] width:72 height:16
+	spinner sp_spn_target "" pos:[8,48] width:72 height:16 range:[1,100,1] type:#float
+	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
 
      global tDis
      global cDis
@@ -37,27 +37,39 @@ rollout spectrum "spectrum" width:160 height:192
 	 global oSel
 	 global oTar
 	 global oSrc
+	 global iUnt
 	 global lArray = #()
 	 global cArray = #()
-	button sp_btn_resetX "resetX" pos:[88,120] width:64 height:16
-	button sp_btn_scale_res "zero" pos:[88,144] width:64 height:16 toolTip:"reset to original scale"
-	checkbutton sp_chk_tape "tape" pos:[8,24] width:72 height:16
-	label sp_lbl_top "spectrum" pos:[9,6] width:64 height:16
-	pickbutton sp_btn_append "append list" pos:[8,96] width:72 height:16
-	button sp_btn_source "source" pos:[88,48] width:64 height:16
-	spinner sp_spn_source "" pos:[88,64] width:64 height:16 enabled:false
+	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16
+	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset to original scale"
+	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16
+	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16
+	button sp_btn_source "source" pos:[88,32] width:64 height:16
+	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false
 	
 	on sp_btn_execute pressed do
 	(
 	saveScale()
-	if sp_chk_mode.state == true then
+	if oSrc == undefined then
 	(
-			for o = 1 to lArray.count do 
-			(
-			lArray[o].scale = lArray[o].scale * sFac
-			)
+		case sp_chk_mode.state of
+		(
+		true:
+			  (
+				  for o = 1 to lArray.count do 
+				  (
+				  lArray[o].scale = lArray[o].scale * sFac
+				  )
+			   )
+		false:
+			   (
+			   $.scale = $.scale *sFac	   
+			   )
+		default:
+			   ()
+		)
 	)
-	else $.scale = $.scale *sFac
+	else $.scale = $.scale * (tDis * iUnt)
 	)
 	on sp_listbox doubleClicked sel do
 	(
@@ -160,7 +172,8 @@ rollout spectrum "spectrum" width:160 height:192
 				s2 = sArr[2]
 				sDis = sp_spn_source.value
 				cDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
--- 				sFac = (sDis / vDis)
+				-- 1 imaginary or custom unit
+				iUnt = (cDis / sDis)
 				saveScale()
 				)
 				else messagebox("select two points in a mesh")
