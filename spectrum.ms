@@ -21,6 +21,17 @@ fn saveScale =
 
 rollout spectrum "spectrum" width:160 height:160
 (
+	global tDis
+	global cDis
+	global fDis
+	global sFac
+	global oSel
+	global oTar
+	global oSrc
+	global iUnt
+	global lArray = #()
+	global cArray = #()
+	
 	button sp_btn_execute "execute" pos:[88,8] width:64 height:16
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
@@ -29,17 +40,6 @@ rollout spectrum "spectrum" width:160 height:160
 	button sp_btn_target "target" pos:[8,32] width:72 height:16
 	spinner sp_spn_target "" pos:[8,48] width:72 height:16 range:[1,100,1] type:#float
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
-
-     global tDis
-     global cDis
-     global fDis
-     global sFac
-	 global oSel
-	 global oTar
-	 global oSrc
-	 global iUnt
-	 global lArray = #()
-	 global cArray = #()
 	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16
 	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset to original scale"
 	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16
