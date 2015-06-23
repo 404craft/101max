@@ -112,7 +112,8 @@ rollout spectrum "spectrum" width:160 height:160
 	print ("scale factor:" + sFac as string)
 	print ("target distance:" + tDis as string)
 	print ("custom unit:" + iUnt as string)
-	$.scale = $.scale * sFac
+	print ("target vert distance:" + tvDis as string)
+	$.scale = $.scale * (tvDis/sFac)
 	)
 	)
 	on sp_listbox doubleClicked sel do
@@ -131,7 +132,7 @@ rollout spectrum "spectrum" width:160 height:160
 	on sp_btn_target pressed do
 	(
 		saveScale()
-	    if selection.count != 0 AND oTar == undefined then
+	    if selection.count != 0 then
 	    (
 			if $ != oSrc then
 			(
@@ -152,7 +153,13 @@ rollout spectrum "spectrum" width:160 height:160
 			)
 			else messagebox("select a different object")
 	    )
-	    else messagebox("select an object")
+	    if selection.count == 0 AND oTar != undefined do
+		(
+		oTar = undefined
+		sp_btn_target.text = "target"
+		sp_spn_target.enabled = false
+		)
+		if selection.count == 0 AND oTar == undefined do messagebox("select an object")
 	)
 	on sp_spn_target changed val do
 	(
@@ -200,7 +207,7 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	on sp_btn_source pressed do
 	(
-	    if selection.count != 0 AND oSrc == undefined do
+	    if selection.count != 0 do
 	    (
 			if $ != oTar then
 			(
