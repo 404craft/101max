@@ -25,16 +25,31 @@ fn updateSpn spn =
 	(
 		if spectrum.sp_spn_target.enabled == true do
 		(
-		tDis = spectrum.sp_spn_target.value
-		print ("target distance:" + tDis as string)
-		sFac = (tDis / tvDis)
-		print ("scale factor:" + tDis as string + " " +tvDis as string + " (" + sFac as string +")")
+			try
+			(
+			tDis = spectrum.sp_spn_target.value
+			sFac = (tDis / tvDis)
+			print ("target distance:" + tDis as string)
+			print ("target vert distance:" + tvDis as string)
+			print ("scale factor:" + sFac as string)
+			)
+			catch()
 		)
 	)
 	else
 	(
-	sDis = spectrum.sp_spn_source.value
-	iUnt = (svDis / sDis)
+		if spectrum.sp_spn_source.enabled = true do
+		(
+			try
+			(
+			sDis = spectrum.sp_spn_source.value
+			iUnt = (svDis / sDis)
+			print ("source distance:" + sDis as string)
+			print ("source vert distance:" + svDis as string)
+			print ("custom unit:" + iUnt as string)
+			)
+			catch()
+		)
 	)
 )
 
@@ -91,7 +106,14 @@ rollout spectrum "spectrum" width:160 height:160
 			   ()
 		)
 	)
-	else $.scale = $.scale * (tDis * iUnt)
+	else
+	(
+	sFac = tDis * iUnt
+	print ("scale factor:" + sFac as string)
+	print ("target distance:" + tDis as string)
+	print ("custom unit:" + iUnt as string)
+	$.scale = $.scale * sFac
+	)
 	)
 	on sp_listbox doubleClicked sel do
 	(
