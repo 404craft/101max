@@ -23,12 +23,13 @@ fn updateSpn spn =
 (
 	if spn == 0 then
 	(
-		if spectrum.sp_spn_target.enabled == true do
+		if spectrum.sp_spn_target.enabled = true do
 		(
 			try
 			(
 			tDis = spectrum.sp_spn_target.value
 			sFac = (tDis / tvDis)
+			print ("------------")
 			print ("target distance:" + tDis as string)
 			print ("target vert distance:" + tvDis as string)
 			print ("scale factor:" + sFac as string)
@@ -44,6 +45,7 @@ fn updateSpn spn =
 			(
 			sDis = spectrum.sp_spn_source.value
 			iUnt = (svDis / sDis)
+			print ("------------")
 			print ("source distance:" + sDis as string)
 			print ("source vert distance:" + svDis as string)
 			print ("custom unit:" + iUnt as string)
@@ -62,7 +64,7 @@ rollout spectrum "spectrum" width:160 height:160
 	
 	global oSrc --source object
 	global sDis --source distance
-	global svDis  --current source vertex distance
+	global svDis --current source vertex distance
 	global iUnt --imaginary / custom unit
 	
 	global oSel --appended item
@@ -100,7 +102,7 @@ rollout spectrum "spectrum" width:160 height:160
 			   )
 		false:
 			   (
-			   $.scale = $.scale *sFac	   
+			   oTar.scale = oTar.scale *sFac	   
 			   )
 		default:
 			   ()
@@ -108,12 +110,15 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	else
 	(
-	sFac = tDis * iUnt
+	--sFac = tDis * iUnt
+	sFac = (tDis / sDis)*(svDis / tvDis)
+	print ("------------")
 	print ("scale factor:" + sFac as string)
 	print ("target distance:" + tDis as string)
 	print ("custom unit:" + iUnt as string)
 	print ("target vert distance:" + tvDis as string)
-	$.scale = $.scale * (tvDis/sFac)
+	oTar.scale = oTar.scale * sFac
+	--((tDis / sDis)*(tvDis / svDis)) * tvDis
 	)
 	)
 	on sp_listbox doubleClicked sel do
@@ -132,7 +137,7 @@ rollout spectrum "spectrum" width:160 height:160
 	on sp_btn_target pressed do
 	(
 		saveScale()
-	    if selection.count != 0 then
+	    if selection.count == 1 do
 	    (
 			if $ != oSrc then
 			(
@@ -159,7 +164,7 @@ rollout spectrum "spectrum" width:160 height:160
 		sp_btn_target.text = "target"
 		sp_spn_target.enabled = false
 		)
-		if selection.count == 0 AND oTar == undefined do messagebox("select an object")
+		if (selection.count == 0 AND oTar == undefined) OR (selection.count > 1) do messagebox("select an object")
 	)
 	on sp_spn_target changed val do
 	(
@@ -207,7 +212,7 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	on sp_btn_source pressed do
 	(
-	    if selection.count != 0 do
+	    if selection.count == 1 do
 	    (
 			if $ != oTar then
 			(
@@ -235,7 +240,7 @@ rollout spectrum "spectrum" width:160 height:160
 		sp_btn_source.text = "source"
 		sp_spn_source.enabled = false
 		)
-		if selection.count == 0 AND oSrc == undefined do messagebox("select an object")
+		if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
 	)
 	on sp_spn_source changed val do
 	(
