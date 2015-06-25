@@ -23,7 +23,7 @@ fn updateSpn spn =
 (
 	if spn == 0 then
 	(
-		if spectrum.sp_spn_target.enabled = true do
+		if spectrum.sp_spn_target.enabled == true do
 		(
 			try
 			(
@@ -39,7 +39,7 @@ fn updateSpn spn =
 	)
 	else
 	(
-		if spectrum.sp_spn_source.enabled = true do
+		if spectrum.sp_spn_source.enabled == true do
 		(
 			try
 			(
@@ -71,20 +71,20 @@ rollout spectrum "spectrum" width:160 height:160
 	global lArray = #()
 	global cArray = #()
 	
-	button sp_btn_execute "execute" pos:[88,8] width:64 height:16
+	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"do the scaling"
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	button btn5 "Button" pos:[86,281] width:0 height:0
-	checkbutton sp_chk_mode "mode" pos:[88,72] width:64 height:16
-	button sp_btn_target "target" pos:[8,32] width:72 height:16
-	spinner sp_spn_target "" pos:[8,48] width:72 height:16 type:#float enabled:false range:[0,16777216,0]
+	checkbutton sp_chk_mode "mode" pos:[88,72] width:64 height:16 toolTip:"select scaling mode"
+	button sp_btn_target "target" pos:[8,32] width:72 height:16 toolTip:"define target object"
+	spinner sp_spn_target "" pos:[8,48] width:72 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
-	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16
-	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset to original scale"
-	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16
-	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16
-	button sp_btn_source "source" pos:[88,32] width:64 height:16
-	spinner sp_spn_source "" pos:[88,48] width:64 height:16 type:#float enabled:false range:[0,16777216,0]
+	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse"
+	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset an object to its original scale"
+	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
+	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
+	button sp_btn_source "source" pos:[88,32] width:64 height:16 toolTip:"define source object"
+	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	
 	on sp_btn_execute pressed do
 	(
@@ -110,7 +110,6 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	else
 	(
-	--sFac = tDis * iUnt
 	sFac = (tDis / sDis)*(svDis / tvDis)
 	print ("------------")
 	print ("scale factor:" + sFac as string)
@@ -118,7 +117,6 @@ rollout spectrum "spectrum" width:160 height:160
 	print ("custom unit:" + iUnt as string)
 	print ("target vert distance:" + tvDis as string)
 	oTar.scale = oTar.scale * sFac
-	--((tDis / sDis)*(tvDis / svDis)) * tvDis
 	)
 	)
 	on sp_listbox doubleClicked sel do
@@ -172,7 +170,7 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	on sp_spn_target buttondown do
 	(
-    updateSpn 0
+	updateSpn 0
 		)
 	on sp_spn_target buttonup do
 	(
@@ -180,10 +178,20 @@ rollout spectrum "spectrum" width:160 height:160
 		)
 	on sp_btn_resetX pressed do
 	(
-		for n = 1 to selection.count where superclassof selection[n] == geometryclass do
+		for n = 1 to selection.count do
 			(
 				resetxform selection[n]
-				convertto selection[n] editable_poly
+				case superclassof selection[n] of
+				(
+				geometryclass:
+								   (
+								   convertto selection[n] editable_poly
+								   )
+				shape:
+						(
+						convertto selection[n] splineshape
+						)
+				)
 			)
 	)
 	on sp_btn_scale_res pressed do
@@ -200,7 +208,15 @@ rollout spectrum "spectrum" width:160 height:160
 	)
 	on sp_chk_tape changed state do
 	(
-	actionMan.executeAction 0 "40472"
+		case sp_chk_tape.state of
+		(
+		true:
+			(
+			)
+		false:
+			(
+			)
+		)
 	)
 	on sp_btn_append picked obj do
 	(
@@ -246,11 +262,11 @@ rollout spectrum "spectrum" width:160 height:160
 	(
 	updateSpn 1
 	)
-	on sp_spn_source buttondown  do
+	on sp_spn_source buttondown do
 	(
 	updateSpn 1
 	)
-	on sp_spn_source buttonup  do
+	on sp_spn_source buttonup do
 	(
 	updateSpn 1
 	)
