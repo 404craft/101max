@@ -139,7 +139,7 @@ rollout spectrum "spectrum" width:160 height:160
 	    (
 			if $ != oSrc then
 			(
-				if $.mesh.selectedVerts.count == 2 then
+				if ($.mesh.selectedVerts.count == 2) then
 				(
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
@@ -152,17 +152,31 @@ rollout spectrum "spectrum" width:160 height:160
 				sFac = (tDis / tvDis)
 				saveScale()
 				)
-				else messagebox("select two points in a mesh")
+				else
+					(
+						try
+						(
+						p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
+						if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
+						)
+						catch()
+						messagebox("select two points in a mesh")
+					)
 			)
 			else messagebox("select a different object")
 	    )
-	    if selection.count == 0 AND oTar != undefined do
+	    if selection.count == 0 AND oTar != undefined then
 		(
-		oTar = undefined
-		sp_btn_target.text = "target"
-		sp_spn_target.enabled = false
+			try
+			(
+			sp_btn_target.text = "target"
+			sp_spn_target.value = 0.0
+			oTar = undefined
+			sp_spn_target.enabled = false
+			)
+			catch()
 		)
-		if (selection.count == 0 AND oTar == undefined) OR (selection.count > 1) do messagebox("select an object")
+		else if (selection.count == 0 AND oTar == undefined) OR (selection.count > 1) do messagebox("select an object")
 	)
 	on sp_spn_target changed val do
 	(
@@ -246,17 +260,31 @@ rollout spectrum "spectrum" width:160 height:160
 				iUnt = (svDis / sDis)
 				saveScale()
 				)
-				else messagebox("select two points in a mesh")
+				else
+					(
+						try
+						(
+						p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
+						if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
+						)
+						catch()
+						messagebox("select two points in a mesh")
+					)
 			)
 			else messagebox("select a different object")
 	    )
-	    if selection.count == 0 AND oSrc != undefined do
+	    if selection.count == 0 AND oSrc != undefined then
 		(
-		oSrc = undefined
-		sp_btn_source.text = "source"
-		sp_spn_source.enabled = false
+			try
+			(
+			sp_btn_source.text = "source"
+			sp_spn_source.value = 0.0
+			oSrc = undefined
+			sp_spn_source.enabled = false
+			)
+			catch()
 		)
-		if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
+		else if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
 	)
 	on sp_spn_source changed val do
 	(
