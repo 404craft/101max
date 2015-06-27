@@ -4,6 +4,15 @@
 -- i.e. use this script to apply a random material to hundreds of /groups of objects/
 -- limited functionality plugin
 
+/*
+for n = 1 to 24 do 
+(
+tMat = StandardMaterial()
+tMat.diffuse = random black white
+setMeditMaterial n tMat
+)
+*/
+
 try(destroydialog ::radMat)catch()
 
 rollout radMat "" width:88 height:146
