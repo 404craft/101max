@@ -3,6 +3,8 @@
 -- auto-rescale an object locally or auto-rescale entire scene
 -- limited functionality plugin
 
+try(destroydialog ::spectrum)catch()
+
 oTar = undefined
 oSrc = undefined
 
@@ -55,7 +57,7 @@ fn updateSpn spn =
 	)
 )
 
-rollout spectrum "spectrum" width:160 height:160
+rollout spectrum "" width:160 height:160
 (
 	global oTar --target object
 	global tDis --target distance
