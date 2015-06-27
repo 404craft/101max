@@ -2,6 +2,8 @@
 -- useful for making handrails with splines for instance
 -- limited functionality plugin
 
+try(destroydialog ::auto_rail)catch()
+
 rollout auto_rail "a-rail" width:88 height:177
 (
 	pickbutton ar_pic_path "select path" pos:[8,24] width:72 height:16 toolTip:"select item"
