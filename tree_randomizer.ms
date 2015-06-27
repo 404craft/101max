@@ -2,13 +2,15 @@
 -- distribute trees along target verts
 -- limited functionality plugin
 
+try(destroydialog ::manage3)catch()
+
 tStats = #()
 sTerrain = undefined
 fn mSet mAtt = (for n = 1 to selection.count do selection[n].attribute)
 fn select3 = select (for o in selection where classof o == foliage collect o)
 select3 ()
 
-rollout m3 "m3" width:160 height:296
+rollout manage3 "" width:160 height:296
 (
 	local targetObj = #()
 	
@@ -328,4 +330,4 @@ rollout m3 "m3" width:160 height:296
 		)
 	)
 )
-createdialog m3
+createdialog manage3
