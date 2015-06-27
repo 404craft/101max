@@ -1,6 +1,8 @@
 -render diffuse then ambient occlusion via material override in mental ray
 -limited usability plugin
 
+try(destroydialog ::timeout)catch()
+
 rollout timeout "timeout" width:128 height:160
 (
 	global c
