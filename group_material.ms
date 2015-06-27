@@ -4,6 +4,8 @@
 -- i.e. use this script to apply a random material to hundreds of /groups of objects/
 -- limited functionality plugin
 
+try(destroydialog ::radMat)catch()
+
 rollout radMat "radMat" width:88 height:146
 (
 	checkbutton rm_chk_mode "mode" pos:[8,32] width:72 height:24 toolTip:"assign same material to all group members?"
