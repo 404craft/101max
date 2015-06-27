@@ -3,6 +3,8 @@
 -- /optional/ use material ID channel value to define material's softness
 -- limited functionality plugin
 
+try(destroydialog ::softMat)catch()
+
 rollout softMat "softMat" width:96 height:128
 (
 	fn manageMaterial n rndVar =
