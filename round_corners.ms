@@ -5,7 +5,7 @@
 
 try(destroydialog ::softMat)catch()
 
-rollout softMat "" width:96 height:144
+rollout softMat "" width:96 height:176
 (
 	fn manageMaterial n rndVar rndVal=
 	(
@@ -19,12 +19,16 @@ rollout softMat "" width:96 height:144
 				(
 					n.Round_Corners_Enable = on
 					n.round_corners_source = rndVar
+					if softmat.sm_ckb_blend.state == true then n.round_corners_blend_with_other_materials = on
+						else n.round_corners_blend_with_other_materials = off
 				)
 				
 				arch___design__mi:
 				(
 					n.opts_round_corners_on = on
 					n.opts_round_corners_radius = rndVar
+					if softmat.sm_ckb_blend.state == true then n.opts_round_corners_any_mtl = on
+						else n.opts_round_corners_any_mtl = off
 				)
 				
 				vraymtl:
@@ -49,18 +53,27 @@ rollout softMat "" width:96 height:144
 	)
 	
 	label sm_lbl_top "softMat" pos:[27,4] width:40 height:15
-	button sm_btn_apply "apply" pos:[16,96] width:64 height:16 toolTip:"apply round corners"
-	label sm_lbl_bottom "@101craft" pos:[22,125] width:54 height:16
+	button sm_btn_apply "assign" pos:[16,136] width:64 height:16 toolTip:"apply round corners"
+	label sm_lbl_bottom "@101craft" pos:[22,157] width:54 height:16
 	spinner sm_spn_val "" pos:[16,48] width:64 height:16 range:[0,10,0] scale:0.01 toolTip:"round corners value"
-	checkbutton sm_chk_mode "matID/off" pos:[8,72] width:80 height:16 toolTip:"use Material ID Channel value"
+	checkbutton sm_chk_mode "matID/off" pos:[16,88] width:64 height:16 toolTip:"use Material ID Channel value"
 	spinner sm_spn_var "" pos:[16,32] width:64 height:16 range:[0.1,1,0.1] type:#float toolTip:"matID multiplier"
 	
+	checkbutton sm_ckb_blend "blend/off" pos:[16,72] width:64 height:16 toolTip:"blend with other materials"
+	checkbutton sm_ckb_range "local" pos:[16,112] width:64 height:16 toolTip:"affect selection or all materials in scene"
 	on sm_btn_apply pressed do
 	(
-		for m in scenematerials where m != undefined do
+		if sm_ckb_range.state == true then mRng = scenematerials
+			else mRng = selection
+		for m in mRng do
 		(
-		if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] softmat.sm_spn_val.value
-		manageMaterial m softmat.sm_spn_val.value softmat.sm_spn_var.value
+		if sm_ckb_range.state == false do m = m.material
+		if (sm_ckb_range.state == true) OR (sm_ckb_range.state == false AND mRng.count > 0) do
+		(
+			if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] softmat.sm_spn_val.value
+			manageMaterial m softmat.sm_spn_val.value softmat.sm_spn_var.value
+			if sm_ckb_range.state == false do m = undefined
+		)
 		)
 	)
 	on sm_chk_mode changed state do
@@ -72,6 +85,28 @@ rollout softMat "" width:96 height:144
 		else
 		(
 		sm_chk_mode.text = "matID/off"
+		)
+	)
+	on sm_ckb_blend changed state do
+	(
+		if state == true then 
+		(
+		sm_ckb_blend.text = "blend/on"
+		)
+		else
+		(
+		sm_ckb_blend.text = "blend/off"
+		)
+	)
+	on sm_ckb_range changed state do
+	(
+		if state == true then 
+		(
+		sm_ckb_range.text = "global"
+		)
+		else
+		(
+		sm_ckb_range.text = "local"
 		)
 	)
 )
