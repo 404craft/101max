@@ -68,12 +68,12 @@ rollout softMat "" width:96 height:176
 		for m in mRng do
 		(
 		if sm_ckb_range.state == false do m = m.material
-		if (sm_ckb_range.state == true) OR (sm_ckb_range.state == false AND mRng.count > 0) do
-		(
-			if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] softmat.sm_spn_val.value
-			manageMaterial m softmat.sm_spn_val.value softmat.sm_spn_var.value
-			if sm_ckb_range.state == false do m = undefined
-		)
+			if (sm_ckb_range.state == true) OR (sm_ckb_range.state == false AND mRng.count > 0) do
+			(
+				if classof m == multimaterial do for l = 1 to m.materiallist.count do manageMaterial m[l] softmat.sm_spn_val.value
+				manageMaterial m softmat.sm_spn_val.value softmat.sm_spn_var.value
+				if sm_ckb_range.state == false do m = undefined
+			)
 		)
 	)
 	on sm_chk_mode changed state do
