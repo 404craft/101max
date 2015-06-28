@@ -1,4 +1,4 @@
--render diffuse then ambient occlusion via material override in mental ray
+-render diffuse and ambient occlusion (via material override) passes consecutively in mental ray
 -limited usability plugin
 
 try(destroydialog ::timeout)catch()
