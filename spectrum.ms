@@ -57,7 +57,7 @@ fn updateSpn spn =
 	)
 )
 
-rollout spectrum "" width:160 height:160
+rollout spectrum "" width:160 height:299
 (
 	global oTar --target object
 	global tDis --target distance
@@ -73,16 +73,15 @@ rollout spectrum "" width:160 height:160
 	global lArray = #()
 	global cArray = #()
 	
-	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"do the scaling"
+	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"execute pending operations"
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
-	button btn5 "Button" pos:[86,281] width:0 height:0
-	checkbutton sp_chk_mode "mode" pos:[88,72] width:64 height:16 toolTip:"select scaling mode"
+	checkbutton sp_chk_mode "local" pos:[88,72] width:64 height:16 toolTip:"scale an object vs scale all objects"
 	button sp_btn_target "target" pos:[8,32] width:72 height:16 toolTip:"define target object"
 	spinner sp_spn_target "" pos:[8,48] width:72 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
-	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse"
-	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset an object to its original scale"
+	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse object/s"
+	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset object/s to original scale"
 	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
 	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
 	button sp_btn_source "source" pos:[88,32] width:64 height:16 toolTip:"define source object"
@@ -182,16 +181,16 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_spn_target changed val do
 	(
-	updateSpn 0
+	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttondown do
 	(
-	updateSpn 0
-		)
+	try(updateSpn 0)catch()
+	)
 	on sp_spn_target buttonup do
 	(
-	updateSpn 0
-		)
+	try(updateSpn 0)catch()
+	)
 	on sp_btn_resetX pressed do
 	(
 		for n = 1 to selection.count do
@@ -290,15 +289,15 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_spn_source changed val do
 	(
-	updateSpn 1
+	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttondown do
 	(
-	updateSpn 1
+	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttonup do
 	(
-	updateSpn 1
+	try(updateSpn 1)catch()
 	)
 )
 createdialog spectrum
