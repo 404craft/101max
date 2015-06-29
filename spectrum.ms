@@ -30,6 +30,11 @@ fn updateSpn spn =
 			try
 			(
 			tDis = spectrum.sp_spn_target.value
+				if $.scale != [1,1,1] do
+				(
+				print("---scale mismatch---")	
+				tvDis = $.scale.x * tvDis 
+				)
 			sFac = (tDis / tvDis)
 			print ("------------")
 			print ("target distance:" + tDis as string)
@@ -46,6 +51,11 @@ fn updateSpn spn =
 			try
 			(
 			sDis = spectrum.sp_spn_source.value
+				if $.scale != [1,1,1] do
+				(
+				print("---scale mismatch---")	
+				svDis = $.scale * svDis
+				)
 			iUnt = (svDis / sDis)
 			print ("------------")
 			print ("source distance:" + sDis as string)
@@ -57,7 +67,7 @@ fn updateSpn spn =
 	)
 )
 
-rollout spectrum "" width:160 height:299
+rollout spectrum "" width:160 height:160
 (
 	global oTar --target object
 	global tDis --target distance
@@ -150,6 +160,11 @@ rollout spectrum "" width:160 height:299
 				t2 = tArr[2]
 				tDis = sp_spn_target.value
 				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
+					if $.scale != [1,1,1] do
+					(
+					print("---scale mismatch---")	
+					tvDis = $.scale.x * tvDis
+					)
 				sFac = (tDis / tvDis)
 				saveScale()
 				)
