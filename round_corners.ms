@@ -5,7 +5,7 @@
 
 try(destroydialog ::softMat)catch()
 
-rollout softMat "" width:96 height:176
+rollout softMat "" width:96 height:177
 (
 	fn manageMaterial n rndVar rndVal=
 	(
@@ -55,12 +55,14 @@ rollout softMat "" width:96 height:176
 	label sm_lbl_top "softMat" pos:[27,4] width:40 height:15
 	button sm_btn_apply "assign" pos:[16,136] width:64 height:16 toolTip:"apply round corners"
 	label sm_lbl_bottom "@101craft" pos:[22,157] width:54 height:16
-	spinner sm_spn_val "" pos:[16,48] width:64 height:16 range:[0,10,0] scale:0.01 toolTip:"round corners value"
+	spinner sm_spn_val "" pos:[16,48] width:56 height:16 range:[0,100,0] scale:0.01 toolTip:"round corners value"
 	checkbutton sm_chk_mode "matID/off" pos:[16,88] width:64 height:16 toolTip:"use Material ID Channel value"
-	spinner sm_spn_var "" pos:[16,32] width:64 height:16 range:[0.1,1,0.1] type:#float toolTip:"matID multiplier"
+	spinner sm_spn_var "" pos:[16,32] width:56 height:16 range:[0.1,1,0.1] type:#float toolTip:"matID multiplier"
 	
 	checkbutton sm_ckb_blend "blend/off" pos:[16,72] width:64 height:16 toolTip:"blend with other materials"
 	checkbutton sm_ckb_range "local" pos:[16,112] width:64 height:16 toolTip:"affect selection or all materials in scene"
+	button sm_btn_var_rnd "" pos:[72,32] width:16 height:16 toolTip:"random matID multiplier"
+	button sm_btn_val_rnd "" pos:[72,48] width:16 height:16 toolTip:"random round corners value"
 	on sm_btn_apply pressed do
 	(
 		if sm_ckb_range.state == true then mRng = scenematerials
@@ -108,6 +110,14 @@ rollout softMat "" width:96 height:176
 		(
 		sm_ckb_range.text = "local"
 		)
+	)
+	on sm_btn_var_rnd pressed  do
+	(
+	sm_spn_var.value = random 0.1 1.0
+	)
+	on sm_btn_val_rnd pressed  do
+	(
+	sm_spn_val.value = random 0.1 100.0
 	)
 )
 createdialog softMat
