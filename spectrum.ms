@@ -60,7 +60,7 @@ fn updateSpn spn =
 			(
 				sDis = spectrum.sp_spn_source.value
 				
-				if $.scale != [1,1,1] do
+				if $.scale != [1,1,1] then
 				(
 				print("---source scale out---")	
 				s_svDis = undefined
@@ -174,15 +174,8 @@ rollout spectrum "" width:160 height:160
 				tArr = for i in $.mesh.selectedVerts collect i.index
 				t1 = tArr[1]
 				t2 = tArr[2]
-				tDis = sp_spn_target.value
 				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
-					if $.scale != [1,1,1] do
-					(
-					print("---scale mismatch---")	
-					s_tvDis = $.scale.x * tvDis
-					tvDis = s_tvDis
-					)
-				sFac = (tDis / tvDis)
+				try(updateSpn 0)catch()
 				saveScale()
 				)
 				else
@@ -290,10 +283,8 @@ rollout spectrum "" width:160 height:160
 				sArr = for i in $.mesh.selectedVerts collect i.index
 				s1 = sArr[1]
 				s2 = sArr[2]
-				sDis = sp_spn_source.value
 				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
-				-- 1 imaginary or custom unit
-				iUnt = (svDis / sDis)
+				try(updateSpn 0)catch()
 				saveScale()
 				)
 				else
