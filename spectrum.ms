@@ -33,12 +33,13 @@ fn updateSpn spn =
 				if $.scale != [1,1,1] do
 				(
 				print("---scale mismatch---")	
-				tvDis = $.scale.x * tvDis 
+				s_tvDis = undefined
+				s_tvDis = $.scale.x * tvDis
 				)
 			sFac = (tDis / tvDis)
 			print ("------------")
 			print ("target distance:" + tDis as string)
-			print ("target vert distance:" + tvDis as string)
+			if $.scale != [1,1,1] then print ("target vert distance:" + s_tvDis as string) else print ("target vert distance:" + tvDis as string)
 			print ("scale factor:" + sFac as string)
 			)
 			catch()
@@ -54,12 +55,13 @@ fn updateSpn spn =
 				if $.scale != [1,1,1] do
 				(
 				print("---scale mismatch---")	
-				svDis = $.scale * svDis
+				s_svDis = undefined
+				s_svDis = $.scale * svDis
 				)
 			iUnt = (svDis / sDis)
 			print ("------------")
 			print ("source distance:" + sDis as string)
-			print ("source vert distance:" + svDis as string)
+			if $.scale != [1,1,1] then print ("source vert distance:" + s_svDis as string) else print ("source vert distance:" + svDis as string)
 			print ("custom unit:" + iUnt as string)
 			)
 			catch()
@@ -163,7 +165,8 @@ rollout spectrum "" width:160 height:160
 					if $.scale != [1,1,1] do
 					(
 					print("---scale mismatch---")	
-					tvDis = $.scale.x * tvDis
+					s_tvDis = $.scale.x * tvDis
+					tvDis = s_tvDis
 					)
 				sFac = (tDis / tvDis)
 				saveScale()
@@ -196,14 +199,17 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_spn_target changed val do
 	(
+	print("sp_spn_target_changed")
 	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttondown do
 	(
+	print("sp_spn_target_buttondown")
 	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttonup do
 	(
+	print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
 	on sp_btn_resetX pressed do
@@ -304,14 +310,17 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_spn_source changed val do
 	(
+	print("sp_spn_source_changed")
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttondown do
 	(
+	print("sp_spn_source_buttondown")
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttonup do
 	(
+	print("sp_spn_source_buttonup")
 	try(updateSpn 1)catch()
 	)
 )
