@@ -45,8 +45,8 @@ fn updateSpn spn =
 				)
 				
 				sFac = (tDis / tvDis)
-				print ("target vert distance:" + tvDis as string)
 				print ("target distance:" + tDis as string)
+				print ("target vert distance:" + tvDis as string)
 				print ("scale factor:" + sFac as string)
 			)
 			catch()
@@ -61,23 +61,21 @@ fn updateSpn spn =
 			try
 			(
 				sDis = spectrum.sp_spn_source.value
-				
-				if $.scale != [1,1,1] then
+				sArr = for i in $.mesh.selectedVerts collect i.index
+				s1 = sArr[1]
+				s2 = sArr[2]
+				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
+								
+				if $.scale != [1,1,1] do
 				(
 				print("---source scale out---")	
 				s_svDis = undefined
-				s_svDis = $.scale * svDis
-				iUnt = (s_svDis / sDis)
-				print ("source vert distance:" + s_svDis as string)
+				s_svDis = $.scale.x * svDis
+				svDis = s_svDis
 				)
-			
-				else
-				(
-				print("---source---")	
 				iUnt = (svDis / sDis)
-				print ("source vert distance:" + svDis as string)
-				)
 				print ("source distance:" + sDis as string)
+				print ("source vert distance:" + svDis as string)
 				print ("custom unit:" + iUnt as string)
 			)
 			catch()
@@ -284,11 +282,7 @@ rollout spectrum "" width:160 height:160
 				sp_btn_source.text = $.name
 				oSrc = $
 				sp_spn_source.enabled = true
-				sArr = for i in $.mesh.selectedVerts collect i.index
-				s1 = sArr[1]
-				s2 = sArr[2]
-				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
-				try(updateSpn 0)catch()
+				try(updateSpn 1)catch()
 				saveScale()
 				)
 				else
