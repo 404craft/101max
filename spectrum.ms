@@ -29,18 +29,25 @@ fn updateSpn spn =
 		(
 			try
 			(
-			tDis = spectrum.sp_spn_target.value
-				if $.scale != [1,1,1] do
+				tDis = spectrum.sp_spn_target.value
+				
+				if $.scale != [1,1,1] then
 				(
-				print("---scale mismatch---")	
+				print ("---target scale out---")	
 				s_tvDis = undefined
 				s_tvDis = $.scale.x * tvDis
+				sFac = (tDis / s_tvDis)
+				print ("target vert distance:" + s_tvDis as string)
 				)
-			sFac = (tDis / tvDis)
-			print ("------------")
-			print ("target distance:" + tDis as string)
-			if $.scale != [1,1,1] then print ("target vert distance:" + s_tvDis as string) else print ("target vert distance:" + tvDis as string)
-			print ("scale factor:" + sFac as string)
+				
+				else
+				(
+				print ("---target---")
+				sFac = (tDis / tvDis)
+				print ("target vert distance:" + tvDis as string)
+				)
+				print ("target distance:" + tDis as string)
+				print ("scale factor:" + sFac as string)
 			)
 			catch()
 		)
@@ -51,18 +58,25 @@ fn updateSpn spn =
 		(
 			try
 			(
-			sDis = spectrum.sp_spn_source.value
+				sDis = spectrum.sp_spn_source.value
+				
 				if $.scale != [1,1,1] do
 				(
-				print("---scale mismatch---")	
+				print("---source scale out---")	
 				s_svDis = undefined
 				s_svDis = $.scale * svDis
+				iUnt = (s_svDis / sDis)
+				print ("source vert distance:" + s_svDis as string)
 				)
-			iUnt = (svDis / sDis)
-			print ("------------")
-			print ("source distance:" + sDis as string)
-			if $.scale != [1,1,1] then print ("source vert distance:" + s_svDis as string) else print ("source vert distance:" + svDis as string)
-			print ("custom unit:" + iUnt as string)
+			
+				else
+				(
+				print("---source---")	
+				iUnt = (svDis / sDis)
+				print ("source vert distance:" + svDis as string)
+				)
+				print ("source distance:" + sDis as string)
+				print ("custom unit:" + iUnt as string)
 			)
 			catch()
 		)
