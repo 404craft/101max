@@ -23,6 +23,7 @@ fn saveScale =
 
 fn updateSpn spn =
 (
+	--update target spinner
 	if spn == 0 then
 	(
 		if spectrum.sp_spn_target.enabled == true do
@@ -30,28 +31,29 @@ fn updateSpn spn =
 			try
 			(
 				tDis = spectrum.sp_spn_target.value
+				tArr = for i in $.mesh.selectedVerts collect i.index
+				t1 = tArr[1]
+				t2 = tArr[2]
+				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
 				
-				if $.scale != [1,1,1] then
+				if $.scale != [1,1,1] do
 				(
 				print ("---target scale out---")	
 				s_tvDis = undefined
 				s_tvDis = $.scale.x * tvDis
-				sFac = (tDis / s_tvDis)
-				print ("target vert distance:" + s_tvDis as string)
+				tvDis = s_tvDis
 				)
 				
-				else
-				(
-				print ("---target---")
 				sFac = (tDis / tvDis)
 				print ("target vert distance:" + tvDis as string)
-				)
 				print ("target distance:" + tDis as string)
 				print ("scale factor:" + sFac as string)
 			)
 			catch()
 		)
 	)
+	
+	--update source spinner
 	else
 	(
 		if spectrum.sp_spn_source.enabled == true do
@@ -113,9 +115,12 @@ rollout spectrum "" width:160 height:160
 	button sp_btn_source "source" pos:[88,32] width:64 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	
+	--execute pending operations
 	on sp_btn_execute pressed do
 	(
 	saveScale()
+		
+	--compare against source object
 	if oSrc == undefined then
 	(
 		case sp_chk_mode.state of
@@ -129,15 +134,17 @@ rollout spectrum "" width:160 height:160
 			   )
 		false:
 			   (
-			   oTar.scale = oTar.scale *sFac	   
+			   oTar.scale = oTar.scale * sFac	   
 			   )
 		default:
 			   ()
 		)
 	)
+	
+	--account for target spinner value only
 	else
 	(
-	sFac = (tDis / sDis)*(svDis / tvDis)
+	sFac = (tDis / sDis) * (svDis / tvDis)
 	print ("------------")
 	print ("scale factor:" + sFac as string)
 	print ("target distance:" + tDis as string)
@@ -146,6 +153,7 @@ rollout spectrum "" width:160 height:160
 	oTar.scale = oTar.scale * sFac
 	)
 	)
+	
 	on sp_listbox doubleClicked sel do
 	(
 		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
@@ -171,10 +179,6 @@ rollout spectrum "" width:160 height:160
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
 				oTar = $
-				tArr = for i in $.mesh.selectedVerts collect i.index
-				t1 = tArr[1]
-				t2 = tArr[2]
-				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
 				try(updateSpn 0)catch()
 				saveScale()
 				)
