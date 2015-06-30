@@ -1,3 +1,4 @@
+-- under development (ignore for now)
 -- alternative batch render dialogue
 -- limited functionality plugin
 
