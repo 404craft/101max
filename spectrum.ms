@@ -7,8 +7,21 @@ try(destroydialog ::spectrum)catch()
 
 oTar = undefined
 oSrc = undefined
-tar_spn_0 = false
-src_spn_0 = false
+n = 1
+
+fn markSpinner spnType =
+(
+		if spnType.enabled == true do
+		(
+		spnArr = #()
+		spnArr[1] = 0.0
+		spnArr[2] = tvDis
+		if oSrc != undefined do spnArr[3] = svDis
+		spnType.value = spnArr[n]
+		n += 1
+		if n > spnArr.count do n = 1
+		)
+)
 
 fn saveScale =
 (
@@ -117,8 +130,8 @@ rollout spectrum "" width:160 height:160
 	
 	--execute pending operations
 	
-	button sp_btn_target_rst "-" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
-	button sp_btn_source_rst "-" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
+	button sp_btn_target_rst "•" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
+	button sp_btn_source_rst "•" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
 	on sp_btn_execute pressed do
 	(
 	saveScale()
@@ -333,36 +346,12 @@ rollout spectrum "" width:160 height:160
 	
 	on sp_btn_target_rst pressed do
 	(
-		if tar_spn_0 == false then
-		(
-		sp_spn_target.value = 0.0
-		updateSpn 0
-		tar_spn_0 = true
-		sp_btn_target_rst.text = "+"
-		)
-		else if tar_spn_0 == true then
-		(
-		sp_spn_target.value = tvDis
-		updateSpn 0
-		tar_spn_0 = false
-		)
+	markSpinner sp_spn_target
 	)
 	
 	on sp_btn_source_rst pressed do
 	(
-		if src_spn_0 == false then
-		(
-		sp_spn_source.value = 0.0
-		updateSpn 1
-		src_spn_0 = true
-		sp_btn_source_rst.text = "+"
-		)
-		else if src_spn_0 == true then
-		(
-		sp_spn_source.value = svDis
-		updateSpn 1
-		src_spn_0 = false
-		)
+	markSpinner sp_spn_source
 	)
 )
 createdialog spectrum
