@@ -7,6 +7,8 @@ try(destroydialog ::spectrum)catch()
 
 oTar = undefined
 oSrc = undefined
+tar_spn_0 = false
+src_spn_0 = false
 
 fn saveScale =
 (
@@ -103,17 +105,20 @@ rollout spectrum "" width:160 height:160
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	checkbutton sp_chk_mode "local" pos:[88,72] width:64 height:16 toolTip:"scale an object vs scale all objects"
-	button sp_btn_target "target" pos:[8,32] width:72 height:16 toolTip:"define target object"
+	button sp_btn_target "target" pos:[8,32] width:56 height:16 toolTip:"define target object"
 	spinner sp_spn_target "" pos:[8,48] width:72 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
 	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse object/s"
 	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset object/s to original scale"
 	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
 	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
-	button sp_btn_source "source" pos:[88,32] width:64 height:16 toolTip:"define source object"
+	button sp_btn_source "source" pos:[88,32] width:48 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	
 	--execute pending operations
+	
+	button sp_btn_target_rst "-" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
+	button sp_btn_source_rst "-" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
 	on sp_btn_execute pressed do
 	(
 	saveScale()
@@ -151,7 +156,6 @@ rollout spectrum "" width:160 height:160
 	oTar.scale = oTar.scale * sFac
 	)
 	)
-	
 	on sp_listbox doubleClicked sel do
 	(
 		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
@@ -325,6 +329,40 @@ rollout spectrum "" width:160 height:160
 	(
 	print("sp_spn_source_buttonup")
 	try(updateSpn 1)catch()
+	)
+	
+	on sp_btn_target_rst pressed do
+	(
+		if tar_spn_0 == false then
+		(
+		sp_spn_target.value = 0.0
+		updateSpn 0
+		tar_spn_0 = true
+		sp_btn_target_rst.text = "+"
+		)
+		else if tar_spn_0 == true then
+		(
+		sp_spn_target.value = tvDis
+		updateSpn 0
+		tar_spn_0 = false
+		)
+	)
+	
+	on sp_btn_source_rst pressed do
+	(
+		if src_spn_0 == false then
+		(
+		sp_spn_source.value = 0.0
+		updateSpn 1
+		src_spn_0 = true
+		sp_btn_source_rst.text = "+"
+		)
+		else if src_spn_0 == true then
+		(
+		sp_spn_source.value = svDis
+		updateSpn 1
+		src_spn_0 = false
+		)
 	)
 )
 createdialog spectrum
