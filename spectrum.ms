@@ -7,6 +7,7 @@ try(destroydialog ::spectrum)catch()
 
 oTar = undefined
 oSrc = undefined
+obj = objects
 n = 1
 
 fn markSpinner spnType =
@@ -23,15 +24,25 @@ fn markSpinner spnType =
 		)
 )
 
-fn saveScale =
+fn rootParent node = 
 (
-	for n = 1 to selection.count do
+	if isvalidnode node do 
 	(
-		if getuserprop selection[n] "oScale_x" == undefined do
+	while node.parent != undefined do node = node.parent
+	node
+	)
+)
+
+fn saveScale sObj =
+(
+	print sobj
+	for n = 1 to sObj.count do
+	(
+		if getuserprop sObj[n] "oScale_x" == undefined do
 		(
-		setuserprop selection[n] "oScale_x" selection[n].scale.x
-		setuserprop selection[n] "oScale_y" selection[n].scale.y
-		setuserprop selection[n] "oScale_z" selection[n].scale.z
+		setuserprop sObj[n] "oScale_x" sObj[n].scale.x
+		setuserprop sObj[n] "oScale_y" sObj[n].scale.y
+		setuserprop sObj[n] "oScale_z" sObj[n].scale.z
 		)
 	)
 )
@@ -113,6 +124,7 @@ rollout spectrum "" width:160 height:160
 	global oSel --appended item
 	global lArray = #()
 	global cArray = #()
+	global nArray = #()
 	
 	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"execute pending operations"
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
@@ -127,25 +139,39 @@ rollout spectrum "" width:160 height:160
 	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
 	button sp_btn_source "source" pos:[88,32] width:48 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
-	
-	--execute pending operations
-	
 	button sp_btn_target_rst "•" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
 	button sp_btn_source_rst "•" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
+	
+	--execute pending operations
 	on sp_btn_execute pressed do
 	(
-	saveScale()
+	if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
+	print ("------------")
+	print ("scale factor:" + sFac as string)
+	print ("target distance:" + tDis as string)
+	print ("custom unit:" + iUnt as string)
+	print ("target vert distance:" + tvDis as string)
 		
-	--compare against source object
-	if oSrc == undefined then
-	(
+	--global vs local
 		case sp_chk_mode.state of
 		(
 		true:
 			  (
-				  for o = 1 to lArray.count do 
+				  for o = 1 to obj.count do
 				  (
-				  lArray[o].scale = lArray[o].scale * sFac
+					  for l = 1 to lArray.count do
+					  (
+						  if findItem lArray obj[l] == 0 do
+						  (
+						  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 do (appendifunique cArray obj[o])
+						  )
+					  )
+				  )
+				  nArray = join cArray lArray
+				  saveScale nArray
+				  for n = 1 to nArray.count do 
+				  (
+				  nArray[n].scale = nArray[n].scale * sFac
 				  )
 			   )
 		false:
@@ -153,21 +179,9 @@ rollout spectrum "" width:160 height:160
 			   oTar.scale = oTar.scale * sFac	   
 			   )
 		default:
-			   ()
+			   (
+			   )
 		)
-	)
-	
-	--account for target spinner value only
-	else
-	(
-	sFac = (tDis / sDis) * (svDis / tvDis)
-	print ("------------")
-	print ("scale factor:" + sFac as string)
-	print ("target distance:" + tDis as string)
-	print ("custom unit:" + iUnt as string)
-	print ("target vert distance:" + tvDis as string)
-	oTar.scale = oTar.scale * sFac
-	)
 	)
 	on sp_listbox doubleClicked sel do
 	(
@@ -184,7 +198,6 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_btn_target pressed do
 	(
-		saveScale()
 	    if selection.count == 1 do
 	    (
 			if $ != oSrc then
@@ -195,7 +208,6 @@ rollout spectrum "" width:160 height:160
 				sp_btn_target.text = $.name
 				oTar = $
 				try(updateSpn 0)catch()
-				saveScale()
 				)
 				else
 					(
@@ -260,12 +272,13 @@ rollout spectrum "" width:160 height:160
 	(
 		for n = 1 to selection.count do 
 		(
-			if (getuserprop selection[n] "oScale_x") != undefined do 
+			if (getuserprop selection[n] "oScale_x") != undefined then 
 			(
 				selection[n].scale.x = (getuserprop selection[n] "oScale_x") as float
 				selection[n].scale.y = (getuserprop selection[n] "oScale_y") as float
 				selection[n].scale.z = (getuserprop selection[n] "oScale_z") as float
 			)
+			else selection[n].scale = [1,1,1]
 		)
 	)
 	on sp_chk_tape changed state do
@@ -280,13 +293,12 @@ rollout spectrum "" width:160 height:160
 			)
 		)
 	)
-	on sp_btn_append picked obj do
+	on sp_btn_append picked oSel do
 	(
-		oSel = obj
-		sp_listbox.items = append sp_listbox.items (oSel as string)
+		oCount = lArray.count
 		appendifunique lArray oSel
-		for n in oSel do appendifunique cArray n.children
-		print(cArray)
+		nCount = lArray.count
+		if oCount < nCount do sp_listbox.items = append sp_listbox.items (oSel as string)
 	)
 	on sp_btn_source pressed do
 	(
@@ -300,7 +312,6 @@ rollout spectrum "" width:160 height:160
 				oSrc = $
 				sp_spn_source.enabled = true
 				try(updateSpn 1)catch()
-				saveScale()
 				)
 				else
 					(
