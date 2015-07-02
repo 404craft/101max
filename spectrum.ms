@@ -24,6 +24,13 @@ fn markSpinner spnType =
 		)
 )
 
+fn managePoly =
+(
+	p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
+	if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
+	subobjectLevel = 1
+)
+
 fn rootParent node = 
 (
 	if isvalidnode node do 
@@ -35,7 +42,6 @@ fn rootParent node =
 
 fn saveScale sObj =
 (
-	print sobj
 	for n = 1 to sObj.count do
 	(
 		if getuserprop sObj[n] "oScale_x" == undefined do
@@ -121,7 +127,6 @@ rollout spectrum "" width:160 height:160
 	global svDis --current source vertex distance
 	global iUnt --imaginary / custom unit
 	
-	global oSel --appended item
 	global lArray = #()
 	global cArray = #()
 	global nArray = #()
@@ -211,12 +216,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try
-						(
-						p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
-						if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
-						)
-						catch()
+						try(managePoly())catch()
 						messagebox("select two points in a mesh")
 					)
 			)
@@ -315,12 +315,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try
-						(
-						p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
-						if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
-						)
-						catch()
+						try(managePoly())catch()
 						messagebox("select two points in a mesh")
 					)
 			)
