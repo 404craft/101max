@@ -24,12 +24,27 @@ fn markSpinner spnType =
 		)
 )
 
-fn managePoly =
+fn polyReady pObj=
 (
-	if superclassof oTar == geometryclass then
+	if superclassof pObj == shape do
 	(
-	p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
-	if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
+	p = (for m in pObj.modifiers where (classof m == edit_spline) collect m).count
+		if (classof pObj != line) AND (p == 0) AND (classof pObj != splineshape) then oReady = false
+		else oReady = true
+	)
+)
+
+fn managePoly mObj =
+(
+	if superclassof mObj == geometryclass then
+	(
+	p = (for m in mObj.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
+	if (classof mObj != editable_poly) AND (p == 0) do addmodifier mObj (edit_poly())
+	)
+	else if superclassof mObj == shape then
+	(
+	p = (for m in mObj.modifiers where (classof m == edit_spline) collect m).count
+	if (classof mObj != line) AND (p == 0) AND (classof pObj != splineshape) do addmodifier mObj (edit_spline())
 	)
 	subobjectLevel = 1
 )
@@ -156,6 +171,8 @@ rollout spectrum "" width:160 height:160
 	global cArray = #()
 	global nArray = #()
 	
+	global oReady = false
+	
 	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"execute pending operations"
 	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
@@ -193,10 +210,11 @@ rollout spectrum "" width:160 height:160
 				  (
 					  if findItem lArray obj[l] == 0 do
 					  (
-					  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 do (appendifunique cArray obj[o])
+					  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 AND obj[o] != oSrc do (appendifunique cArray obj[o])
 					  )
 				  )
 			  )
+-- 			  nArray = undefined
 			  nArray = join cArray lArray
 			  saveScale nArray
 			  for n = 1 to nArray.count do 
@@ -228,7 +246,9 @@ rollout spectrum "" width:160 height:160
 	    (
 			if $ != oSrc then
 			(
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (superclassof $ == shape AND (getKnotSelection $ 1).count == 2) then
+				oReady = false
+				polyReady $
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (oReady == true AND (getKnotSelection $ 1).count == 2) then
 				(
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
@@ -237,7 +257,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try(managePoly())catch()
+						try(managePoly $)catch()
 						messagebox("select two points in a mesh")
 					)
 			)
@@ -348,7 +368,9 @@ rollout spectrum "" width:160 height:160
 	    (
 			if $ != oTar then
 			(
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (superclassof $ == shape AND (getKnotSelection $ 1).count == 2) then
+				oReady = false
+				polyReady $
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (oReady == true AND (getKnotSelection $ 1).count == 2) then
 				(
 				sp_btn_source.text = $.name
 				oSrc = $
@@ -357,7 +379,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try(managePoly())catch()
+						try(managePoly $)catch()
 						messagebox("select two points in a mesh")
 					)
 			)
