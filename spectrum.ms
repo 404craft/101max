@@ -70,16 +70,16 @@ fn updateSpn spn =
 				
 				if $.scale != [1,1,1] do
 				(
-				print ("---target scale out---")	
+				/* print ("---target scale out---")	 */
 				s_tvDis = undefined
 				s_tvDis = $.scale.x * tvDis
 				tvDis = s_tvDis
 				)
 				
 				sFac = (tDis / tvDis)
-				print ("target distance:" + tDis as string)
+				/* print ("target distance:" + tDis as string)
 				print ("target vert distance:" + tvDis as string)
-				print ("scale factor:" + sFac as string)
+				print ("scale factor:" + sFac as string) */
 			)
 			catch()
 		)
@@ -100,15 +100,15 @@ fn updateSpn spn =
 								
 				if $.scale != [1,1,1] do
 				(
-				print("---source scale out---")	
+				/* print("---source scale out---") */	
 				s_svDis = undefined
 				s_svDis = $.scale.x * svDis
 				svDis = s_svDis
 				)
 				iUnt = (svDis / sDis)
-				print ("source distance:" + sDis as string)
+				/* print ("source distance:" + sDis as string)
 				print ("source vert distance:" + svDis as string)
-				print ("custom unit:" + iUnt as string)
+				print ("custom unit:" + iUnt as string) */
 			)
 			catch()
 		)
@@ -151,56 +151,52 @@ rollout spectrum "" width:160 height:160
 	on sp_btn_execute pressed do
 	(
 	if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
-	print ("------------")
+	/* print ("------------")
 	print ("scale factor:" + sFac as string)
 	print ("target distance:" + tDis as string)
 	print ("custom unit:" + iUnt as string)
-	print ("target vert distance:" + tvDis as string)
+	print ("target vert distance:" + tvDis as string) */
 		
 	--global vs local
-		case sp_chk_mode.state of
-		(
-		true:
+	case sp_chk_mode.state of
+	(
+	true:
+		  (
+			  for o = 1 to obj.count do
 			  (
-				  for o = 1 to obj.count do
+				  for l = 1 to lArray.count do
 				  (
-					  for l = 1 to lArray.count do
+					  if findItem lArray obj[l] == 0 do
 					  (
-						  if findItem lArray obj[l] == 0 do
-						  (
-						  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 do (appendifunique cArray obj[o])
-						  )
+					  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 do (appendifunique cArray obj[o])
 					  )
 				  )
-				  nArray = join cArray lArray
-				  saveScale nArray
-				  for n = 1 to nArray.count do 
-				  (
-				  nArray[n].scale = nArray[n].scale * sFac
-				  )
-			   )
-		false:
-			   (
-			   oTar.scale = oTar.scale * sFac	   
-			   )
-		default:
-			   (
-			   )
-		)
+			  )
+			  nArray = join cArray lArray
+			  saveScale nArray
+			  for n = 1 to nArray.count do 
+			  (
+			  nArray[n].scale = nArray[n].scale * sFac
+			  )
+		   )
+	false:
+		   (
+		   oTar.scale = oTar.scale * sFac      
+		   )
+	default:
+		   (
+		   )
 	)
-	on sp_listbox doubleClicked sel do
-	(
-		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
-		(
-		deleteitem lArray sp_listbox.selection
-		sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
-		)
+	
 	)
+	
 	on sp_chk_mode changed state do
 	(
 	 if state == true then sp_chk_mode.text = "global"
 		 else sp_chk_mode.text = "local"
 	)
+	
+	--select target object
 	on sp_btn_target pressed do
 	(
 	    if selection.count == 1 do
@@ -235,6 +231,8 @@ rollout spectrum "" width:160 height:160
 		)
 		else if (selection.count == 0 AND oTar == undefined) OR (selection.count > 1) do messagebox("select an object")
 	)
+	
+	--target spinner
 	on sp_spn_target changed val do
 	(
 	print("sp_spn_target_changed")
@@ -250,6 +248,8 @@ rollout spectrum "" width:160 height:160
 	print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
+	
+	--resetX button
 	on sp_btn_resetX pressed do
 	(
 		for n = 1 to selection.count do
@@ -268,6 +268,8 @@ rollout spectrum "" width:160 height:160
 				)
 			)
 	)
+	
+	--zero button
 	on sp_btn_scale_res pressed do
 	(
 		for n = 1 to selection.count do 
@@ -281,6 +283,8 @@ rollout spectrum "" width:160 height:160
 			else selection[n].scale = [1,1,1]
 		)
 	)
+	
+	--tape button / currently under dev
 	on sp_chk_tape changed state do
 	(
 		case sp_chk_tape.state of
@@ -293,6 +297,8 @@ rollout spectrum "" width:160 height:160
 			)
 		)
 	)
+	
+	--append listbox
 	on sp_btn_append picked oSel do
 	(
 		oCount = lArray.count
@@ -300,6 +306,17 @@ rollout spectrum "" width:160 height:160
 		nCount = lArray.count
 		if oCount < nCount do sp_listbox.items = append sp_listbox.items (oSel as string)
 	)
+	--remove from listbox
+	on sp_listbox doubleClicked sel do
+	(
+		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
+		(
+		deleteitem lArray sp_listbox.selection
+		sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
+		)
+	)
+	
+	--select source object
 	on sp_btn_source pressed do
 	(
 	    if selection.count == 1 do
@@ -334,19 +351,21 @@ rollout spectrum "" width:160 height:160
 		)
 		else if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
 	)
+	
+	--source spinner
 	on sp_spn_source changed val do
 	(
-	print("sp_spn_source_changed")
+ 	--print("sp_spn_source_changed")
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttondown do
 	(
-	print("sp_spn_source_buttondown")
+	--print("sp_spn_source_buttondown")
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttonup do
 	(
-	print("sp_spn_source_buttonup")
+ 	--print("sp_spn_source_buttonup")
 	try(updateSpn 1)catch()
 	)
 	
