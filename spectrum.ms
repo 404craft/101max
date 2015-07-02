@@ -26,8 +26,11 @@ fn markSpinner spnType =
 
 fn managePoly =
 (
+	if superclassof oTar == geometryclass then
+	(
 	p = (for m in $.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
 	if (classof $ != editable_poly) AND (p == 0) do addmodifier $ (edit_poly())
+	)
 	subobjectLevel = 1
 )
 
@@ -63,10 +66,21 @@ fn updateSpn spn =
 			try
 			(
 				tDis = spectrum.sp_spn_target.value
+				
+				if superclassof oTar == geometryclass then
+				(
 				tArr = for i in $.mesh.selectedVerts collect i.index
 				t1 = tArr[1]
 				t2 = tArr[2]
 				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
+				)
+				else if superclassof oTar == shape then
+				(
+				tArr = getKnotSelection $ 1
+				t1 = getKnotPoint $ 1 tArr[1]
+				t2 = getKnotPoint $ 1 tArr[2]
+				tvDis = distance t1 t2
+				)
 				
 				if $.scale != [1,1,1] do
 				(
@@ -93,11 +107,22 @@ fn updateSpn spn =
 			try
 			(
 				sDis = spectrum.sp_spn_source.value
+				
+				if superclassof oSrc == geometryclass then
+				(
 				sArr = for i in $.mesh.selectedVerts collect i.index
 				s1 = sArr[1]
 				s2 = sArr[2]
 				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
-								
+				)
+				else if superclassof oSrc == shape then
+				(
+				sArr = getKnotSelection $ 1
+				s1 = getKnotPoint $ 1 sArr[1]
+				s2 = getKnotPoint $ 1 sArr[2]
+				svDis = distance s1 s2
+				)
+				
 				if $.scale != [1,1,1] do
 				(
 				/* print("---source scale out---") */	
@@ -203,7 +228,7 @@ rollout spectrum "" width:160 height:160
 	    (
 			if $ != oSrc then
 			(
-				if ($.mesh.selectedVerts.count == 2) then
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (superclassof $ == shape AND (getKnotSelection $ 1).count == 2) then
 				(
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
@@ -235,17 +260,17 @@ rollout spectrum "" width:160 height:160
 	--target spinner
 	on sp_spn_target changed val do
 	(
-	print("sp_spn_target_changed")
+	--print("sp_spn_target_changed")
 	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttondown do
 	(
-	print("sp_spn_target_buttondown")
+	--print("sp_spn_target_buttondown")
 	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttonup do
 	(
-	print("sp_spn_target_buttonup")
+	--print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
 	
@@ -323,7 +348,7 @@ rollout spectrum "" width:160 height:160
 	    (
 			if $ != oTar then
 			(
-				if $.mesh.selectedVerts.count == 2 then
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (superclassof $ == shape AND (getKnotSelection $ 1).count == 2) then
 				(
 				sp_btn_source.text = $.name
 				oSrc = $
@@ -371,11 +396,13 @@ rollout spectrum "" width:160 height:160
 	
 	on sp_btn_target_rst pressed do
 	(
+	try(updateSpn 0)catch()
 	markSpinner sp_spn_target
 	)
 	
 	on sp_btn_source_rst pressed do
 	(
+	try(updateSpn 1)catch()
 	markSpinner sp_spn_source
 	)
 )
