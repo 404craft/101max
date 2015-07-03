@@ -172,7 +172,6 @@ rollout spectrum "" width:160 height:160
 	global oReady = false
 	
 	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"execute pending operations"
-	pickbutton btn4 "PickButton" pos:[84,295] width:0 height:0
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	checkbutton sp_chk_mode "local" pos:[88,72] width:64 height:16 toolTip:"scale an object vs scale all objects"
 	button sp_btn_target "target" pos:[8,32] width:56 height:16 toolTip:"define target object"
@@ -180,7 +179,7 @@ rollout spectrum "" width:160 height:160
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
 	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse object/s"
 	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset object/s to original scale"
-	checkbutton sp_chk_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
+	button sp_btn_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
 	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
 	button sp_btn_source "source" pos:[88,32] width:48 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
@@ -328,17 +327,8 @@ rollout spectrum "" width:160 height:160
 	)
 	
 	--tape button / currently under dev
-	on sp_chk_tape changed state do
+	on sp_btn_tape pressed do
 	(
-		case sp_chk_tape.state of
-		(
-		true:
-			(
-			)
-		false:
-			(
-			)
-		)
 	)
 	
 	--append listbox
