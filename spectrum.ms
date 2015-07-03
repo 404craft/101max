@@ -69,6 +69,30 @@ fn saveScale sObj =
 	)
 )
 
+fn updateTape nTar nSpn=
+(
+	managePoly nTar 0
+	vArr = for i in nTar.verts collect i.index
+	tArr = for o in objects where classof o == tape collect o
+
+	for n = 1 to vArr.count do 
+	(
+		for t = 1 to tArr.count do 
+		(
+			if nTar.verts[n].pos == tArr[t].pos do 
+			(
+			oTape = tArr[t]
+			nVal = distance oTape oTape.target
+			if nSpn == 0 then tvDis = nVal
+				else if nSpn == 1 then svDis nVal
+			spectrum.sp_btn_tape.text = oTape.name
+			oTar = nTar
+			spectrum.sp_spn_target.enabled = true
+			spectrum.sp_btn_target.text = nTar.name
+			)
+		)
+	)
+)
 fn updateSpn spn =
 (
 	if spn == 0 then
@@ -324,27 +348,7 @@ rollout spectrum "" width:160 height:161
 	)
 	on sp_btn_tape pressed do
 	(
-	managePoly $ 0
-	vArr = for i in $.verts collect i.index
-	tArr = for o in objects where classof o == tape collect o
-	
-		for n = 1 to vArr.count do 
-		(
-			for t = 1 to tArr.count do 
-			(
-				---if (distance $.verts[n].pos tArr[t].pos < 0.001) do 
-				if $.verts[n].pos == tArr[t].pos do 
-				(
-				oTape = tArr[t]
-				tvDis = distance oTape oTape.target
-				print (tvDis)
-				sp_btn_tape.text = oTape.name
-				sp_spn_target.enabled = true
-				sp_btn_target.text = $.name
-				oTar = $
-				)
-			)
-		)
+	updateTape $ 0
 	)
 	
 	on sp_btn_append picked oSel do
