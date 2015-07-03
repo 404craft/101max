@@ -24,12 +24,11 @@ fn markSpinner spnType =
 		)
 )
 
-fn polyReady pObj=
+fn polyReady pObj =
 (
 	if superclassof pObj == shape do
 	(
-	p = (for m in pObj.modifiers where (classof m == edit_spline) collect m).count
-		if (classof pObj != line) AND (p == 0) AND (classof pObj != splineshape) then oReady = false
+		if (classof pObj != line) AND (classof pObj != splineshape) then oReady = false
 		else oReady = true
 	)
 )
@@ -43,8 +42,7 @@ fn managePoly mObj =
 	)
 	else if superclassof mObj == shape then
 	(
-	p = (for m in mObj.modifiers where (classof m == edit_spline) collect m).count
-	if (classof mObj != line) AND (p == 0) AND (classof pObj != splineshape) do addmodifier mObj (edit_spline())
+	if (classof mObj != line) AND (classof pObj != splineshape) do convertToSplineShape mObj
 	)
 	subobjectLevel = 1
 )
