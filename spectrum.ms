@@ -33,7 +33,7 @@ fn polyReady pObj =
 	)
 )
 
-fn managePoly mObj =
+fn managePoly mObj sLvl=
 (
 	if superclassof mObj == geometryclass then
 	(
@@ -44,7 +44,7 @@ fn managePoly mObj =
 	(
 	if (classof mObj != line) AND (classof pObj != splineshape) do convertToSplineShape mObj
 	)
-	subobjectLevel = 1
+	subobjectLevel = sLvl
 )
 
 fn rootParent node = 
@@ -71,7 +71,6 @@ fn saveScale sObj =
 
 fn updateSpn spn =
 (
-	--update target spinner
 	if spn == 0 then
 	(
 		if spectrum.sp_spn_target.enabled == true do
@@ -112,7 +111,6 @@ fn updateSpn spn =
 		)
 	)
 	
-	--update source spinner
 	else
 	(
 		if spectrum.sp_spn_source.enabled == true do
@@ -153,7 +151,7 @@ fn updateSpn spn =
 	)
 )
 
-rollout spectrum "" width:160 height:160
+rollout spectrum "" width:160 height:161
 (
 	global oTar --target object
 	global tDis --target distance
@@ -164,6 +162,7 @@ rollout spectrum "" width:160 height:160
 	global sDis --source distance
 	global svDis --current source vertex distance
 	global iUnt --imaginary / custom unit
+	global oTape --selected tape
 	
 	global lArray = #()
 	global cArray = #()
@@ -180,13 +179,12 @@ rollout spectrum "" width:160 height:160
 	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse object/s"
 	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset object/s to original scale"
 	button sp_btn_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
-	pickbutton sp_btn_append "append list" pos:[8,72] width:72 height:16 toolTip:"add in parents"
+	pickbutton sp_btn_append "add to list" pos:[8,72] width:72 height:16 message:"" toolTip:"add in parents"
 	button sp_btn_source "source" pos:[88,32] width:48 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	button sp_btn_target_rst "•" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
 	button sp_btn_source_rst "•" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
 	
-	--execute pending operations
 	on sp_btn_execute pressed do
 	(
 	if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
@@ -211,7 +209,7 @@ rollout spectrum "" width:160 height:160
 					  )
 				  )
 			  )
--- 			  nArray = undefined
+	-- 			  nArray = undefined
 			  nArray = join cArray lArray
 			  saveScale nArray
 			  for n = 1 to nArray.count do 
@@ -229,14 +227,19 @@ rollout spectrum "" width:160 height:160
 	)
 	
 	)
-	
+	on sp_listbox doubleClicked sel do
+	(
+		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
+		(
+		deleteitem lArray sp_listbox.selection
+		sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
+		)
+	)
 	on sp_chk_mode changed state do
 	(
 	 if state == true then sp_chk_mode.text = "global"
 		 else sp_chk_mode.text = "local"
 	)
-	
-	--select target object
 	on sp_btn_target pressed do
 	(
 	    if selection.count == 1 do
@@ -254,7 +257,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try(managePoly $)catch()
+						try(managePoly $ 1)catch()
 						messagebox("select two points in a mesh")
 					)
 			)
@@ -273,8 +276,6 @@ rollout spectrum "" width:160 height:160
 		)
 		else if (selection.count == 0 AND oTar == undefined) OR (selection.count > 1) do messagebox("select an object")
 	)
-	
-	--target spinner
 	on sp_spn_target changed val do
 	(
 	--print("sp_spn_target_changed")
@@ -290,8 +291,6 @@ rollout spectrum "" width:160 height:160
 	--print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
-	
-	--resetX button
 	on sp_btn_resetX pressed do
 	(
 		for n = 1 to selection.count do
@@ -310,8 +309,6 @@ rollout spectrum "" width:160 height:160
 				)
 			)
 	)
-	
-	--zero button
 	on sp_btn_scale_res pressed do
 	(
 		for n = 1 to selection.count do 
@@ -325,13 +322,31 @@ rollout spectrum "" width:160 height:160
 			else selection[n].scale = [1,1,1]
 		)
 	)
-	
-	--tape button / currently under dev
 	on sp_btn_tape pressed do
 	(
+	managePoly $ 0
+	vArr = for i in $.verts collect i.index
+	tArr = for o in objects where classof o == tape collect o
+	
+		for n = 1 to vArr.count do 
+		(
+			for t = 1 to tArr.count do 
+			(
+				---if (distance $.verts[n].pos tArr[t].pos < 0.001) do 
+				if $.verts[n].pos == tArr[t].pos do 
+				(
+				oTape = tArr[t]
+				tvDis = distance oTape oTape.target
+				print (tvDis)
+				sp_btn_tape.text = oTape.name
+				sp_spn_target.enabled = true
+				sp_btn_target.text = $.name
+				oTar = $
+				)
+			)
+		)
 	)
 	
-	--append listbox
 	on sp_btn_append picked oSel do
 	(
 		oCount = lArray.count
@@ -339,17 +354,6 @@ rollout spectrum "" width:160 height:160
 		nCount = lArray.count
 		if oCount < nCount do sp_listbox.items = append sp_listbox.items (oSel as string)
 	)
-	--remove from listbox
-	on sp_listbox doubleClicked sel do
-	(
-		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
-		(
-		deleteitem lArray sp_listbox.selection
-		sp_listbox.items = deleteItem sp_listbox.items sp_listbox.selection
-		)
-	)
-	
-	--select source object
 	on sp_btn_source pressed do
 	(
 	    if selection.count == 1 do
@@ -367,7 +371,7 @@ rollout spectrum "" width:160 height:160
 				)
 				else
 					(
-						try(managePoly $)catch()
+						try(managePoly $ 1)catch()
 						messagebox("select two points in a mesh")
 					)
 			)
@@ -386,11 +390,9 @@ rollout spectrum "" width:160 height:160
 		)
 		else if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
 	)
-	
-	--source spinner
 	on sp_spn_source changed val do
 	(
- 	--print("sp_spn_source_changed")
+	--print("sp_spn_source_changed")
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttondown do
@@ -400,16 +402,14 @@ rollout spectrum "" width:160 height:160
 	)
 	on sp_spn_source buttonup do
 	(
- 	--print("sp_spn_source_buttonup")
+	--print("sp_spn_source_buttonup")
 	try(updateSpn 1)catch()
 	)
-	
 	on sp_btn_target_rst pressed do
 	(
 	try(updateSpn 0)catch()
 	markSpinner sp_spn_target
 	)
-	
 	on sp_btn_source_rst pressed do
 	(
 	try(updateSpn 1)catch()
