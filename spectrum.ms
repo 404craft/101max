@@ -89,12 +89,15 @@ fn updateTape nTar =
 						(
 						tvDis = nVal
 						spectrum.sp_spn_target.value = tvDis
+						nPrefix = "tar:"
 						)
 						else if nTar == oSrc then 
 						(
 						svDis = nVal
 						spectrum.sp_spn_target.value = svDis
+						nPrefix = "src:"
 						)
+					spectrum.sp_btn_tape.text = nPrefix + oTape.name
 					)
 				)
 			)
