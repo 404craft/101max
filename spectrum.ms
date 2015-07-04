@@ -8,29 +8,19 @@ try(destroydialog ::spectrum)catch()
 oTar = undefined
 oSrc = undefined
 obj = objects
-n = 1
+i = 1
 
-fn markSpinner spnType =
+fn markSpinner spnType n =
 (
 		if spnType.enabled == true do
 		(
 		spnArr = #()
-		spnArr[1] = 0.0
-		spnArr[2] = tvDis
-		if oSrc != undefined do spnArr[3] = svDis
-		spnType.value = spnArr[n]
-		n += 1
-		if n > spnArr.count do n = 1
+		spnArr[1] = #(0.0,tvDis)
+		spnArr[2] = #(0.0,svDis)
+		spnType.value = spnArr[n][i]
+		i += 1
+		if i > spnArr[n].count do i = 1
 		)
-)
-
-fn polyReady pObj =
-(
-	if superclassof pObj == shape do
-	(
-		if (classof pObj != line) AND (classof pObj != splineshape) then oReady = false
-		else oReady = true
-	)
 )
 
 fn managePoly mObj sLvl=
@@ -42,7 +32,12 @@ fn managePoly mObj sLvl=
 	)
 	else if superclassof mObj == shape then
 	(
-	if (classof mObj != line) AND (classof pObj != splineshape) do convertToSplineShape mObj
+	if (classof mObj != line) AND (classof pObj != splineshape) then 
+		(
+		convertToSplineShape mObj
+		oReady = true
+		)
+	else oReady = false
 	)
 	subobjectLevel = sLvl
 )
@@ -69,30 +64,46 @@ fn saveScale sObj =
 	)
 )
 
-fn updateTape nTar nSpn=
+fn updateTape nTar =
 (
 	managePoly nTar 0
+	vArr = #()
+	tArr = #()
 	vArr = for i in nTar.verts collect i.index
 	tArr = for o in objects where classof o == tape collect o
-
-	for n = 1 to vArr.count do 
+	
+	if nTar == oTar OR nTar == oSrc then
 	(
-		for t = 1 to tArr.count do 
+		if tArr.count > 0 then
 		(
-			if nTar.verts[n].pos == tArr[t].pos do 
+			for n = 1 to vArr.count do 
 			(
-			oTape = tArr[t]
-			nVal = distance oTape oTape.target
-			if nSpn == 0 then tvDis = nVal
-				else if nSpn == 1 then svDis nVal
-			spectrum.sp_btn_tape.text = oTape.name
-			oTar = nTar
-			spectrum.sp_spn_target.enabled = true
-			spectrum.sp_btn_target.text = nTar.name
+				for t = 1 to tArr.count do 
+				(
+					if nTar.verts[n].pos == tArr[t].pos do 
+					(
+					oTape = tArr[t]
+					nVal = distance oTape oTape.target
+					
+						if nTar == oTar then
+						(
+						tvDis = nVal
+						spectrum.sp_spn_target.value = tvDis
+						)
+						else if nTar == oSrc then 
+						(
+						svDis = nVal
+						spectrum.sp_spn_target.value = svDis
+						)
+					)
+				)
 			)
 		)
+		else messagebox("create tape between target anchor points")
 	)
+	else messagebox("select target or source object")
 )
+
 fn updateSpn spn =
 (
 	if spn == 0 then
@@ -251,6 +262,7 @@ rollout spectrum "" width:160 height:161
 	)
 	
 	)
+
 	on sp_listbox doubleClicked sel do
 	(
 		if sp_listbox.items.count > 0 and sp_listbox.selection > 0 do
@@ -264,6 +276,7 @@ rollout spectrum "" width:160 height:161
 	 if state == true then sp_chk_mode.text = "global"
 		 else sp_chk_mode.text = "local"
 	)
+	
 	on sp_btn_target pressed do
 	(
 	    if selection.count == 1 do
@@ -271,8 +284,8 @@ rollout spectrum "" width:160 height:161
 			if $ != oSrc then
 			(
 				oReady = false
-				polyReady $
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (oReady == true AND (getKnotSelection $ 1).count == 2) then
+				managePoly $ 1
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (oReady == true AND (getKnotSelection $ 1).count >= 2) then
 				(
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
@@ -282,7 +295,7 @@ rollout spectrum "" width:160 height:161
 				else
 					(
 						try(managePoly $ 1)catch()
-						messagebox("select two points in a mesh")
+						messagebox("select two anchor points")
 					)
 			)
 			else messagebox("select a different object")
@@ -315,6 +328,7 @@ rollout spectrum "" width:160 height:161
 	--print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
+	
 	on sp_btn_resetX pressed do
 	(
 		for n = 1 to selection.count do
@@ -333,6 +347,7 @@ rollout spectrum "" width:160 height:161
 				)
 			)
 	)
+	
 	on sp_btn_scale_res pressed do
 	(
 		for n = 1 to selection.count do 
@@ -346,9 +361,10 @@ rollout spectrum "" width:160 height:161
 			else selection[n].scale = [1,1,1]
 		)
 	)
+	
 	on sp_btn_tape pressed do
 	(
-	updateTape $ 0
+	updateTape $
 	)
 	
 	on sp_btn_append picked oSel do
@@ -358,6 +374,7 @@ rollout spectrum "" width:160 height:161
 		nCount = lArray.count
 		if oCount < nCount do sp_listbox.items = append sp_listbox.items (oSel as string)
 	)
+	
 	on sp_btn_source pressed do
 	(
 	    if selection.count == 1 do
@@ -365,8 +382,8 @@ rollout spectrum "" width:160 height:161
 			if $ != oTar then
 			(
 				oReady = false
-				polyReady $
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count == 2) OR (oReady == true AND (getKnotSelection $ 1).count == 2) then
+				managePoly $ 1
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (oReady == true AND (getKnotSelection $ 1).count >= 2) then
 				(
 				sp_btn_source.text = $.name
 				oSrc = $
@@ -376,7 +393,7 @@ rollout spectrum "" width:160 height:161
 				else
 					(
 						try(managePoly $ 1)catch()
-						messagebox("select two points in a mesh")
+						messagebox("select two anchor points")
 					)
 			)
 			else messagebox("select a different object")
@@ -394,6 +411,7 @@ rollout spectrum "" width:160 height:161
 		)
 		else if (selection.count == 0 AND oSrc == undefined) OR selection.count > 1 do messagebox("select an object")
 	)
+	
 	on sp_spn_source changed val do
 	(
 	--print("sp_spn_source_changed")
@@ -412,12 +430,12 @@ rollout spectrum "" width:160 height:161
 	on sp_btn_target_rst pressed do
 	(
 	try(updateSpn 0)catch()
-	markSpinner sp_spn_target
+	markSpinner sp_spn_target 1
 	)
 	on sp_btn_source_rst pressed do
 	(
 	try(updateSpn 1)catch()
-	markSpinner sp_spn_source
+	markSpinner sp_spn_source 2
 	)
 )
 createdialog spectrum
