@@ -24,7 +24,7 @@ rollout radMat "" width:96 height:138
 	spinner rm_spn_rng_btm "" pos:[48,24] width:40 height:16 range:[2,24,2] type:#integer
 	label rm_lbl_bottom "@101craft" pos:[24,117] width:54 height:17
 	spinner rm_spn_rng_top "" pos:[8,24] width:40 height:16 range:[1,23,1] type:#integer
-	spinner rm_spn_distance "" pos:[24,48] width:64 height:16 enabled:false range:[0,1e+006,0]
+	spinner rm_spn_distance "" pos:[24,48] width:64 height:16 enabled:false range:[-1e+006,1e+006,0]
 	checkbutton rm_ckb_distance "•" pos:[8,48] width:16 height:16 toolTip:"defined distance between objects"
 	
 	on rm_chk_mode changed state do
@@ -51,7 +51,8 @@ rollout radMat "" width:96 height:138
 				(
 					nArr = objects as array
 					deleteItem nArr o
-					for n = 1 to nArr.count where (distance oArr[o] nArr[n] <= rm_spn_distance.value) do try(oArr[o].material = groupmaterial)catch()
+					if rm_spn_distance.value > 0 do for n = 1 to nArr.count where (distance oArr[o] nArr[n] <= rm_spn_distance.value) do try(oArr[o].material = groupmaterial)catch()
+					if rm_spn_distance.value < 0 do for n = 1 to nArr.count where (distance oArr[o] nArr[n] >= -1 * rm_spn_distance.value) do try(oArr[o].material = groupmaterial)catch()
 				)
 			)
 		)
