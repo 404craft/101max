@@ -1,5 +1,5 @@
 --auto-assign random smoothing groups across all faces 
---assign smoothing groups other than neighbours
+--assign smoothing groups other than neighbors
 --make an object coarse
 --brute force method
 --http://imgur.com/2ildnWQ
