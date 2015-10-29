@@ -27,7 +27,7 @@ fn check f =
 	
 	s_f = polyop.getFaceSmoothGroup $ f
 	
-	print (s_f as string)
+	--print ("debug: fn check " + s_f as string)
 	do
 	(
 	--print ("debug: fn check --- start new do loop ---")
@@ -35,7 +35,7 @@ fn check f =
 		for i in fFaces where i != f do
 		(
 			s_i = polyop.getFaceSmoothGroup $ i
-			print (s_i as string)
+			--print ("debug: fn check " + s_i as string)
 				if (s_i == s_f) do
 				(
 				hit(i)
