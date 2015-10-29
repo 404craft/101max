@@ -30,7 +30,7 @@ fn check f =
 	print (s_f as string)
 	do
 	(
-	print ("start new do loop")
+	--print ("debug: fn check --- start new do loop ---")
 	b = false
 		for i in fFaces where i != f do
 		(
@@ -39,7 +39,7 @@ fn check f =
 				if (s_i == s_f) do
 				(
 				hit(i)
-				--print ("debug: same group ------ restart ------")
+				--print ("debug: fn check --- same group restart ---")
 				a = true
 				b = true
 				)
@@ -61,7 +61,7 @@ fn differ =
 	
 	do
 	(
-	-- print("debug: big loop start -----------------------")
+	-- print("debug: fn differ ---------- big loop start ----------")
 	a = false
 		for f = 1 to fArr do
 		(
