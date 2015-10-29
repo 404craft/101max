@@ -1,4 +1,5 @@
---assign random smoothing groups across all faces different to neighbours
+--assign random smoothing groups across all faces 
+--assign smoothing groups different to neighbours
 --make an object coarse
 --brute force method
 
