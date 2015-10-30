@@ -8,9 +8,20 @@ global a
 fn wipe w=
 (
 	fArr = undefined
+	if w == 0 do
+	(
 	fArr = polyop.getNumFaces $
-	--if w == 1 do fArr = (polyop.getFaceSelection $) as array
 	for f = 1 to fArr do polyop.setFaceSmoothGroup $ f 0
+	)
+	
+	if w == 1 do 
+	(
+	fArr = polyop.getFaceSelection $
+		for f = 1 to fArr.count do
+		(
+		if fArr[f] == true do polyop.setFaceSmoothGroup $ f 0
+		)
+	)
 )
 
 fn hit f =
@@ -84,15 +95,14 @@ rollout clear_cut "" width:64 height:64
 
 	on btn_wipe pressed do
 	(
-		wipe(0)
-		/*if ckb_range.state == true do
+		if ckb_range.state == true do
 		(
 			wipe(1)
 		)
 		if ckb_range.state == false do
 		(
 			wipe(0)
-		)*/
+		)
 	)
 	on btn_differ pressed do
 	(
