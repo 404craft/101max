@@ -1,7 +1,8 @@
---auto-assign random smoothing groups across all faces 
---assign smoothing groups different to neighbors
---make an object coarse
---brute force method
+-- auto-assign random smoothing groups across all faces 
+-- assign smoothing groups different to neighbors
+-- make an object / selected faces coarse
+-- reset smoothing groups on all or only selected faces (• - switch)
+-- brute force method
 
 global a
 
@@ -16,10 +17,10 @@ fn wipe w=
 	
 	if w == 1 do 
 	(
-	fArr = polyop.getFaceSelection $
+	fArr = polyop.getFaceSelection $ as array
 		for f = 1 to fArr.count do
 		(
-		if fArr[f] == true do polyop.setFaceSmoothGroup $ f 0
+		polyop.setFaceSmoothGroup $ fArr[f] 0
 		)
 	)
 )
@@ -63,24 +64,48 @@ fn check f =
 fn differ =
 (	
 	fArr = undefined
-	fArr = (polyop.getFaceSelection $) as array
 	fArr = polyop.getNumFaces $
-
-	for f = 1 to fArr do
-	(
-		hit(f)
-	)
+	sel = polyop.getFaceSelection $ as array
 	
-	do
+	-- if there are no selected faces loop through all faces
+	if sel.count == 0 do
 	(
-	-- print("debug: fn differ ---------- big loop start ----------")
-	a = false
 		for f = 1 to fArr do
 		(
-			check(f)
+			hit(f)
 		)
+		
+		do
+		(
+		-- print("debug: fn differ ---------- big loop start ----------")
+		a = false
+			for f = 1 to fArr do
+			(
+				check(f)
+			)
+		)
+		while a
 	)
-	while a
+	
+	-- differ selected polygons
+	if sel.count != 0 do
+	(
+		for f = 1 to sel.count do
+		(
+			hit(sel[f])
+		)
+		
+		do
+		(
+		-- print("debug: fn differ ---------- big loop start ----------")
+		a = false
+			for f = 1 to sel.count do
+			(
+				check(sel[f])
+			)
+		)
+		while a
+	)
 )
 
 -- rollout
@@ -95,10 +120,12 @@ rollout clear_cut "" width:64 height:64
 
 	on btn_wipe pressed do
 	(
+		-- if the dot is pressed reset smoothing groups on selected faces only
 		if ckb_range.state == true do
 		(
 			wipe(1)
 		)
+		-- if the dot is unpressed reset object's smoothing groups globally
 		if ckb_range.state == false do
 		(
 			wipe(0)
