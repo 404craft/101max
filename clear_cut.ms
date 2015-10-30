@@ -1,6 +1,6 @@
 -- auto-assign random smoothing groups across all faces 
 -- assign smoothing groups different to neighbors
--- make an object / selected faces coarse
+-- make an object or selected faces coarse
 -- reset smoothing groups on all or only selected faces (• - switch)
 -- brute force method
 
