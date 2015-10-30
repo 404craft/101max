@@ -1,14 +1,15 @@
 --auto-assign random smoothing groups across all faces 
---assign smoothing groups other than neighbors
+--assign smoothing groups different to neighbors
 --make an object coarse
 --brute force method
 
 global a
 
-fn wipe =
+fn wipe w=
 (
 	fArr = undefined
 	fArr = polyop.getNumFaces $
+	--if w == 1 do fArr = (polyop.getFaceSelection $) as array
 	for f = 1 to fArr do polyop.setFaceSmoothGroup $ f 0
 )
 
@@ -51,7 +52,7 @@ fn check f =
 fn differ =
 (	
 	fArr = undefined
-	--fArr = (polyop.getFaceSelection $) as array
+	fArr = (polyop.getFaceSelection $) as array
 	fArr = polyop.getNumFaces $
 
 	for f = 1 to fArr do
@@ -71,4 +72,35 @@ fn differ =
 	while a
 )
 
-differ()
+-- rollout
+try(destroydialog ::clear_cut)catch()
+
+rollout clear_cut "" width:64 height:64
+(
+	button btn_wipe "wipe" pos:[8,8] width:32 height:16 toolTip:"erase smoothing groups"
+	button btn_differ "differ" pos:[8,24] width:48 height:16 toolTip:"assign random smoothing groups"
+	label craft101 "@101craft" pos:[6,44] width:52 height:16
+	checkbutton ckb_range "•" pos:[40,8] width:16 height:16
+
+	on btn_wipe pressed do
+	(
+		wipe(0)
+		/*if ckb_range.state == true do
+		(
+			wipe(1)
+		)
+		if ckb_range.state == false do
+		(
+			wipe(0)
+		)*/
+	)
+	on btn_differ pressed do
+	(
+	differ()	
+	)
+	on ckb_range changed state do
+	(
+		
+	)
+)
+createdialog clear_cut
