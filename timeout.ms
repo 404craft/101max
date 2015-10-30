@@ -3,7 +3,7 @@
 
 try(destroydialog ::timeout)catch()
 
-rollout timeout "timeout" width:128 height:160
+rollout time_out "timeout" width:128 height:160
 (
 	global c
 	global numSeg = 4
