@@ -15,6 +15,10 @@ setMeditMaterial n tMat
 )
 */
 
+/*
+for i = 1 to 100 do sphere pos: (random [-300,-300,-300] [300,300,300]) radius:(random 2 20)
+*/
+
 try(destroydialog ::radMat)catch()
 sObj = undefined
 rollout radMat "" width:96 height:162
