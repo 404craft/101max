@@ -2,7 +2,6 @@
 --assign smoothing groups other than neighbors
 --make an object coarse
 --brute force method
---http://imgur.com/2ildnWQ
 
 global a
 
