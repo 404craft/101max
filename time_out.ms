@@ -1,5 +1,5 @@
--render diffuse and ambient occlusion (via material override) passes consecutively in mental ray
--limited usability plugin
+-- render diffuse and ambient occlusion (via material override) passes consecutively in mental ray
+-- limited usability plugin
 
 try(destroydialog ::timeout)catch()
 
