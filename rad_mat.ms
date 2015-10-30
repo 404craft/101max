@@ -37,6 +37,8 @@ rollout radMat "" width:96 height:162
 	)
 	on rm_btn_exe pressed do
 	(
+	groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
+	
 		if rm_chk_mode.state == true do
 		(	
 			for p in selection as array where isgrouphead p do
