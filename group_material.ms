@@ -9,6 +9,7 @@
 for n = 1 to 24 do 
 (
 tMat = StandardMaterial()
+tMat.name = "mat_" + n as string
 tMat.diffuse = random black white
 setMeditMaterial n tMat
 )
@@ -36,14 +37,11 @@ rollout radMat "" width:96 height:162
 	)
 	on rm_btn_exe pressed do
 	(
-		groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
-		
-		if rm_chk_mode.state == true then
-		(
- 			for n in selection do n.material = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
-				
-			for p in selection where isgrouphead p do
+		if rm_chk_mode.state == true do
+		(	
+			for p in selection as array where isgrouphead p do
 			(
+			groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
 			for c in p where isgroupmember c do c.material = groupmaterial
 			)
 			
@@ -78,7 +76,7 @@ rollout radMat "" width:96 height:162
 				)
 			)
 		)
-		else for n in selection do n.material = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
+		if rm_chk_mode.state == false do for n in selection do n.material = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
 	)
 	on rm_spn_rng_btm changed val do
 	(
