@@ -82,7 +82,6 @@ rollout radMat "" width:96 height:162
 					oArr = objects as array
 					for o = 1 to oArr.count do 
 					(
-						print oArr[o]
 						groupmaterial = meditmaterials [random rm_spn_rng_btm.value rm_spn_rng_top.value]
 						nArr = objects as array
 						deleteItem nArr o
