@@ -1,3 +1,4 @@
+-- tree randomizer
 -- manage trees en-masse in your scene
 -- distribute trees along target verts
 -- limited functionality plugin
