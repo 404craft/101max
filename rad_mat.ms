@@ -16,7 +16,7 @@ setMeditMaterial n tMat
 */
 
 try(destroydialog ::radMat)catch()
-
+sObj = undefined
 rollout radMat "" width:96 height:162
 (
 	checkbutton rm_chk_mode "node" pos:[16,96] width:64 height:16 toolTip:"assign same material to all group members?"
@@ -37,34 +37,41 @@ rollout radMat "" width:96 height:162
 	)
 	on rm_btn_exe pressed do
 	(
-	groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
+	-- groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
 	
-		if rm_chk_mode.state == true do
-		(	
-			for p in selection as array where isgrouphead p do
+			if rm_ckb_distance.state == true do
 			(
-			groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
-			for c in p where isgroupmember c do c.material = groupmaterial
-			)
-			
-			if rm_ckb_distance.state == true then
-			(
-				if sObj != undefined then
+				-- assign random materials to objects within distance from a set object
+				if sObj != undefined do
 				(
 				sObj.material = groupmaterial
-				for o in objects where distance o.pos sObj.pos <= rm_spn_distance.value do try(o.material = sObj.material)catch()
+					for o in objects where distance o.pos sObj.pos <= rm_spn_distance.value do
+					(
+						try
+						(
+						groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
+						o.material = groupmaterial
+						)
+						catch()
+					)
 				)
 				
-				else
+				if sObj == undefined do
 				(
 					oArr = objects as array
 					for o = 1 to oArr.count do 
 					(
+						print oArr[o]
+						groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
 						nArr = objects as array
 						deleteItem nArr o
 						if rm_spn_distance.value > 0 then 
 						(
-						for n = 1 to nArr.count where (distance oArr[o] nArr[n] <= rm_spn_distance.value) do try(oArr[o].material = groupmaterial)catch()
+							for n = 1 to nArr.count where (distance oArr[o] nArr[n] <= rm_spn_distance.value) do
+							(
+								try(oArr[o].material = groupmaterial)catch()
+								-- deleteItem nArr n
+							)
 						)
 						else if rm_spn_distance.value < 0 then
 						(
@@ -77,7 +84,21 @@ rollout radMat "" width:96 height:162
 					)
 				)
 			)
+			
+		-- per group basis
+		if rm_chk_mode.state == true do
+		(	
+			-- manage selected object groups only
+			if selection.count > 0 do
+			(
+				for p in selection as array where isgrouphead p do
+				(
+				groupmaterial = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
+				for c in p where isgroupmember c do c.material = groupmaterial
+				)
+			)
 		)
+		-- per node basis
 		if rm_chk_mode.state == false do for n in selection do n.material = meditmaterials [random rm_spn_rng_top.value rm_spn_rng_btm.value]
 	)
 	on rm_spn_rng_btm changed val do
