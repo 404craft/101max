@@ -1,6 +1,6 @@
 # 101max
 maxscript adventures
 
-scene management plugin collection
+scene management plugins
 
 contact maciej@chodakowski.com
