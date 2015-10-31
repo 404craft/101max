@@ -18,7 +18,7 @@ rollout masterSnap "" width:72 height:112
 	button btn_parent "parent" pos:[8,88] width:56 height:17
 	button btn_src "source" pos:[24,8] width:40 height:17
 	button btn_tar "target" pos:[24,24] width:40 height:17
-	spinner spn_range "" pos:[8,48] width:56 height:16 range:[0.1,100000,0.1] type:#float
+	spinner spn_range "" pos:[8,48] width:56 height:16 range:[0.01,100000,0.01] type:#float
 
 	button btn_tar_sel "•" pos:[8,24] width:16 height:17
 	button btn_src_sel "•" pos:[8,8] width:16 height:17
