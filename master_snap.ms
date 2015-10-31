@@ -10,6 +10,8 @@ sphere pos: [p[1] + random -3 3,p[2] + random -3 3,p[3] + random -3 3] radius: (
 )*/
 /*for o = 1 to selection.count do move $[o] (random [-0.1,-0.1,-0.1] [0.1,0.1,0.1])*/
 
+/*for o in objects where o.children.count == 0 AND o.parent == undefined do hide o*/
+
 src = #()
 tar = #()
 try(destroydialog ::masterSnap)catch()
