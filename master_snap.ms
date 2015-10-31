@@ -7,6 +7,7 @@ r = random 10 20
 box pos: (p = random [-300,-300,-300] [300,300,300]) length:r width:r height:r wirecolor: yellow
 sphere pos: [p[1] + random -3 3,p[2] + random -3 3,p[3] + random -3 3] radius: (r + random -5 5) wirecolor: blue
 )*/
+/*for o = 1 to selection.count do move $[o] (random [-0.1,-0.1,-0.1] [0.1,0.1,0.1])*/
 
 src = #()
 tar = #()
