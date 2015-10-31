@@ -1,5 +1,6 @@
 -- move objectAs to nearby objectBs
 -- parent objectAs to nearby objectBs
+-- i.e. connect particle systems (vfx) to nearby cannons
 
 /*for i = 1 to 100 do
 (
