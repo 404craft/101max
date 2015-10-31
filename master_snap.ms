@@ -1,5 +1,5 @@
--- move objectA to nearby objectB
--- parent objectA to nearby objectB
+-- move objectAs to nearby objectBs
+-- parent objectAs to nearby objectBs
 
 /*for i = 1 to 100 do
 (
