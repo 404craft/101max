@@ -7,15 +7,16 @@ tar_path = undefined
 iPost = #()
 cPost = #()
 ready = true
-rollout auto_rail "a-rail" width:88 height:144
+rollout auto_rail "a-rail" width:88 height:145
 (
-	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 toolTip:"select item"
-	button ar_btn_assign "confirm" pos:[16,104] width:56 height:16 toolTip:"distribute items"
+	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 toolTip:"select path"
+	button ar_btn_assign "confirm" pos:[24,104] width:48 height:16 toolTip:"distribute objects"
 	label ar_lbl_top "auto-rail" pos:[24,5] width:42 height:16
 	label ar_lbl_bottom "@101craft" pos:[17,125] width:56 height:16
 	spinner ar_spn_normal "" pos:[16,80] width:56 height:16 range:[1,100,2] type:#float
 	checkbutton ckb_rule "divide" pos:[8,48] width:72 height:24 enabled:true checked:true
-
+	button ar_btn_del "•" pos:[8,104] width:16 height:16 toolTip:"delete objects"
+	
 	on ar_pic_path picked oPath do
 	(
 		if classof oPath == line OR classof oPath == SplineShape then 
@@ -45,6 +46,10 @@ rollout auto_rail "a-rail" width:88 height:144
 			collapseStack tar_path
 			distribute tar_path
 		)
+	)
+	on ar_btn_del pressed do
+	(
+		wipe()
 	)
 	on ckb_rule changed state do
 	(
