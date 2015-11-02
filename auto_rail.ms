@@ -37,15 +37,10 @@ rollout auto_rail "a-rail" width:88 height:177
 			wipe()
 			ar_pic_path.object.wirecolor = blue
 			tar_path = copy ar_pic_path.object
+			x = ar_spn_normal.value as integer
 			if ckb_rule.state == true do
 			(
-				for s = 1 to numsplines tar_path do
-				(
-					for n = 1 to numsegments tar_path s do
-					(
-						subdivideSegment tar_path s n (ar_spn_normal.value as integer)
-					)
-				)
+			divide tar_path x
 			)
 			if ckb_rule.state == false do addmodifier tar_path (normalize_spl length:ar_spn_normal.value name: "rail_normalize" wirecolor:yellow)
 			collapseStack tar_path
@@ -80,9 +75,19 @@ fn distribute target =
 	ready = true
 )
 
-fn divide target =
+fn divide target x =
 (
-
+	c = 1
+	for s = 1 to numsplines target do
+	(
+		numSegs = numsegments target s
+		
+		for n = 1 to numSegs do
+		(
+			subdivideSegment target s c x
+			c += (x+1)
+		)
+	)
 )
 
 fn wipe =
