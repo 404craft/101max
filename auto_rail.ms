@@ -7,16 +7,15 @@ tar_path = undefined
 iPost = #()
 cPost = #()
 ready = true
-rollout auto_rail "a-rail" width:88 height:177
+rollout auto_rail "a-rail" width:88 height:144
 (
-	pickbutton ar_pic_path "select path" pos:[8,24] width:72 height:16 toolTip:"select item"
-	button ar_btn_assign "confirm" pos:[8,136] width:72 height:16 toolTip:"distribute items"
+	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 toolTip:"select item"
+	button ar_btn_assign "confirm" pos:[16,104] width:56 height:16 toolTip:"distribute items"
 	label ar_lbl_top "auto-rail" pos:[24,5] width:42 height:16
-	label ar_lbl_bottom "@101craft" pos:[18,157] width:56 height:16
-	spinner ar_spn_normal "" pos:[16,104] width:56 height:16 range:[1,100,2] type:#float
-	
-	checkbutton ckb_rule "divide" pos:[12,57] width:63 height:30 enabled:true checked:true
-	
+	label ar_lbl_bottom "@101craft" pos:[17,125] width:56 height:16
+	spinner ar_spn_normal "" pos:[16,80] width:56 height:16 range:[1,100,2] type:#float
+	checkbutton ckb_rule "divide" pos:[8,48] width:72 height:24 enabled:true checked:true
+
 	on ar_pic_path picked oPath do
 	(
 		if classof oPath == line OR classof oPath == SplineShape then 
@@ -27,7 +26,7 @@ rollout auto_rail "a-rail" width:88 height:177
 	)
 	on ar_btn_assign pressed do
 	(
-		distribute ar_pic_path.object
+		try(delete tar_path)catch()
 	)
 	on ar_spn_normal changed val do
 	(
@@ -49,8 +48,8 @@ rollout auto_rail "a-rail" width:88 height:177
 	)
 	on ckb_rule changed state do
 	(
-	if state == true then ckb_rule.text = "divide"
-	else if state == false do ckb_rule.text = "normalize"
+	if state == true then (ckb_rule.text = "divide"; ar_spn_normal.value = 2.0)
+	else if state == false do (ckb_rule.text = "normalize"; ar_spn_normal.value = 40.0)
 	)
 )
 
