@@ -5,7 +5,6 @@
 try(destroydialog ::auto_rail)catch()
 tar_path = undefined
 iPost = #()
-cPost = #()
 ready = true
 rollout auto_rail "" width:88 height:145
 (
