@@ -1,6 +1,6 @@
 -- aligns an object with line anchor points
+-- divide segments and align vs normalize / align
 -- useful for making handrails with splines for instance
--- limited functionality plugin
 
 try(destroydialog ::auto_rail)catch()
 tar_path = undefined
