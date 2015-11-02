@@ -7,7 +7,7 @@ tar_path = undefined
 iPost = #()
 cPost = #()
 ready = true
-rollout auto_rail "a-rail" width:88 height:145
+rollout auto_rail "" width:88 height:145
 (
 	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 toolTip:"select path"
 	button ar_btn_assign "confirm" pos:[24,104] width:48 height:16 toolTip:"distribute objects"
