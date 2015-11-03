@@ -23,23 +23,23 @@ fn markSpinner spnType n =
 	)
 )
 
-fn managePoly mObj sLvl=
+fn managePoly tar sub =
 (
 	if superclassof mObj == geometryclass then
 	(
-	p = (for m in mObj.modifiers where ((classof m == edit_poly) OR (classof m == edit_mesh)) collect m).count
-	if (classof mObj != editable_poly) AND (p == 0) do addmodifier mObj (edit_poly())
+	p = (for t in tar.modifiers where ((classof t == edit_poly) OR (classof t == edit_mesh)) collect t).count
+	if (classof tar != editable_poly) AND (p == 0) do addmodifier tar (edit_poly())
 	)
-	else if superclassof mObj == shape then
+	else if superclassof tar == shape then
 	(
-	if (classof mObj != line) AND (classof pObj != splineshape) then 
+	if (classof tar != line) AND (classof tar != splineshape) then 
 		(
-		convertToSplineShape mObj
+		convertToSplineShape tar
 		ready = true
 		)
 	else ready = false
 	)
-	subobjectLevel = sLvl
+	subobjectLevel = sub
 )
 
 fn rootParent node = 
@@ -51,15 +51,15 @@ fn rootParent node =
 	)
 )
 
-fn saveScale sObj =
+fn saveScale tar =
 (
-	for n = 1 to sObj.count do
+	for t = 1 to tar.count do
 	(
-		if getuserprop sObj[n] "oScale_x" == undefined do
+		if getuserprop tar[t] "oScale_x" == undefined do
 		(
-		setuserprop sObj[n] "oScale_x" sObj[n].scale.x
-		setuserprop sObj[n] "oScale_y" sObj[n].scale.y
-		setuserprop sObj[n] "oScale_z" sObj[n].scale.z
+		setuserprop tar[t] "oScale_x" tar[t].scale.x
+		setuserprop tar[t] "oScale_y" tar[t].scale.y
+		setuserprop tar[t] "oScale_z" tar[t].scale.z
 		)
 	)
 )
