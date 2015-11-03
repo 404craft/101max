@@ -21,6 +21,8 @@ setMeditMaterial n mat
 )
 */
 
+-- for i = 1 to selection.count do selection[i].material = meditmaterials[i]
+
 try(destroydialog ::softMat)catch()
 
 rollout softMat "" width:96 height:177
@@ -30,7 +32,7 @@ rollout softMat "" width:96 height:177
 		if softmat.sm_chk_mode.state == true do rndVar = rndVar * (rndVal * n.effectschannel)
 		if rndVar != 0 do
 		(
-					-- test 1
+					-- mr mats
 					if hasproperty n "Round_Corners_Enable" do
 					(
 					n.Round_Corners_Enable = on
@@ -38,8 +40,7 @@ rollout softMat "" width:96 height:177
 					if softmat.sm_ckb_blend.state == true then n.round_corners_blend_with_other_materials = on
 						else n.round_corners_blend_with_other_materials = off
 					)
-				
-					-- test 2
+
 					if hasproperty n "opts_round_corners_on" do
 					(
 					n.opts_round_corners_on = on
@@ -47,6 +48,8 @@ rollout softMat "" width:96 height:177
 					if softmat.sm_ckb_blend.state == true then n.opts_round_corners_any_mtl = on
 						else n.opts_round_corners_any_mtl = off
 					)
+					
+					-- vray mats
 					c = 0
 					if classof n == vraymtl do c = 1
 					if classof n == vRaycarpaintmtl do c = 2
