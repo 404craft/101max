@@ -1,7 +1,7 @@
 -- compute distance between two anchors in an object (i.e. the object is not to scale)
 -- define target distance / real measurements of the object
--- use imaginary units instead of scene units
 -- rescale an object locally or rescale entire scene
+-- use imaginary units instead of scene units
 
 try(destroydialog ::spectrum)catch()
 
@@ -25,7 +25,7 @@ fn markSpinner spnType n =
 
 fn managePoly tar sub =
 (
-	if superclassof mObj == geometryclass then
+	if superclassof tar == geometryclass then
 	(
 	p = (for t in tar.modifiers where ((classof t == edit_poly) OR (classof t == edit_mesh)) collect t).count
 	if (classof tar != editable_poly) AND (p == 0) do addmodifier tar (edit_poly())
@@ -37,7 +37,7 @@ fn managePoly tar sub =
 		convertToSplineShape tar
 		ready = true
 		)
-	else ready = false
+	else ready = true
 	)
 	subobjectLevel = sub
 )
