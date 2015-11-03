@@ -30,37 +30,35 @@ rollout softMat "" width:96 height:177
 	fn manageMaterial n rndVar rndVal=
 	(
 		if softmat.sm_chk_mode.state == true do rndVar = rndVar * (rndVal * n.effectschannel)
-		if rndVar != 0 do
+		-- mr mats
+		if hasproperty n "Round_Corners_Enable" do
 		(
-					-- mr mats
-					if hasproperty n "Round_Corners_Enable" do
-					(
-					n.Round_Corners_Enable = on
-					n.round_corners_source = rndVar
-					if softmat.sm_ckb_blend.state == true then n.round_corners_blend_with_other_materials = on
-						else n.round_corners_blend_with_other_materials = off
-					)
+		if rndVar == 0 do (n.Round_Corners_Enable = of; continue)
+		n.Round_Corners_Enable = on
+		n.round_corners_source = rndVar
+		if softmat.sm_ckb_blend.state == true then n.round_corners_blend_with_other_materials = on
+			else n.round_corners_blend_with_other_materials = off
+		)
 
-					if hasproperty n "opts_round_corners_on" do
-					(
-					n.opts_round_corners_on = on
-					n.opts_round_corners_radius = rndVar
-					if softmat.sm_ckb_blend.state == true then n.opts_round_corners_any_mtl = on
-						else n.opts_round_corners_any_mtl = off
-					)
-					
-					-- vray mats
-					c = 0
-					if classof n == vraymtl do c = 1
-					if classof n == vRaycarpaintmtl do c = 2
-					if c != 0 do
-					(
-					if c == 1 do if n.texmap_bump == undefined do n.texmap_bump = vrayedgestex ()
-					if c == 2 do if n.texmap_base_bump == undefined do n.texmap_base_bump = vrayedgestex ()
-					n.texmap_base_bump_on = true
-					n.texmap_base_bump.widthtype = 0
-					n.texmap_base_bump.thickness = rndVar
-					)
+		if hasproperty n "opts_round_corners_on" do
+		(
+		n.opts_round_corners_on = on
+		n.opts_round_corners_radius = rndVar
+		if softmat.sm_ckb_blend.state == true then n.opts_round_corners_any_mtl = on
+			else n.opts_round_corners_any_mtl = off
+		)
+		
+		-- vray mats
+		c = 0
+		if classof n == vraymtl do c = 1
+		if classof n == vRaycarpaintmtl do c = 2
+		if c != 0 do
+		(
+		if c == 1 do if n.texmap_bump == undefined do n.texmap_bump = vrayedgestex ()
+		if c == 2 do if n.texmap_base_bump == undefined do n.texmap_base_bump = vrayedgestex ()
+		n.texmap_base_bump_on = true
+		n.texmap_base_bump.widthtype = 0
+		n.texmap_base_bump.thickness = rndVar
 		)
 	)
 	
