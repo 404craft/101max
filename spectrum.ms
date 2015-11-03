@@ -3,6 +3,15 @@
 -- rescale the object locally or rescale entire scene
 -- use imaginary units instead of scene units
 
+/*
+for i = 1 to 3 do
+(
+r = random 10.0 20.0
+p = random 10 50
+box pos: (random [-p,-p,-p] [p,p,p]) length:r width:r height:r wirecolor: yellow
+)
+*/
+
 try(destroydialog ::spectrum)catch()
 
 global oTar = undefined --target object
