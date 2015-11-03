@@ -5,19 +5,34 @@
 
 try(destroydialog ::spectrum)catch()
 
-oTar = undefined
-oSrc = undefined
+global oTar = undefined --target object
+global tDis --target distance
+global tvDis --current target vertex distance
+global sFac --scale factor
+
+global oSrc = undefined --source object
+global sDis --source distance
+global svDis --current source vertex distance
+global iUnt --imaginary / custom unit
+global oTape --selected tape
+
+global lArray = #()
+global cArray = #()
+global nArray = #()
+
+global ready = false
+
 obj = objects
 i = 1
 
-fn markSpinner spnType n =
+fn markSpinner spn n =
 (
-	if spnType.enabled == true do
+	if spn.enabled == true do
 	(
 	spnArr = #()
 	spnArr[1] = #(0.0,tvDis)
 	spnArr[2] = #(0.0,svDis)
-	spnType.value = spnArr[n][i]
+	spn.value = spnArr[n][i]
 	i += 1
 	if i > spnArr[n].count do i = 1
 	)
@@ -39,7 +54,7 @@ fn managePoly tar sub =
 		)
 	else ready = true
 	)
-	subobjectLevel = sub
+	try(subobjectLevel = sub)catch()
 )
 
 fn rootParent node = 
@@ -191,23 +206,6 @@ fn updateSpn spn =
 
 rollout spectrum "" width:160 height:161
 (
-	global oTar --target object
-	global tDis --target distance
-	global tvDis --current target vertex distance
-	global sFac --scale factor
-	
-	global oSrc --source object
-	global sDis --source distance
-	global svDis --current source vertex distance
-	global iUnt --imaginary / custom unit
-	global oTape --selected tape
-	
-	global lArray = #()
-	global cArray = #()
-	global nArray = #()
-	
-	global ready = false
-	
 	button sp_btn_execute "execute" pos:[88,120] width:64 height:16 toolTip:"execute pending operations"
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	checkbutton sp_chk_mode "local" pos:[88,72] width:64 height:16 toolTip:"scale an object vs scale all objects"
@@ -334,7 +332,14 @@ rollout spectrum "" width:160 height:161
 	--print("sp_spn_target_buttonup")
 	try(updateSpn 0)catch()
 	)
-	
+	on sp_btn_target_rst pressed do
+	(
+		try
+		(
+		updateSpn 0
+		markSpinner sp_spn_target 1
+		)catch()
+	)
 	on sp_btn_resetX pressed do
 	(
 		for n = 1 to selection.count do
@@ -433,15 +438,13 @@ rollout spectrum "" width:160 height:161
 	--print("sp_spn_source_buttonup")
 	try(updateSpn 1)catch()
 	)
-	on sp_btn_target_rst pressed do
-	(
-	try(updateSpn 0)catch()
-	markSpinner sp_spn_target 1
-	)
 	on sp_btn_source_rst pressed do
 	(
-	try(updateSpn 1)catch()
-	markSpinner sp_spn_source 2
+		try
+		(
+		updateSpn 1
+		markSpinner sp_spn_source 2
+		)catch()
 	)
 )
 createdialog spectrum
