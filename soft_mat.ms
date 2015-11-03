@@ -1,7 +1,7 @@
 -- adjust round corners scene-wide
 -- iterate through multi/sub-object material list
 -- use material ID channel value to grade material softness
--- i.e. multiply final round corners value by Material Channel ID: 1 - rough, 7 - soft, 15 - very soft
+-- i.e. multiply final round corners value by Material Channel ID: 0 - sharp, 1 - rough, 7 - soft, 15 - very soft
 
 /*
 i = 0
