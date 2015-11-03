@@ -33,7 +33,7 @@ rollout softMat "" width:96 height:177
 		-- mr mats
 		if hasproperty n "Round_Corners_Enable" do
 		(
-		if rndVar == 0 do (n.Round_Corners_Enable = of; continue)
+		if rndVar == 0 do (n.Round_Corners_Enable = off; continue)
 		n.Round_Corners_Enable = on
 		n.round_corners_source = rndVar
 		if softmat.sm_ckb_blend.state == true then n.round_corners_blend_with_other_materials = on
@@ -42,6 +42,7 @@ rollout softMat "" width:96 height:177
 
 		if hasproperty n "opts_round_corners_on" do
 		(
+		if rndVar == 0 do (n.opts_round_corners_on = off; continue)
 		n.opts_round_corners_on = on
 		n.opts_round_corners_radius = rndVar
 		if softmat.sm_ckb_blend.state == true then n.opts_round_corners_any_mtl = on
