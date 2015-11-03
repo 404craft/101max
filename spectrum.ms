@@ -1,7 +1,7 @@
--- compute distance between two points of an object (i.e. an object is not to scale)
+-- compute distance between two anchors in an object (i.e. the object is not to scale)
 -- define target distance / real measurements of the object
--- auto-rescale an object locally or auto-rescale entire scene
--- limited functionality plugin
+-- use imaginary units instead of scene units
+-- rescale an object locally or rescale entire scene
 
 try(destroydialog ::spectrum)catch()
 
@@ -12,15 +12,15 @@ i = 1
 
 fn markSpinner spnType n =
 (
-		if spnType.enabled == true do
-		(
-		spnArr = #()
-		spnArr[1] = #(0.0,tvDis)
-		spnArr[2] = #(0.0,svDis)
-		spnType.value = spnArr[n][i]
-		i += 1
-		if i > spnArr[n].count do i = 1
-		)
+	if spnType.enabled == true do
+	(
+	spnArr = #()
+	spnArr[1] = #(0.0,tvDis)
+	spnArr[2] = #(0.0,svDis)
+	spnType.value = spnArr[n][i]
+	i += 1
+	if i > spnArr[n].count do i = 1
+	)
 )
 
 fn managePoly mObj sLvl=
@@ -35,9 +35,9 @@ fn managePoly mObj sLvl=
 	if (classof mObj != line) AND (classof pObj != splineshape) then 
 		(
 		convertToSplineShape mObj
-		oReady = true
+		ready = true
 		)
-	else oReady = false
+	else ready = false
 	)
 	subobjectLevel = sLvl
 )
@@ -102,9 +102,9 @@ fn updateTape nTar =
 				)
 			)
 		)
-		else messagebox("create tape between target anchor points")
+		else messagebox("create tape between object's anchor points")
 	)
-	else messagebox("select target or source object")
+	else messagebox("select target or source objects")
 )
 
 fn updateSpn spn =
@@ -206,64 +206,67 @@ rollout spectrum "" width:160 height:161
 	global cArray = #()
 	global nArray = #()
 	
-	global oReady = false
+	global ready = false
 	
-	button sp_btn_execute "execute" pos:[88,8] width:64 height:16 toolTip:"execute pending operations"
+	button sp_btn_execute "execute" pos:[88,120] width:64 height:16 toolTip:"execute pending operations"
 	listbox sp_listbox "" pos:[8,96] width:72 height:4
 	checkbutton sp_chk_mode "local" pos:[88,72] width:64 height:16 toolTip:"scale an object vs scale all objects"
 	button sp_btn_target "target" pos:[8,32] width:56 height:16 toolTip:"define target object"
 	spinner sp_spn_target "" pos:[8,48] width:72 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	label sp_lbl_101 "@101craft" pos:[96,141] width:53 height:16
-	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse object/s"
-	button sp_btn_scale_res "zero" pos:[88,120] width:64 height:16 toolTip:"reset object/s to original scale"
-	button sp_btn_tape "tape" pos:[8,8] width:72 height:16 toolTip:"account for nearby tape"
-	pickbutton sp_btn_append "add to list" pos:[8,72] width:72 height:16 message:"" toolTip:"add in parents"
+	button sp_btn_resetX "resetX" pos:[88,96] width:64 height:16 toolTip:"reset x-form and collapse"
+	button sp_btn_scale_res "zero" pos:[88,8] width:64 height:16 toolTip:"reset to original scale"
+	button sp_btn_tape "tape" pos:[8,8] width:72 height:16 toolTip:"assign nearby tape"
+	pickbutton sp_btn_append "add obj" pos:[8,72] width:72 height:16 message:"" toolTip:"add in parents"
 	button sp_btn_source "source" pos:[88,32] width:48 height:16 toolTip:"define source object"
 	spinner sp_spn_source "" pos:[88,48] width:64 height:16 enabled:false range:[0,1.67772e+007,0] type:#float
 	button sp_btn_target_rst "•" pos:[64,32] width:16 height:16 toolTip:"reset target spinner"
-	button sp_btn_source_rst "•" pos:[136,32] width:16 height:16 toolTip:"reset target spinner"
+	button sp_btn_source_rst "•" pos:[136,32] width:16 height:16 toolTip:"reset source spinner"
 	
 	on sp_btn_execute pressed do
 	(
-	if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
-	/* print ("------------")
-	print ("scale factor:" + sFac as string)
-	print ("target distance:" + tDis as string)
-	print ("custom unit:" + iUnt as string)
-	print ("target vert distance:" + tvDis as string) */
-		
-	--global vs local
-	case sp_chk_mode.state of
+	if oTar != undefined then
 	(
-	true:
-		  (
-			  for o = 1 to obj.count do
+		if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
+		/* print ("------------")
+		print ("scale factor:" + sFac as string)
+		print ("target distance:" + tDis as string)
+		print ("custom unit:" + iUnt as string)
+		print ("target vert distance:" + tvDis as string) */
+			
+		--global vs local
+		case sp_chk_mode.state of
+		(
+		true:
 			  (
-				  for l = 1 to lArray.count do
+				  for o = 1 to obj.count do
 				  (
-					  if findItem lArray obj[l] == 0 do
+					  for l = 1 to lArray.count do
 					  (
-					  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 AND obj[o] != oSrc do (appendifunique cArray obj[o])
+						  if findItem lArray obj[l] == 0 do
+						  (
+						  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 AND obj[o] != oSrc do (appendifunique cArray obj[o])
+						  )
 					  )
 				  )
-			  )
-	-- 			  nArray = undefined
-			  nArray = join cArray lArray
-			  saveScale nArray
-			  for n = 1 to nArray.count do 
-			  (
-			  nArray[n].scale = nArray[n].scale * sFac
-			  )
-		   )
-	false:
-		   (
-		   oTar.scale = oTar.scale * sFac      
-		   )
-	default:
-		   (
-		   )
+				  --nArray = undefined
+				  nArray = join cArray lArray
+				  saveScale nArray
+				  for n = 1 to nArray.count do 
+				  (
+				  nArray[n].scale = nArray[n].scale * sFac
+				  )
+			   )
+		false:
+			   (
+			   oTar.scale = oTar.scale * sFac      
+			   )
+		default:
+			   (
+			   )
+		)
 	)
-	
+	else messagebox ("target undefined")
 	)
 
 	on sp_listbox doubleClicked sel do
@@ -286,9 +289,9 @@ rollout spectrum "" width:160 height:161
 	    (
 			if $ != oSrc then
 			(
-				oReady = false
+				ready = false
 				managePoly $ 1
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (oReady == true AND (getKnotSelection $ 1).count >= 2) then
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (ready == true AND (getKnotSelection $ 1).count >= 2) then
 				(
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
@@ -384,9 +387,9 @@ rollout spectrum "" width:160 height:161
 	    (
 			if $ != oTar then
 			(
-				oReady = false
+				ready = false
 				managePoly $ 1
-				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (oReady == true AND (getKnotSelection $ 1).count >= 2) then
+				if (superclassof $ == geometryclass AND $.mesh.selectedVerts.count >= 2) OR (ready == true AND (getKnotSelection $ 1).count >= 2) then
 				(
 				sp_btn_source.text = $.name
 				oSrc = $
