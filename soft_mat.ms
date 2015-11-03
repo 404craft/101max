@@ -1,7 +1,6 @@
 -- adjust round corners scene-wide
 -- iterate through multi/sub-object material list
 -- use material ID channel value to grade material softness
--- limited functionality plugin
 
 try(destroydialog ::softMat)catch()
 
