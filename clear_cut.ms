@@ -111,7 +111,6 @@ fn differ =
 	)
 )
 
--- rollout
 try(destroydialog ::clear_cut)catch()
 
 rollout clear_cut "" width:64 height:64
@@ -137,10 +136,6 @@ rollout clear_cut "" width:64 height:64
 	on btn_differ pressed do
 	(
 	differ()	
-	)
-	on ckb_range changed state do
-	(
-		
 	)
 )
 createdialog clear_cut
