@@ -98,7 +98,7 @@ fn updateTape tar =
 (
 	managePoly tar 0
 	vArr = #() --(v)ertex array
-	mArr = #() -- tape / (m)easure array
+	mArr = #() --tape / (m)easure array
 	vArr = for t in tar.verts collect t.index
 	mArr = for o in objects where classof o == tape collect o
 	
