@@ -3,7 +3,6 @@
 -- assign same random material to objects based on their distance from each other
 -- define source materials by defining material editor slot ranges 1-2 to 1-24
 -- i.e. you use this script to apply a random material to hundreds of /groups of objects/
--- limited functionality plugin
 
 /*
 for n = 1 to 24 do 
