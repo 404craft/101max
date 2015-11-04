@@ -180,7 +180,7 @@ fn executeGlobal mode tar =
 		  )
 	  )
 	)
-	--nArray = undefined
+	nArray = #()
 	nArray = join cArray lArray
 	saveScale nArray
 	for n = 1 to nArray.count do 
