@@ -15,14 +15,15 @@ box pos: (random [-p,-p,-p] [p,p,p]) length:r width:r height:r wirecolor: yellow
 try(destroydialog ::spectrum)catch()
 
 global oTar = undefined --target object
-global tDis --target distance
-global tvDis --current target vertex distance
-global sFac --scale factor
+global tDis = 0.0 --target distance
+global tvDis = 0.0 --current target vertex distance
+global fac = 0.0 --scale factor
 
 global oSrc = undefined --source object
-global sDis --source distance
-global svDis --current source vertex distance
-global iUnt --imaginary / custom unit
+global sDis = 0.0 --source distance
+global svDis = 0.0 --current source vertex distance
+global unt = 0.0 --imaginary / custom unit
+
 global oTape --selected tape
 
 global lArray = #()
@@ -32,18 +33,18 @@ global nArray = #()
 global ready = false
 
 obj = objects
-i = 1
 
-fn markSpinner spn n =
+fn markSpinner spn =
 (
 	if spn.enabled == true do
 	(
 	spnArr = #()
-	spnArr[1] = #(0.0,tvDis)
-	spnArr[2] = #(0.0,svDis)
-	spn.value = spnArr[n][i]
+	if oTar != undefined do append spnArr tvDis
+	if oSrc != undefined do append spnArr svDis
+	append spnArr 0.0
+	spn.value = spnArr[i]
 	i += 1
-	if i > spnArr[n].count do i = 1
+	if i > spnArr.count do i = 1
 	)
 )
 
@@ -131,86 +132,40 @@ fn updateTape nTar =
 	else messagebox("select target or source objects")
 )
 
-fn updateSpn spn =
+fn updateSpn spn tar dis arr v1 v2 vdis =
 (
-	if spn == 0 then
-	(
-		if spectrum.sp_spn_target.enabled == true do
+		if (spn == 0 AND spectrum.sp_spn_target.enabled == true) OR (spn == 1 AND spectrum.sp_spn_source.enabled == true) do
 		(
 			try
 			(
-				tDis = spectrum.sp_spn_target.value
-				
-				if superclassof oTar == geometryclass then
+				if superclassof tar == geometryclass then
 				(
-				tArr = for i in $.mesh.selectedVerts collect i.index
-				t1 = tArr[1]
-				t2 = tArr[2]
-				tvDis = distance $.mesh.verts[t1].pos $.mesh.verts[t2].pos
+				arr = for i in tar.mesh.selectedVerts collect i.index
+				v1 = arr[1]
+				v2 = arr[2]
+				vdis = distance tar.mesh.verts[v1].pos tar.mesh.verts[v2].pos
 				)
-				else if superclassof oTar == shape then
+				else if superclassof tar == shape then
 				(
-				tArr = getKnotSelection $ 1
-				t1 = getKnotPoint $ 1 tArr[1]
-				t2 = getKnotPoint $ 1 tArr[2]
-				tvDis = distance t1 t2
+				arr = getKnotSelection tar 1
+				v1 = getKnotPoint tar 1 arr[1]
+				v2 = getKnotPoint tar 1 arr[2]
+				vdis = distance v1 v2
 				)
 				
-				if $.scale != [1,1,1] do
+				if tar.scale != [1,1,1] do
 				(
-				/* print ("---target scale out---")	 */
-				s_tvDis = undefined
-				s_tvDis = $.scale.x * tvDis
-				tvDis = s_tvDis
+				s_vdis = undefined
+				s_vdis = tar.scale.x * vdis
+				vdis = s_vdis
 				)
-				
-				sFac = (tDis / tvDis)
-				/* print ("target distance:" + tDis as string)
-				print ("target vert distance:" + tvDis as string)
-				print ("scale factor:" + sFac as string) */
+				--target
+				if spn == 0 do (oTar = tar; tDis = dis; fac = (dis / vdis); tvDis = vdis)
+				--source
+				if spn == 1 do (oSrc = tar; sDis = dis; unt = (vdis / dis); svDis = vdis)
 			)
 			catch()
 		)
-	)
-	
-	else
-	(
-		if spectrum.sp_spn_source.enabled == true do
-		(
-			try
-			(
-				sDis = spectrum.sp_spn_source.value
-				
-				if superclassof oSrc == geometryclass then
-				(
-				sArr = for i in $.mesh.selectedVerts collect i.index
-				s1 = sArr[1]
-				s2 = sArr[2]
-				svDis = distance $.mesh.verts[s1].pos $.mesh.verts[s2].pos
-				)
-				else if superclassof oSrc == shape then
-				(
-				sArr = getKnotSelection $ 1
-				s1 = getKnotPoint $ 1 sArr[1]
-				s2 = getKnotPoint $ 1 sArr[2]
-				svDis = distance s1 s2
-				)
-				
-				if $.scale != [1,1,1] do
-				(
-				/* print("---source scale out---") */	
-				s_svDis = undefined
-				s_svDis = $.scale.x * svDis
-				svDis = s_svDis
-				)
-				iUnt = (svDis / sDis)
-				/* print ("source distance:" + sDis as string)
-				print ("source vert distance:" + svDis as string)
-				print ("custom unit:" + iUnt as string) */
-			)
-			catch()
-		)
-	)
 )
 
 rollout spectrum "" width:160 height:161
@@ -234,11 +189,11 @@ rollout spectrum "" width:160 height:161
 	(
 	if oTar != undefined then
 	(
-		if oSrc != undefined do sFac = (tDis / sDis) * (svDis / tvDis)
+		if oSrc != undefined do fac = (tDis / sDis) * (svDis / tvDis)
 		/* print ("------------")
-		print ("scale factor:" + sFac as string)
+		print ("scale factor:" + fac as string)
 		print ("target distance:" + tDis as string)
-		print ("custom unit:" + iUnt as string)
+		print ("custom unit:" + unt as string)
 		print ("target vert distance:" + tvDis as string) */
 			
 		--global vs local
@@ -261,12 +216,12 @@ rollout spectrum "" width:160 height:161
 				  saveScale nArray
 				  for n = 1 to nArray.count do 
 				  (
-				  nArray[n].scale = nArray[n].scale * sFac
+				  nArray[n].scale = nArray[n].scale * fac
 				  )
 			   )
 		false:
 			   (
-			   oTar.scale = oTar.scale * sFac      
+			   if fac != 0.0 do oTar.scale = oTar.scale * fac      
 			   )
 		default:
 			   (
@@ -304,7 +259,7 @@ rollout spectrum "" width:160 height:161
 				sp_spn_target.enabled = true
 				sp_btn_target.text = $.name
 				oTar = $
-				try(updateSpn 0)catch()
+				try(updateSpn 0 $ tDis tArr t1 t2 tvDis)catch()
 				)
 				else
 					(
@@ -331,24 +286,24 @@ rollout spectrum "" width:160 height:161
 	(
 	--print("sp_spn_target_changed")
 	sp_spn_target.value = val
-	try(updateSpn 0)catch()
+	try(updateSpn 0 oTar spectrum.sp_spn_target.value tArr t1 t2 tvDis)catch()
 	)
 	on sp_spn_target buttondown do
 	(
 	--print("sp_spn_target_buttondown")
-	try(updateSpn 0)catch()
+	try(updateSpn 0 oTar spectrum.sp_spn_target.value tArr t1 t2 tvDis)catch()
 	)
 	on sp_spn_target buttonup do
 	(
 	--print("sp_spn_target_buttonup")
-	try(updateSpn 0)catch()
+	try(updateSpn 0 oTar spectrum.sp_spn_target.value tArr t1 t2 tvDis)catch()
 	)
 	on sp_btn_target_rst pressed do
 	(
 		try
 		(
-		updateSpn 0
-		markSpinner sp_spn_target 1
+		updateSpn 0 oTar spectrum.sp_spn_target.value tArr t1 t2 tvDis
+		markSpinner sp_spn_target
 		)catch()
 	)
 	on sp_btn_resetX pressed do
@@ -410,7 +365,7 @@ rollout spectrum "" width:160 height:161
 				sp_btn_source.text = $.name
 				oSrc = $
 				sp_spn_source.enabled = true
-				try(updateSpn 1)catch()
+				try(updateSpn 1 $ spectrum.sp_spn_source.value sArr s1 s2 svDis)catch()
 				)
 				else
 					(
@@ -438,24 +393,24 @@ rollout spectrum "" width:160 height:161
 	(
 	--print("sp_spn_source_changed")
 	sp_spn_source.value = val
-	try(updateSpn 1)catch()
+	try(updateSpn 1 oSrc spectrum.sp_spn_source.value sArr s1 s2 svDis)catch()
 	)
 	on sp_spn_source buttondown do
 	(
 	--print("sp_spn_source_buttondown")
-	try(updateSpn 1)catch()
+	try(updateSpn 1 oSrc spectrum.sp_spn_source.value sArr s1 s2 svDis)catch()
 	)
 	on sp_spn_source buttonup do
 	(
 	--print("sp_spn_source_buttonup")
-	try(updateSpn 1)catch()
+	try(updateSpn 1 oSrc spectrum.sp_spn_source.value sArr s1 s2 svDis)catch()
 	)
 	on sp_btn_source_rst pressed do
 	(
 		try
 		(
-		updateSpn 1
-		markSpinner sp_spn_source 2
+		updateSpn 1 oSrc spectrum.sp_spn_source.value sArr s1 s2 svDis
+		markSpinner sp_spn_source
 		)catch()
 	)
 )
