@@ -2,6 +2,7 @@
 -- assign smoothing groups different to neighbors
 -- make an object or selected faces coarse
 -- reset smoothing groups on all or only selected faces (• - switch)
+-- use it instead of auto-smooth to create a coarse object where auto-smooth assigns same smoothing groups to faces sharing the same vertex which results in a crease after adding a turbosmoothing
 -- brute force method
 
 global a
