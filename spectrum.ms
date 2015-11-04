@@ -45,7 +45,6 @@ fn markSpinner spn =
 		if oTar != undefined do append spnArr tvDis
 		if oSrc != undefined do append spnArr svDis
 		append spnArr 0.0
-		print(svDis)
 		spn.value = spnArr[c]
 		c += 1
 		if c > spnArr.count do c = 1
