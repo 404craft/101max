@@ -94,37 +94,39 @@ fn saveScale arr =
 	)
 )
 
-fn updateTape nTar =
+fn updateTape tar =
 (
-	managePoly nTar 0
-	vArr = #()
-	tArr = #()
-	vArr = for i in nTar.verts collect i.index
-	tArr = for o in objects where classof o == tape collect o
+	managePoly tar 0
+	vArr = #() --(v)ertex array
+	mArr = #() -- tape / (m)easure array
+	vArr = for t in tar.verts collect t.index
+	mArr = for o in objects where classof o == tape collect o
 	
-	if nTar == oTar OR nTar == oSrc then
+	if tar == oTar OR tar == oSrc then
 	(
-		if tArr.count > 0 then
+		if mArr.count > 0 then
 		(
-			for n = 1 to vArr.count do 
+			for v = 1 to vArr.count do 
 			(
-				for t = 1 to tArr.count do 
+				for m = 1 to mArr.count do 
 				(
-					if nTar.verts[n].pos == tArr[t].pos do 
+					if tar.verts[v].pos == mArr[m].pos do 
 					(
-					oTape = tArr[t]
+					oTape = mArr[m]
 					nVal = distance oTape oTape.target
 					
-						if nTar == oTar then
+						if tar == oTar then
 						(
 						tvDis = nVal
 						spectrum.sp_spn_target.value = tvDis
+						markSpinner sp_spn_target
 						nPrefix = "tar:"
 						)
-						else if nTar == oSrc then 
+						else if tar == oSrc then 
 						(
 						svDis = nVal
-						spectrum.sp_spn_target.value = svDis
+						spectrum.sp_spn_source.value = svDis
+						markSpinner sp_spn_source
 						nPrefix = "src:"
 						)
 					spectrum.sp_btn_tape.text = nPrefix + oTape.name
