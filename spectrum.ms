@@ -1,5 +1,6 @@
 -- compute distance between two anchors in an object (i.e. the object is not to scale)
 -- define target distance / real measurements of the object
+-- define the ratio between target and source objects
 -- rescale the object locally or rescale entire scene
 -- use imaginary units instead of scene units
 
