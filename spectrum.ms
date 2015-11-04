@@ -76,15 +76,15 @@ fn rootParent node =
 	)
 )
 
-fn saveScale tar =
+fn saveScale arr =
 (
-	for t = 1 to tar.count do
+	for a = 1 to arr.count do
 	(
-		if getuserprop tar[t] "oScale_x" == undefined do
+		if getuserprop arr[a] "oScale_x" == undefined do
 		(
-		setuserprop tar[t] "oScale_x" tar[t].scale.x
-		setuserprop tar[t] "oScale_y" tar[t].scale.y
-		setuserprop tar[t] "oScale_z" tar[t].scale.z
+		setuserprop arr[a] "oScale_x" arr[a].scale.x
+		setuserprop arr[a] "oScale_y" arr[a].scale.y
+		setuserprop arr[a] "oScale_z" arr[a].scale.z
 		)
 	)
 )
@@ -168,6 +168,39 @@ fn updateSpn spn tar dis arr v1 v2 vdis =
 		)
 )
 
+fn executeGlobal mode tar =
+(
+	for o = 1 to tar.count do
+	(
+	  for l = 1 to lArray.count do
+	  (
+		  if findItem lArray tar[l] == 0 do
+		  (
+		  if rootParent tar[o] != lArray[l] AND findItem lArray tar[o] == 0 AND tar[o] != oSrc do (appendifunique cArray tar[o])
+		  )
+	  )
+	)
+	--nArray = undefined
+	nArray = join cArray lArray
+	saveScale nArray
+	for n = 1 to nArray.count do 
+	(
+	if mode == 0 do scaleReset n nArray
+	if mode == 1 do nArray[n].scale = nArray[n].scale * fac
+	)
+)
+
+fn scaleReset a arr = 
+(
+	if (getuserprop arr[a] "oScale_x") != undefined then 
+	(
+		arr[a].scale.x = (getuserprop arr[a] "oScale_x") as float
+		arr[a].scale.y = (getuserprop arr[a] "oScale_y") as float
+		arr[a].scale.z = (getuserprop arr[a] "oScale_z") as float
+	)
+	else arr[a].scale = [1,1,1]
+)
+
 rollout spectrum "" width:160 height:161
 (
 	button sp_btn_execute "execute" pos:[88,120] width:64 height:16 toolTip:"execute pending operations"
@@ -198,24 +231,8 @@ rollout spectrum "" width:160 height:161
 		(
 		true:
 			  (
-				  for o = 1 to obj.count do
-				  (
-					  for l = 1 to lArray.count do
-					  (
-						  if findItem lArray obj[l] == 0 do
-						  (
-						  if rootParent obj[o] != lArray[l] AND findItem lArray obj[o] == 0 AND obj[o] != oSrc do (appendifunique cArray obj[o])
-						  )
-					  )
-				  )
-				  --nArray = undefined
-				  nArray = join cArray lArray
-				  saveScale nArray
-				  for n = 1 to nArray.count do 
-				  (
-				  nArray[n].scale = nArray[n].scale * fac
-				  )
-			   )
+			  executeGlobal 1 obj
+			  )
 		false:
 			   (
 			   if fac != 0.0 AND lfac != fac do oTar.scale = oTar.scale * fac      
@@ -324,15 +341,11 @@ rollout spectrum "" width:160 height:161
 	
 	on sp_btn_scale_res pressed do
 	(
-		for n = 1 to selection.count do 
+		if sp_chk_mode.state == true then sel = objects
+			else if sp_chk_mode.state == false then sel = selection
+		for n = 1 to sel.count do 
 		(
-			if (getuserprop selection[n] "oScale_x") != undefined then 
-			(
-				selection[n].scale.x = (getuserprop selection[n] "oScale_x") as float
-				selection[n].scale.y = (getuserprop selection[n] "oScale_y") as float
-				selection[n].scale.z = (getuserprop selection[n] "oScale_z") as float
-			)
-			else selection[n].scale = [1,1,1]
+			scaleReset n sel
 		)
 	)
 	
