@@ -329,6 +329,7 @@ rollout spectrum "" width:160 height:161
 	on sp_spn_target changed val do
 	(
 	--print("sp_spn_target_changed")
+	sp_spn_target.value = val
 	try(updateSpn 0)catch()
 	)
 	on sp_spn_target buttondown do
@@ -435,6 +436,7 @@ rollout spectrum "" width:160 height:161
 	on sp_spn_source changed val do
 	(
 	--print("sp_spn_source_changed")
+	sp_spn_source.value = val
 	try(updateSpn 1)catch()
 	)
 	on sp_spn_source buttondown do
