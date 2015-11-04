@@ -189,13 +189,10 @@ rollout spectrum "" width:160 height:161
 	(
 	if oTar != undefined then
 	(
+		updateSpn 0 oTar spectrum.sp_spn_target.value tArr t1 t2 tvDis
+		updateSpn 1 oSrc spectrum.sp_spn_source.value sArr s1 s2 svDis
 		if oSrc != undefined do fac = (tDis / sDis) * (svDis / tvDis)
-		/* print ("------------")
-		print ("scale factor:" + fac as string)
-		print ("target distance:" + tDis as string)
-		print ("custom unit:" + unt as string)
-		print ("target vert distance:" + tvDis as string) */
-			
+
 		--global vs local
 		case sp_chk_mode.state of
 		(
@@ -221,7 +218,7 @@ rollout spectrum "" width:160 height:161
 			   )
 		false:
 			   (
-			   if fac != 0.0 do oTar.scale = oTar.scale * fac      
+			   if fac != 0.0 AND lfac != fac do oTar.scale = oTar.scale * fac      
 			   )
 		default:
 			   (
