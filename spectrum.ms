@@ -31,21 +31,27 @@ global cArray = #()
 global nArray = #()
 
 global ready = false
+global c = 1
 
 obj = objects
 
 fn markSpinner spn =
 (
-	if spn.enabled == true do
+	try
 	(
-	spnArr = #()
-	if oTar != undefined do append spnArr tvDis
-	if oSrc != undefined do append spnArr svDis
-	append spnArr 0.0
-	spn.value = spnArr[i]
-	i += 1
-	if i > spnArr.count do i = 1
+		if spn.enabled == true do
+		(
+		spnArr = #()
+		if oTar != undefined do append spnArr tvDis
+		if oSrc != undefined do append spnArr svDis
+		append spnArr 0.0
+		print(svDis)
+		spn.value = spnArr[c]
+		c += 1
+		if c > spnArr.count do c = 1
+		)
 	)
+	catch()
 )
 
 fn managePoly tar sub =
