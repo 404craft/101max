@@ -270,6 +270,7 @@ rollout spectrum "" width:160 height:161
 			   )
 		default:
 			   (
+				print("execute_default")
 			   )
 		)
 	)
