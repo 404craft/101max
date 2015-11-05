@@ -1,5 +1,4 @@
--- parametric model of a solar system
-
+-- underdev
 global root
 global elements = #()
 global planets = #()
@@ -19,11 +18,16 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		m[4].width = 1.5 * c
 		append elements clone
 	)
-	
+	-- base hemisphere
 	s = sphere radius:(0.5 * sun) smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
 	append elements s
+
+	-- rod cylinder base
+	b = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
+	append elements b
 	
-	r = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+	-- rod cylinder
+	r = cylinder pos:[x,y,z] radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
 	append elements r
 
 	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
