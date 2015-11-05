@@ -5,7 +5,7 @@ global elements = #()
 global planets = #()
 global rad = 0
 
-fn wipe arr =
+fn kill arr =
 (
 	for a = 1 to arr.count do delete arr[a]
 )
@@ -23,6 +23,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	rad = 0
 	-- root
 	root = circle radius:(size*circles*circle_gap*1.5) pos:[x,y,z] name: "stellar_root"
+	append elements root
+	
 	-- base circles
 	for c = 1 to circles do
 	(
@@ -126,7 +128,7 @@ rollout stellar "" width:112 height:160
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50,20] type:#float
 	button btn_create "procreate" pos:[16,128] width:80 height:24
-	button btn_kill "annihilate" pos:[8,96] width:96 height:24
+	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true
 	button btn_next "" pos:[96,128] width:8 height:24
 	button btn_last "" pos:[8,128] width:8 height:24
 
@@ -135,20 +137,15 @@ rollout stellar "" width:112 height:160
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
-	on btn_kill pressed do
-	(
-		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
-		select root
-	)
 	on btn_next pressed do
 	(
-		wipe elements
+		if chk_kill.state == true do kill elements
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
 	on btn_last pressed do
 	(
-		wipe elements
+		if chk_kill.state == true do kill elements
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
