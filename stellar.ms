@@ -1,5 +1,6 @@
 -- underdev
 global root
+global elements = #()
 fn procreate x y z size circles circle_gap orbits orbit_gap =
 (
 	-- root
@@ -9,18 +10,30 @@ fn procreate x y z size circles circle_gap orbits orbit_gap =
 	(
 		print(c as string)
 		clone = circle radius:(size*c*circle_gap) pos:[x,y,z] name: "stellar_base"
-		clone.parent = root
 		m = sweep()
 		addModifier clone m
 		classof clone
 		m[4].length = 1.5
 		m[4].width = 1.5 * c
+		append elements clone
 	)
+	
+	s = sphere radius:10.0 smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
+	append elements s
+	
+	ceiling = 220.0
+	c = cylinder pos:[x,y,z] radius:2.5 smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+	append elements c
+
+	s = sphere radius:20.0 smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
+	append elements s
 	
 	--orbits
 	for o = 1 to orbits do
 	(
 	)
+	
+	for e in elements do e.parent = root
 	
 )
 
