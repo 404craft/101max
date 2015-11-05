@@ -195,17 +195,41 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 try(destroydialog ::stellar)catch()
 rollout stellar "" width:112 height:160
 (
+	global sun_min = 5.0
+	global sun_max = 50.0
+	global sun_def = 20.0
+	
+	global ceiling_min = 50.0
+	global ceiling_max = 1000.0
+	global ceiling_def = 200.0
+	
+	global circles_min = 1
+	global circles_max = 10
+	global circles_def = 3
+	
+	global c_gap_min = 1.0
+	global c_gap_max = 10.0
+	global c_gap_def = 3.0
+	
+	global orbits_min = 1
+	global orbits_max = 20
+	global orbits_def = 5
+	
+	global o_gap_min = 5.0
+	global o_gap_max = 75.0
+	global o_gap_def = 20.0
+	
 	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer tooltip:"system size"
-	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[1,50,20] type:#float tooltip:"sun size"
-	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[10,1000,200] type:#float tooltip:"system height"
-	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,5,3] type:#integer tooltip:"number of base circles"
-	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,3] type:#float tooltip:"gaps between circles"
-	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer tooltip:"number of orbits"
-	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50,20] type:#float tooltip:"gaps between orbits"
+	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[sun_min,sun_max,sun_def] type:#float tooltip:"sun size"
+	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[ceiling_min,ceiling_max,ceiling_def] type:#float tooltip:"system height"
+	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[circles_min,circles_max,circles_def] type:#integer tooltip:"number of base circles"
+	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[c_gap_min,c_gap_max,c_gap_def] type:#float tooltip:"gaps between circles"
+	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[orbits_min,orbits_max,orbits_def] type:#integer tooltip:"number of orbits"
+	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[o_gap_min,o_gap_max,o_gap_def] type:#float tooltip:"gaps between orbits"
 	button btn_create "procreate" pos:[16,128] width:80 height:24 tooltip:"abracadabra"
 	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true tooltip:"delete current before creating next"
 	button btn_next "" pos:[96,128] width:8 height:24 tooltip:"create new system based on current values"
-	button btn_last "" pos:[8,128] width:8 height:24 tooltip:"create new system based on current values"
+	button btn_last "" pos:[8,128] width:8 height:24 tooltip:"create new system based on random extreme values"
 	label lbl_101 "101craft" pos:[60,6] width:43 height:16
 
 	on btn_create pressed do
@@ -222,7 +246,7 @@ rollout stellar "" width:112 height:160
 	on btn_last pressed do
 	(
 		try(if chk_kill.state == true do kill elements)catch()
-		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
+		procreate 0.0 0.0 0.0 spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max)
 		select root
 	)
 )
