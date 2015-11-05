@@ -8,7 +8,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	-- base circles
 	for c = 1 to circles do
 	(
-		clone = circle radius:(size*c*circle_gap) pos:[x,y,z] steps:32 name: "stellar_base"
+		rnd = random 0.1 3.0
+		clone = circle radius:(rnd+size*c*circle_gap) pos:[x,y,z] steps:32 name: "stellar_base"
 		m = sweep current_built_in_shape: 2
 		addModifier clone m
 		classof clone
@@ -39,10 +40,19 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		classof orbit
 		m[4].radius = 1.5
 		orbit.parent = d
-		
-		rnd = random 5.0 (sun-(sun*0.15)) 
-		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_core"
 		append elements orbit
+		
+		rnd = random 5.0 (sun-(sun*0.25)) 
+		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_planet"
+		s.parent = d
+		append elements s
+		
+		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: "stellar_holder"
+		c.parent = d
+		append elements c
+		
+		r = random 0 90
+		d.rotation = eulerangles 0 0 rnd
 	)
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
@@ -59,21 +69,21 @@ rollout stellar "" width:112 height:136
 	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[1.0,50.0,20.0] type:#float
 	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[10,1000,200] type:#float
 	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,5,3] type:#integer
-	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,2] type:#float
+	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,3.0] type:#float
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50.0,20.0] type:#float
 	button btn_create "procreate" pos:[8,104] width:96 height:24
 	on spn_size changed val do
-		(
+	(
 	)
 	on spn_ceiling changed val do
-		(
+	(
 	)
 	on spn_circles changed val do
-		(
+	(
 	)
 	on spn_orbits changed val do
-		(
+	(
 	)
 	on btn_create pressed do
 	(
