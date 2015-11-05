@@ -1,5 +1,5 @@
 -- underdev
-
+global root
 fn procreate x y z size circles circle_gap orbits orbit_gap =
 (
 	-- root
@@ -10,12 +10,16 @@ fn procreate x y z size circles circle_gap orbits orbit_gap =
 		print(c as string)
 		clone = circle radius:(size*c*circle_gap) pos:[x,y,z] name: "stellar_base"
 		clone.parent = root
+		m = sweep()
+		addModifier clone m
+		classof clone
+		m[4].length = 1.5
+		m[4].width = 1.5 * c
 	)
 	
 	--orbits
 	for o = 1 to orbits do
 	(
-		print("orbit")
 	)
 	
 )
@@ -42,6 +46,7 @@ rollout stellar "" width:112 height:136
 	on btn_create pressed do
 	(
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value
+		select root
 	)
 )
 
