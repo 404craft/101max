@@ -2,17 +2,27 @@
 
 global root = undefined
 global elements = #()
+global base = #()
+global top = #()
 global planets = #()
 global rad = 0
 
-fn tone arr =
+fn tone arr n =
 (
 	for a = 1 to arr.count do 
 	(
 	-- mat = Arch___Design__mi()
 	mat = standard()
 	mat.name = "m_" + arr[a] as string
-	c = color (255-a*10.625 as integer) (0+a*10.625 as integer) 255 0
+	a1 = (255-a*10.625 as integer)
+	a2 = (0+a*10.625 as integer)
+	r = 255
+	g = 255
+	b = 255
+	if n == 1 then (r = a1; g = a2)
+		else if n == 2 then (g = a1; b = a2)
+			else if n == 3 then (r = a1; b = a2)
+	c = color r g b 0
 	mat.diffuse = c
 	arr[a].material = mat
 	)
@@ -32,11 +42,13 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 (
 	root = undefined
 	elements = #()
+	base = #()
+	top = #()
 	planets = #()
 	rad = 0
 	-- root
 	root = circle radius:(size*circles*circle_gap*1.5) pos:[x,y,z] name: "stellar_root"
-	append elements root
+	append base root
 	
 	-- base circles
 	for c = 1 to circles do
@@ -50,7 +62,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		m[4].length = 1.5
 		m[4].width = 1.5 * c
 		origin clone root
-		append elements clone
+		append base clone
 	)
 	
 	-- base links
@@ -61,42 +73,47 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		clone = box pos:[x,y,z] rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
 		rotate clone (angleAxis rot [0, 0, 1])
 		origin clone root
-		append elements clone
+		append base clone
 	)	
 	
 	-- base hemisphere
 	s = sphere radius:(0.5 * sun) smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
 	origin s root
-	append elements s
+	append base s
 
 	-- rod cylinder base
 	b = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
 	origin b s
-	append elements b
+	append base b
 	
 	-- rod cylinder
 	r = cylinder pos:[x,y,z] radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
 	origin r b
-	append elements r
+	append base r
 
+	-- sun root
+	s_r = dummy pos:[x,y,ceiling] name: ("stellar_core_root")
+	origin s_r r	
+	append top s_r
+	
 	-- sun sphere
 	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
-	origin s r
-	append elements s
+	origin s s_r
+	append top s
 	
 	-- rod cylinder base
 	c = cylinder pos:[x,y,ceiling-(sun+0.1)] radius:(b.radius * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
 	origin c s
-	append elements c
+	append top c
 	
 	--orbits
 	for o = 1 to orbits do
 	(
 		-- orbit roots / dummies
 		d = dummy pos:[x,y,ceiling] name: ("stellar_orbit_root_" + o as string)
-		origin d s
+		origin d s_r
 		append planets d
-		append elements d
+		append top d
 		rnd = random 0.5 10.0
 		rim = rnd+(sun*2)+o*orbit_gap
 		
@@ -107,18 +124,18 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		classof orbit
 		m[4].radius = 1.5
 		origin orbit d
-		append elements orbit
+		append top orbit
 		
 		-- planets
 		rnd = random 5.0 (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: ("stellar_orbit_planet_" + o as string)
 		origin p d
-		append elements p
+		append top p
 		
 		-- orbit holders
 		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: ("stellar_orbit_holder_" + o as string)
 		origin c d
-		append elements c
+		append top c
 		
 		-- set orbit rotation
 		r1 = random -120 120
@@ -129,9 +146,10 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
 	origin c s
-	append elements c
-	
-	tone elements
+	append top c
+	elements = join base top
+	tone base 1
+	tone top 2
 )
 
 try(destroydialog ::stellar)catch()
