@@ -51,8 +51,10 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		c.parent = d
 		append elements c
 		
-		r = random 0 90
-		d.rotation = eulerangles 0 0 rnd
+		r1 = random 0 90
+		r2 = random 0 45
+		rotate d (angleAxis r1 [0, 0, 1])
+		rotate d (angleAxis r2 [0, 1, 0])
 	)
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
