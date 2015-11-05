@@ -1,4 +1,5 @@
--- underdev
+-- parametric model of a solar system
+
 global root
 global elements = #()
 global planets = #()
@@ -30,17 +31,21 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	r = cylinder pos:[x,y,z] radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
 	append elements r
 
+	-- sun sphere
 	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
 	append elements s
 	
 	--orbits
 	for o = 1 to orbits do
 	(
+		-- orbit roots / dummies
 		d = dummy pos:[x,y,ceiling] name: "stellar_orbit_root"
 		append planets d
 		append elements d
 		rnd = random 0.5 10.0
 		rim = rnd+(sun*2)+o*orbit_gap
+		
+		-- orbits
 		orbit = circle radius:rim pos:[x,y,ceiling] steps:32 name: "stellar_orbit"
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
@@ -49,15 +54,18 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		orbit.parent = d
 		append elements orbit
 		
+		-- planets
 		rnd = random 5.0 (sun-(sun*0.25)) 
-		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_planet"
+		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_orbit_planet"
 		s.parent = d
 		append elements s
 		
-		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: "stellar_holder"
+		-- orbit holders
+		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: "stellar_orbit_holder"
 		c.parent = d
 		append elements c
 		
+		-- set orbit rotation
 		r1 = random -120 120
 		r2 = random -30 30
 		rotate d (angleAxis r1 [0, 0, 1])
