@@ -13,10 +13,12 @@ fn purge tar =
 	s_x = 0.0
 	s_y = 0.0
 	s_z = 0.0
-
+	try
+	(
 	s_x = tar.pos.x
 	s_y = tar.pos.y
 	s_z = tar.pos.z
+	)catch()
 )
 
 fn tone arr n rnd =
@@ -230,9 +232,9 @@ rollout stellar "" width:112 height:160
 	global o_gap_max = 75.0
 	global o_gap_def = 20.0
 	
-	global s_x
-	global s_y
-	global s_z
+	global s_x = 0.0
+	global s_y = 0.0
+	global s_z = 0.0
 	
 	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer toolTip:"system size"
 	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[5,50,20] type:#float toolTip:"sun size"
@@ -253,28 +255,24 @@ rollout stellar "" width:112 height:160
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
-		purge root
 	)
 	on btn_c_1 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def)
 		select root
-		purge root
 	)
 	on btn_c_2 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max)
 		select root
-		purge root
 	)
 	on btn_c_3 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max)
 		select root
-		purge root
 	)
 )
 
