@@ -4,10 +4,17 @@ global root = undefined
 global elements = #()
 global planets = #()
 global rad = 0
+
 fn wipe arr =
 (
-	for a in arr do delete a
+	for a = 1 to arr.count do delete arr[a]
 )
+
+fn origin child parent =
+(
+	child.parent = parent
+)
+
 fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 (
 	root = undefined
@@ -27,6 +34,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		classof clone
 		m[4].length = 1.5
 		m[4].width = 1.5 * c
+		origin clone root
 		append elements clone
 	)
 	
@@ -37,23 +45,28 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		rot = (360 / links) * l
 		clone = box pos:[x,y,z] rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: "stellar_link"
 		rotate clone (angleAxis rot [0, 0, 1])
+		origin clone root
 		append elements clone
 	)	
 	
 	-- base hemisphere
 	s = sphere radius:(0.5 * sun) smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
+	origin s root
 	append elements s
 
 	-- rod cylinder base
 	b = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
+	origin b s
 	append elements b
 	
 	-- rod cylinder
 	r = cylinder pos:[x,y,z] radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+	origin r b
 	append elements r
 
 	-- sun sphere
 	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
+	origin s r
 	append elements s
 	
 	--orbits
@@ -62,6 +75,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		arr = #()
 		-- orbit roots / dummies
 		d = dummy pos:[x,y,ceiling] name: "stellar_orbit_root"
+		origin d s
 		append planets d
 		append elements d
 		rnd = random 0.5 10.0
@@ -74,15 +88,18 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		classof orbit
 		m[4].radius = 1.5
 		append arr orbit
+		append elements orbit
 		
 		-- planets
 		rnd = random 5.0 (sun-(sun*0.25)) 
 		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_orbit_planet"
 		append arr s
+		append elements s
 		
 		-- orbit holders
 		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: "stellar_orbit_holder"
 		append arr c
+		append elements c
 		
 		for a in arr do a.parent = d
 		
@@ -94,10 +111,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	)
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
+	origin c s
 	append elements c
-	
-	for e in elements do e.parent = root
-	
 )
 
 try(destroydialog ::stellar)catch()
@@ -114,18 +129,7 @@ rollout stellar "" width:112 height:160
 	button btn_kill "annihilate" pos:[8,96] width:96 height:24
 	button btn_next "" pos:[96,128] width:8 height:24
 	button btn_last "" pos:[8,128] width:8 height:24
-	on spn_size changed val do
-		(
-	)
-	on spn_ceiling changed val do
-		(
-	)
-	on spn_circles changed val do
-		(
-	)
-	on spn_orbits changed val do
-		(
-	)
+
 	on btn_create pressed do
 	(
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
