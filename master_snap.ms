@@ -41,8 +41,8 @@ fn nearest objA objB val =
 try(destroydialog ::masterSnap)catch()
 rollout masterSnap "" width:72 height:112
 (
-	button btn_snap "snap" pos:[8,72] width:56 height:17
-	button btn_parent "parent" pos:[8,88] width:56 height:17
+	button btn_snap "snap" pos:[8,88] width:56 height:17
+	checkbutton btn_parent "parent" pos:[8,72] width:56 height:17 enabled: true checked:true
 	button btn_src "arrayB" pos:[24,24] width:40 height:17
 	button btn_tar "arrayA" pos:[24,8] width:40 height:17
 	spinner spn_range "" pos:[8,48] width:56 height:16 range:[0.01,100000,0.01] type:#float
@@ -58,18 +58,11 @@ rollout masterSnap "" width:72 height:112
 			for c = 1 to closest.count do
 			(
 				tar[c].transform = closest[c].transform
+				if btn_parent.state == true do tar[c].parent = closest[c]
 			)
 		)catch()
 	)
-	on btn_parent pressed do
-	(
-		try
-		(
-		for t = 1 to tar.count do for s = 1 to src.count where distance tar[t] src[s] < spn_range.value do src[s].parent = tar[t]
-		)
-		catch()
-	)
-	
+
 	on btn_src pressed do
 	(
 	src = #()
