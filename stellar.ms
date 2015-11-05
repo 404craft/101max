@@ -1,6 +1,8 @@
--- underdev
+-- parametric model of a solar system
+
 global root
 global elements = #()
+global planets = #()
 fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 (
 	-- root
@@ -31,6 +33,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	for o = 1 to orbits do
 	(
 		d = dummy pos:[x,y,ceiling] name: "stellar_orbit_root"
+		append planets d
 		append elements d
 		rnd = random 0.5 10.0
 		rim = rnd+(sun*2)+o*orbit_gap
@@ -51,8 +54,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		c.parent = d
 		append elements c
 		
-		r1 = random 0 90
-		r2 = random 0 45
+		r1 = random -120 120
+		r2 = random -30 30
 		rotate d (angleAxis r1 [0, 0, 1])
 		rotate d (angleAxis r2 [0, 1, 0])
 	)
