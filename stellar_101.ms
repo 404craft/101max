@@ -28,6 +28,18 @@ fn tone arr n =
 	)
 )
 
+fn life arr dir spd =
+(
+	for a = 1 to arr.count do
+	(
+		with animate on
+		(
+		  at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
+		  at time 100 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
+		)
+	)
+)
+
 fn kill arr =
 (
 	for a = 1 to arr.count do delete arr[a]
@@ -142,6 +154,11 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		r2 = random -30 30
 		rotate d (angleAxis r1 [0, 0, 1])
 		rotate d (angleAxis r2 [0, 1, 0])
+		
+		rnd = random 0 1
+		if rnd == 0 then dir = -1
+			else if rnd == 1 then dir = 1
+		life planets dir (rim as integer)
 	)
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
