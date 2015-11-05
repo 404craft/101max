@@ -34,9 +34,29 @@ fn life arr dir spd =
 	(
 		with animate on
 		(
-		  at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
-		  at time 100 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
+		   at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
+		   at time 100 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
+		  
+		  --at time 0 in coordsys arr[a] (arr[a].rotation.z_rotation = 0)
+		  --at time 100 in coordsys arr[a] (arr[a].rotation.z_rotation = spd * dir)
+		  
+		  --at time 0 in coordsys arr[a] (arr[a].rotation =  arr[a].rotation)
+		  --at time 100 in coordsys arr[a] (rotate arr[a] (eulerangles 0 0 40))
+			
+			--at time 0 rotate arr[a] (quat 0 [0,0,1])
+		    --at time 100 in coordsys arr[a] (rotate arr[a] (quat (spd * dir) [0,0,1]))
 		)
+		
+		ctr = getXYZControllers arr[a].rotation.controller
+		for c in ctr do
+		(	
+			for k in c.keys do
+			(
+			k.inTangentType = #linear
+			k.outTangentType = #linear
+			)
+		)
+		setAfterORT arr[a].rotation.controller #relativeRepeat
 	)
 )
 
@@ -134,31 +154,38 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
-		m[4].radius = 1.5
+		m[4].radius = 1.5	
 		origin orbit d
 		append top orbit
 		
 		-- planets
 		rnd = random 5.0 (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: ("stellar_orbit_planet_" + o as string)
-		origin p d
+		origin p orbit
 		append top p
 		
 		-- orbit holders
 		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: ("stellar_orbit_holder_" + o as string)
-		origin c d
+		origin c orbit
 		append top c
-		
+			
+		-- animate
+		rnd = random 0 1
+		if rnd == 0 then dir = -1
+			else if rnd == 1 then dir = 1
+		life planets dir ((2 * rim) as integer)
+			
 		-- set orbit rotation
 		r1 = random -120 120
 		r2 = random -30 30
 		rotate d (angleAxis r1 [0, 0, 1])
 		rotate d (angleAxis r2 [0, 1, 0])
 		
-		rnd = random 0 1
-		if rnd == 0 then dir = -1
-			else if rnd == 1 then dir = 1
-		life planets dir (rim as integer)
+		-- orientation
+		orbit.rotation.controller = Orientation_Constraint ()
+		orbit.rotation.controller.appendTarget d 100
+		orbit.rotation.controller.local_world = 1
+		orbit.rotation.controller.relative = on	
 	)
 	
 	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
@@ -183,6 +210,7 @@ rollout stellar "" width:112 height:160
 	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true
 	button btn_next "" pos:[96,128] width:8 height:24
 	button btn_last "" pos:[8,128] width:8 height:24
+	label lbl_101 "101craft" pos:[60,6] width:43 height:16
 
 	on btn_create pressed do
 	(
@@ -191,13 +219,13 @@ rollout stellar "" width:112 height:160
 	)
 	on btn_next pressed do
 	(
-		if chk_kill.state == true do kill elements
+		try(if chk_kill.state == true do kill elements)catch()
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
 	on btn_last pressed do
 	(
-		if chk_kill.state == true do kill elements
+		try(if chk_kill.state == true do kill elements)catch()
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
