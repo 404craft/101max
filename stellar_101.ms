@@ -71,6 +71,11 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	origin s r
 	append elements s
 	
+	-- rod cylinder base
+	c = cylinder pos:[x,y,ceiling-(sun+0.1)] radius:(b.radius * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_base"
+	origin c s
+	append elements c
+	
 	--orbits
 	for o = 1 to orbits do
 	(
