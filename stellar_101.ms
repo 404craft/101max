@@ -8,15 +8,15 @@ global top = #()
 global planets = #()
 global rad = 0
 
-fn pur tar =
+fn purge tar =
 (
 	s_x = 0.0
 	s_y = 0.0
 	s_z = 0.0
 
-	s_x = tar.position.x
-	s_y = tar.position.y
-	s_z = tar.position.z
+	s_x = tar.pos.x
+	s_y = tar.pos.y
+	s_z = tar.pos.z
 )
 
 fn tone arr n rnd =
