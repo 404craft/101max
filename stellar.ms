@@ -8,7 +8,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	-- base circles
 	for c = 1 to circles do
 	(
-		clone = circle radius:(size*c*circle_gap) pos:[x,y,z] name: "stellar_base"
+		clone = circle radius:(size*c*circle_gap) pos:[x,y,z] steps:32 name: "stellar_base"
 		m = sweep current_built_in_shape: 2
 		addModifier clone m
 		classof clone
@@ -20,8 +20,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	s = sphere radius:(0.5 * sun) smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
 	append elements s
 	
-	c = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
-	append elements c
+	r = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+	append elements r
 
 	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
 	append elements s
@@ -31,7 +31,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	(
 		d = dummy pos:[x,y,ceiling] name: "stellar_orbit_root"
 		append elements d
-		orbit = circle radius:((sun*2)+o*orbit_gap) pos:[x,y,ceiling] name: "stellar_orbit"
+		rnd = random 0.5 10.0
+		orbit = circle radius:(rnd+(sun*2)+o*orbit_gap) pos:[x,y,ceiling] steps:32 name: "stellar_orbit"
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
@@ -39,6 +40,9 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		orbit.parent = d
 		append elements orbit
 	)
+	
+	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
+	append elements c
 	
 	for e in elements do e.parent = root
 	
@@ -53,7 +57,7 @@ rollout stellar "" width:112 height:136
 	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,5,3] type:#integer
 	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,2] type:#float
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer
-	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50.0,15.0] type:#float
+	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50.0,20.0] type:#float
 	button btn_create "procreate" pos:[8,104] width:96 height:24
 	on spn_size changed val do
 		(
