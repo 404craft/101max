@@ -2,26 +2,28 @@
 
 global root = undefined
 global elements = #()
+global tracks = #()
 global base = #()
 global top = #()
 global planets = #()
 global rad = 0
 
-fn tone arr n =
-(
+fn tone arr n rnd =
+(  
 	for a = 1 to arr.count do 
 	(
 	-- mat = Arch___Design__mi()
 	mat = standard()
 	mat.name = "m_" + arr[a] as string
-	a1 = (255-a*10.625 as integer)
-	a2 = (0+a*10.625 as integer)
+	mod = 255.0 / arr.count
+	a1 = (255-a*mod as integer)
+	a2 = (0+a*mod as integer)
 	r = 255
 	g = 255
 	b = 255
 	if n == 1 then (r = a1; g = a2)
 		else if n == 2 then (g = a1; b = a2)
-			else if n == 3 then (r = a1; b = a2)
+			else if n == 3 then (g = a1; b = a2)
 	c = color r g b 0
 	mat.diffuse = c
 	arr[a].material = mat
@@ -35,16 +37,7 @@ fn life arr dir spd =
 		with animate on
 		(
 		   at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
-		   at time 100 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
-		  
-		  --at time 0 in coordsys arr[a] (arr[a].rotation.z_rotation = 0)
-		  --at time 100 in coordsys arr[a] (arr[a].rotation.z_rotation = spd * dir)
-		  
-		  --at time 0 in coordsys arr[a] (arr[a].rotation =  arr[a].rotation)
-		  --at time 100 in coordsys arr[a] (rotate arr[a] (eulerangles 0 0 40))
-			
-			--at time 0 rotate arr[a] (quat 0 [0,0,1])
-		    --at time 100 in coordsys arr[a] (rotate arr[a] (quat (spd * dir) [0,0,1]))
+		   at time 50 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
 		)
 		
 		ctr = getXYZControllers arr[a].rotation.controller
@@ -74,6 +67,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 (
 	root = undefined
 	elements = #()
+	tracks = #()
 	base = #()
 	top = #()
 	planets = #()
@@ -144,7 +138,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		-- orbit roots / dummies
 		d = dummy pos:[x,y,ceiling] name: ("stellar_orbit_root_" + o as string)
 		origin d s_r
-		append planets d
+		append tracks d
 		append top d
 		rnd = random 0.5 10.0
 		rim = rnd+(sun*2)+o*orbit_gap
@@ -162,6 +156,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		rnd = random 5.0 (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: ("stellar_orbit_planet_" + o as string)
 		origin p orbit
+		append planets p
 		append top p
 		
 		-- orbit holders
@@ -173,7 +168,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		rnd = random 0 1
 		if rnd == 0 then dir = -1
 			else if rnd == 1 then dir = 1
-		life planets dir ((2 * rim) as integer)
+		life tracks dir (2 * rim as integer)
 			
 		-- set orbit rotation
 		r1 = random -120 120
@@ -181,7 +176,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		rotate d (angleAxis r1 [0, 0, 1])
 		rotate d (angleAxis r2 [0, 1, 0])
 		
-		-- orientation
+		-- orbit orientation
 		orbit.rotation.controller = Orientation_Constraint ()
 		orbit.rotation.controller.appendTarget d 100
 		orbit.rotation.controller.local_world = 1
@@ -192,24 +187,25 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	origin c s
 	append top c
 	elements = join base top
-	tone base 1
-	tone top 2
+	tone base 1 0
+	tone top 2 0
+	tone planets 3 (random 0 255)
 )
 
 try(destroydialog ::stellar)catch()
 rollout stellar "" width:112 height:160
 (
-	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer
-	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[1,50,20] type:#float
-	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[10,1000,200] type:#float
-	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,5,3] type:#integer
-	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,3] type:#float
-	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer
-	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50,20] type:#float
-	button btn_create "procreate" pos:[16,128] width:80 height:24
-	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true
-	button btn_next "" pos:[96,128] width:8 height:24
-	button btn_last "" pos:[8,128] width:8 height:24
+	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer tooltip:"system size"
+	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[1,50,20] type:#float tooltip:"sun size"
+	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[10,1000,200] type:#float tooltip:"system height"
+	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,5,3] type:#integer tooltip:"number of base circles"
+	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[0.1,10,3] type:#float tooltip:"gaps between circles"
+	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer tooltip:"number of orbits"
+	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[0.1,50,20] type:#float tooltip:"gaps between orbits"
+	button btn_create "procreate" pos:[16,128] width:80 height:24 tooltip:"abracadabra"
+	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true tooltip:"delete current before creating next"
+	button btn_next "" pos:[96,128] width:8 height:24 tooltip:"create new system based on current values"
+	button btn_last "" pos:[8,128] width:8 height:24 tooltip:"create new system based on current values"
 	label lbl_101 "101craft" pos:[60,6] width:43 height:16
 
 	on btn_create pressed do
