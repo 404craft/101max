@@ -219,31 +219,39 @@ rollout stellar "" width:112 height:160
 	global o_gap_max = 75.0
 	global o_gap_def = 20.0
 	
-	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer tooltip:"system size"
-	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[sun_min,sun_max,sun_def] type:#float tooltip:"sun size"
-	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[ceiling_min,ceiling_max,ceiling_def] type:#float tooltip:"system height"
-	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[circles_min,circles_max,circles_def] type:#integer tooltip:"number of base circles"
-	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[c_gap_min,c_gap_max,c_gap_def] type:#float tooltip:"gaps between circles"
-	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[orbits_min,orbits_max,orbits_def] type:#integer tooltip:"number of orbits"
-	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[o_gap_min,o_gap_max,o_gap_def] type:#float tooltip:"gaps between orbits"
-	button btn_create "procreate" pos:[16,128] width:80 height:24 tooltip:"abracadabra"
-	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 state:true tooltip:"delete current before creating next"
-	button btn_next "" pos:[96,128] width:8 height:24 tooltip:"create new system based on current values"
-	button btn_last "" pos:[8,128] width:8 height:24 tooltip:"create new system based on random extreme values"
+	spinner spn_size "" pos:[8,8] width:48 height:16 range:[1,10,5] type:#integer toolTip:"system size"
+	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[5,50,20] type:#float toolTip:"sun size"
+	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[50,1000,200] type:#float toolTip:"system height"
+	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[1,10,3] type:#integer toolTip:"number of base circles"
+	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[1,10,3] type:#float toolTip:"gaps between circles"
+	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[1,20,5] type:#integer toolTip:"number of orbits"
+	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[5,75,20] type:#float toolTip:"gaps between orbits"
+	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"abracadabra"
+	checkbutton chk_kill "annihilate" pos:[8,96] width:96 height:24 toolTip:"delete current before creating next" state:true
+	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
+	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
+	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
 	label lbl_101 "101craft" pos:[60,6] width:43 height:16
 
 	on btn_create pressed do
-	(
-		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
-		select root
-	)
-	on btn_next pressed do
 	(
 		try(if chk_kill.state == true do kill elements)catch()
 		procreate 0.0 0.0 0.0 spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
 		select root
 	)
-	on btn_last pressed do
+	on btn_c_1 pressed do
+	(
+		try(if chk_kill.state == true do kill elements)catch()
+		procreate 0.0 0.0 0.0 spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def)
+		select root
+	)
+	on btn_c_2 pressed do
+	(
+		try(if chk_kill.state == true do kill elements)catch()
+		procreate 0.0 0.0 0.0 spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max)
+		select root
+	)
+	on btn_c_3 pressed do
 	(
 		try(if chk_kill.state == true do kill elements)catch()
 		procreate 0.0 0.0 0.0 spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max)
