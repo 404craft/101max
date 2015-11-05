@@ -32,12 +32,16 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		d = dummy pos:[x,y,ceiling] name: "stellar_orbit_root"
 		append elements d
 		rnd = random 0.5 10.0
-		orbit = circle radius:(rnd+(sun*2)+o*orbit_gap) pos:[x,y,ceiling] steps:32 name: "stellar_orbit"
+		rim = rnd+(sun*2)+o*orbit_gap
+		orbit = circle radius:rim pos:[x,y,ceiling] steps:32 name: "stellar_orbit"
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
 		m[4].radius = 1.5
 		orbit.parent = d
+		
+		rnd = random 5.0 (sun-(sun*0.15)) 
+		s = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: "stellar_core"
 		append elements orbit
 	)
 	
