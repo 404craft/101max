@@ -87,7 +87,12 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 	planets = #()
 	rad = 0
 	-- root
-	root = circle radius:(size*circles*circle_gap*1.5) pos:[x,y,z] name: "stellar_root"
+	root = circle radius:(size*circles*circle_gap*1.5) pos:[s_x,s_y,s_z] name: "stellar_root"
+	root.steps = 0
+	rootX = root.pos.x
+	rootY = root.pos.y
+	rootZ = root.pos.z
+	
 	append base root
 	
 	-- base circles
@@ -95,7 +100,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 	(
 		rnd = random 0.1 3.0
 		rad = rnd+size*c*circle_gap
-		clone = circle radius:rad pos:[x,y,z] steps:32 name: ("stellar_base_" + c as string)
+		clone = circle radius:rad pos:root.pos steps:32 name: ("stellar_base_" + c as string)
 		m = sweep current_built_in_shape: 2
 		addModifier clone m
 		classof clone
@@ -109,39 +114,39 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 	for l = 1 to (links*2) do
 	(
 		rot = l * (360 / (links*2))
-		clone = box pos:[x,y,z] rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
+		clone = box pos:root.pos rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
 		rotate clone (angleAxis rot [0, 0, 1])
 		origin clone root
 		append base clone
 	)	
 	
 	-- base hemisphere
-	s = sphere radius:(0.5 * sun) smooth:on segs:32 pos:[x,y,z] hemisphere:0.5 name: "stellar_base"
+	s = sphere pos:root.pos radius:(0.5 * sun) smooth:on segs:32 hemisphere:0.5 name: "stellar_base"
 	origin s root
 	append base s
 
 	-- rod cylinder base
-	b = cylinder pos:[x,y,z] radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
+	b = cylinder pos:root.pos radius:2.0 smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
 	origin b s
 	append base b
 	
 	-- rod cylinder
-	r = cylinder pos:[x,y,z] radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+	r = cylinder pos:root.pos radius:(b.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
 	origin r b
 	append base r
 
 	-- sun root
-	s_r = dummy pos:[x,y,ceiling] name: ("stellar_core_root")
+	s_r = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_core_root")
 	origin s_r r	
 	append top s_r
 	
 	-- sun sphere
-	s = sphere radius:sun smooth:on segs:32 pos:[x,y,ceiling] name: "stellar_core"
+	s = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
 	origin s s_r
 	append top s
 	
 	-- rod cylinder base
-	c = cylinder pos:[x,y,ceiling-(sun+0.1)] radius:(b.radius * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
+	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(b.radius * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
 	origin c s
 	append top c
 	
@@ -149,7 +154,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 	for o = 1 to orbits do
 	(
 		-- orbit roots / dummies
-		d = dummy pos:[x,y,ceiling] name: ("stellar_orbit_root_" + o as string)
+		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_orbit_root_" + o as string)
 		origin d s_r
 		append tracks d
 		append top d
@@ -157,7 +162,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 		rim = rnd+(sun*2)+o*orbit_gap
 		
 		-- orbits
-		orbit = circle radius:rim pos:[x,y,ceiling] steps:32 name: ("stellar_orbit_" + o as string)
+		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: ("stellar_orbit_" + o as string)
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
@@ -167,13 +172,13 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 		
 		-- planets
 		rnd = random 5.0 (sun-(sun*0.25)) 
-		p = sphere radius:rnd smooth:on segs:32 pos:[rim,y,ceiling] name: ("stellar_orbit_planet_" + o as string)
+		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: ("stellar_orbit_planet_" + o as string)
 		origin p orbit
 		append planets p
 		append top p
 		
 		-- orbit holders
-		c = cylinder pos:[ceiling,y,z] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: ("stellar_orbit_holder_" + o as string)
+		c = cylinder pos:[rootX+ceiling,rootY,rootZ] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: ("stellar_orbit_holder_" + o as string)
 		origin c orbit
 		append top c
 			
@@ -196,7 +201,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 		orbit.rotation.controller.relative = on	
 	)
 	
-	c = cylinder pos:[x,y,ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
+	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:(r.radius * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
 	origin c s
 	append top c
 	elements = join base top
@@ -264,24 +269,28 @@ rollout stellar "" width:112 height:160
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value
 		select root
+		purge
 	)
 	on btn_c_1 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def)
 		select root
+		purge
 	)
 	on btn_c_2 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max)
 		select root
+		purge
 	)
 	on btn_c_3 pressed do
 	(
 		if chk_kill.state == true do kill elements
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max)
 		select root
+		purge
 	)
 )
 
