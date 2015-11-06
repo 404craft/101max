@@ -11,18 +11,8 @@ global rad = 0
 
 fn purge tar =
 (
-	if tar != undefined then
-	(
-	s_x = tar.pos.x
-	s_y = tar.pos.y
-	s_z = tar.pos.z
-	)
-	else if root == undefined then
-	(
-	s_x = 0.0
-	s_y = 0.0
-	s_z = 0.0
-	)
+	if tar != undefined then s_pos = tar.pos
+	else if root == undefined then s_pos = [0.0,0.0,0.0]
 
 	try(if stellar.chk_kill.state == true do kill elements)catch()
 )
@@ -86,7 +76,7 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wire =
+fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
 (
 	if stellar.ckb_alone.state == true do ceiling = 0.0
 		
@@ -99,7 +89,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 	rad = 0
 	
 	-- root
-	root = circle radius:(size*circles*circle_gap*1.5) pos:[s_x,s_y,s_z] name: "stellar_root"
+	root = circle radius:(size*circles*circle_gap*1.5) pos:pos name: "stellar_root"
 	root.steps = 0
 	rootX = root.pos.x
 	rootY = root.pos.y
@@ -235,55 +225,27 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 try(destroydialog ::stellar)catch()
 rollout stellar "" width:112 height:160
 (
-	global size_min = 1
-	global size_max = 10
-	global size_def = 5
+	global size = [1,10,5]
+	global links = [2,10,3]
+	global sun = [5.0,50.0,20.0]
+	global wire = [0.1,3.0,1.75]
+	global ceiling = [50.0,1000.0,200.0]
+	global circles = [1,10,3]
+	global c_gap = [1.0,10.0,3.0]
+	global orbits = [1,20,5]
+	global o_gap = [5.0,75.0,20.0]
 	
-	global links_min = 2
-	global links_max = 10
-	global links_def = 3
+	global s_pos = [0.0,0.0,0.0]
 	
-	global sun_min = 5.0
-	global sun_max = 50.0
-	global sun_def = 20.0
-	
-	global wire_min = 0.1
-	global wire_max = 3.0
-	global wire_def = 1.75
-	
-	global ceiling_min = 50.0
-	global ceiling_max = 1000.0
-	global ceiling_def = 200.0
-	
-	global circles_min = 1
-	global circles_max = 10
-	global circles_def = 3
-	
-	global c_gap_min = 1.0
-	global c_gap_max = 10.0
-	global c_gap_def = 3.0
-	
-	global orbits_min = 1
-	global orbits_max = 20
-	global orbits_def = 5
-	
-	global o_gap_min = 5.0
-	global o_gap_max = 75.0
-	global o_gap_def = 20.0
-	
-	global s_x = 0.0
-	global s_y = 0.0
-	global s_z = 0.0
-	
-	spinner spn_size "" pos:[8,8] width:48 height:16 range:[size_min,size_max,size_def] type:#integer toolTip:"system size"
-	spinner spn_links "" pos:[56,40] width:48 height:16 enabled:true range:[links_min,links_max,links_def] type:#integer toolTip:"number of diagonal base links"
-	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[sun_min,sun_max,sun_def] type:#float toolTip:"sun size"
-	spinner spn_wire "" pos:[9,40] width:48 height:16 range:[wire_min,wire_max,wire_def] type:#float toolTip:"wire weight"
-	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[ceiling_min,ceiling_max,ceiling_def] type:#float toolTip:"system height"
-	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[circles_min,circles_max,circles_def] type:#integer toolTip:"number of base circles"
-	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[c_gap_min,c_gap_max,c_gap_def] type:#float toolTip:"gaps between circles"
-	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[orbits_min,orbits_max,orbits_def] type:#integer toolTip:"number of orbits"
-	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[o_gap_min,o_gap_max,o_gap_def] type:#float toolTip:"gaps between orbits"
+	spinner spn_size "" pos:[8,8] width:48 height:16 range:size type:#integer toolTip:"system size"
+	spinner spn_links "" pos:[56,40] width:48 height:16 enabled:true range:links type:#integer toolTip:"number of diagonal base links"
+	spinner spn_sun "" pos:[8,24] width:48 height:16 range:sun type:#float toolTip:"sun size"
+	spinner spn_wire "" pos:[9,40] width:48 height:16 range:wire type:#float toolTip:"wire weight"
+	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:ceiling type:#float toolTip:"system height"
+	spinner spn_circles "" pos:[56,56] width:48 height:16 range:circles type:#integer toolTip:"number of base circles"
+	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:c_gap type:#float toolTip:"gaps between circles"
+	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
+	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
 	checkbutton chk_kill "annihilate" pos:[8,96] width:88 height:24 toolTip:"delete current before creating next" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system"
@@ -295,25 +257,25 @@ rollout stellar "" width:112 height:160
 	on btn_create pressed do
 	(
 		purge root
-		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
+		procreate s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z (random size_min size_def) (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def) wire_def
+		procreate s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		select root
 	)
 	on btn_c_2 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z (random size_def size_max) (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max) wire_def
+		procreate s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		select root
 	)
 	on btn_c_3 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z (random size_min size_max) (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max) wire_def
+		procreate s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		select root
 	)
 )
