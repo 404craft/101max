@@ -181,6 +181,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
+		m[4].steps = 3
 		m[4].radius = wire * 0.75
 		origin orbit d
 		append top orbit
@@ -276,13 +277,13 @@ rollout stellar "" width:112 height:160
 	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:[c_gap_min,c_gap_max,c_gap_def] type:#float toolTip:"gaps between circles"
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:[orbits_min,orbits_max,orbits_def] type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:[o_gap_min,o_gap_max,o_gap_def] type:#float toolTip:"gaps between orbits"
-	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"abracadabra"
+	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
 	checkbutton chk_kill "annihilate" pos:[8,96] width:88 height:24 toolTip:"delete current before creating next" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system"
 	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
 	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
 	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
-	label lbl_101 "101craft" pos:[60,6] width:43 height:16
+	label lbl_101 "101craft" pos:[59,8] width:43 height:16
 
 	on btn_create pressed do
 	(
@@ -293,19 +294,19 @@ rollout stellar "" width:112 height:160
 	on btn_c_1 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def) wire_def
+		procreate s_x s_y s_z (random size_min size_def) (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def) wire_def
 		select root
 	)
 	on btn_c_2 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max) wire_def
+		procreate s_x s_y s_z (random size_def size_max) (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max) wire_def
 		select root
 	)
 	on btn_c_3 pressed do
 	(
 		purge root
-		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max) wire_def
+		procreate s_x s_y s_z (random size_min size_max) (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max) wire_def
 		select root
 	)
 )
