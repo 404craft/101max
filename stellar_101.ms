@@ -1,4 +1,5 @@
 -- parametric model of a solar system
+-- can be used for showcasing spaceships
 
 global root = undefined
 global elements = #()
@@ -178,10 +179,10 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 		append top c
 			
 		-- animate
-		rnd = random 0 1
-		if rnd == 0 then dir = -1
-			else if rnd == 1 then dir = 1
-		life tracks dir (2 * rim as integer)
+		rnd = random 1 2
+		if rnd == 1 then dir = -1
+			else if rnd == 2 then dir = 1
+		life tracks dir ((random 1 10) * 15)
 			
 		-- set orbit rotation
 		r1 = random -120 120
