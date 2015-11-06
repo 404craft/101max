@@ -160,10 +160,13 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 	origin s s_r
 	append top s
 	
+	if stellar.ckb_alone.state != true do
+	(
 	-- rod cylinder base
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(wire * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
 	origin c s
 	append top c
+	)
 	
 	--orbits
 	for o = 1 to orbits do
@@ -194,12 +197,12 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 		append top p
 		
 		-- orbit holders
-		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: rim name: ("stellar_orbit_holder_" + o as string)
+		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: ("stellar_orbit_holder_" + o as string)
 		rotate c (angleAxis 90 [0, 1, 0])
 		--c.position.x = c.position.x + ceiling
 		origin c orbit
 		append top c
-			
+		
 		-- animate
 		life tracks ((random 1 10) * 15)
 			
@@ -216,9 +219,13 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links wi
 		orbit.rotation.controller.relative = on	
 	)
 	
-	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (ceiling*0.25) name: "stellar_holder"
+	if stellar.ckb_alone.state != true do
+	(
+	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
 	origin c s
 	append top c
+	)
+	
 	elements = join base top
 	tone base 1 0
 	tone top 2 0
