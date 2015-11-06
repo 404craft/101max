@@ -77,7 +77,7 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
+fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 (
 	root = undefined
 	elements = #()
@@ -106,10 +106,9 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun =
 	)
 	
 	-- base links
-	links = random 3 6
-	for l = 1 to links do
+	for l = 1 to (links*2) do
 	(
-		rot = (360 / links) * l
+		rot = l * (360 / (links*2))
 		clone = box pos:[x,y,z] rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
 		rotate clone (angleAxis rot [0, 0, 1])
 		origin clone root
@@ -213,6 +212,10 @@ rollout stellar "" width:112 height:160
 	global size_max = 10
 	global size_def = 5
 	
+	global links_min = 2
+	global links_max = 10
+	global links_def = 3
+	
 	global sun_min = 5.0
 	global sun_max = 50.0
 	global sun_def = 20.0
@@ -242,6 +245,7 @@ rollout stellar "" width:112 height:160
 	global s_z = 0.0
 	
 	spinner spn_size "" pos:[8,8] width:48 height:16 range:[size_min,size_max,size_def] type:#integer toolTip:"system size"
+	spinner spn_links "" pos:[56,40] width:48 height:16 enabled:true range:[links_min,links_max,links_def] type:#integer toolTip:"number of diagonal base links"
 	spinner spn_sun "" pos:[8,24] width:48 height:16 range:[sun_min,sun_max,sun_def] type:#float toolTip:"sun size"
 	spinner spn_ceiling "" pos:[56,24] width:48 height:16 range:[ceiling_min,ceiling_max,ceiling_def] type:#float toolTip:"system height"
 	spinner spn_circles "" pos:[56,56] width:48 height:16 range:[circles_min,circles_max,circles_def] type:#integer toolTip:"number of base circles"
@@ -258,25 +262,25 @@ rollout stellar "" width:112 height:160
 	on btn_create pressed do
 	(
 		if chk_kill.state == true do kill elements
-		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value
+		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
 		if chk_kill.state == true do kill elements
-		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def)
+		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def)
 		select root
 	)
 	on btn_c_2 pressed do
 	(
 		if chk_kill.state == true do kill elements
-		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max)
+		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max)
 		select root
 	)
 	on btn_c_3 pressed do
 	(
 		if chk_kill.state == true do kill elements
-		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max)
+		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max)
 		select root
 	)
 )
