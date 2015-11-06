@@ -11,15 +11,20 @@ global rad = 0
 
 fn purge tar =
 (
-	s_x = 0.0
-	s_y = 0.0
-	s_z = 0.0
-	try
+	if tar != undefined then
 	(
 	s_x = tar.pos.x
 	s_y = tar.pos.y
 	s_z = tar.pos.z
-	)catch()
+	)
+	else if root == undefined then
+	(
+	s_x = 0.0
+	s_y = 0.0
+	s_z = 0.0
+	)
+
+	if stellar.chk_kill.state == true do kill elements
 )
 
 fn tone arr n rnd =
@@ -114,7 +119,8 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 	for l = 1 to (links*2) do
 	(
 		rot = l * (360 / (links*2))
-		clone = box pos:root.pos rotation:(eulerangles 0 90 0) length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
+		clone = box pos:root.pos length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
+		rotate clone (angleAxis 90 [0,1,0])
 		rotate clone (angleAxis rot [0, 0, 1])
 		origin clone root
 		append base clone
@@ -178,7 +184,9 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 		append top p
 		
 		-- orbit holders
-		c = cylinder pos:[rootX+ceiling,rootY,rootZ] rotation: (eulerangles 0 90 0) radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: (rim) name: ("stellar_orbit_holder_" + o as string)
+		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:(r.radius * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height: rim name: ("stellar_orbit_holder_" + o as string)
+		rotate c (angleAxis 90 [0, 1, 0])
+		--c.position.x = c.position.x + ceiling
 		origin c orbit
 		append top c
 			
@@ -266,31 +274,27 @@ rollout stellar "" width:112 height:160
 
 	on btn_create pressed do
 	(
-		if chk_kill.state == true do kill elements
+		purge root
 		procreate s_x s_y s_z spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value
 		select root
-		purge
 	)
 	on btn_c_1 pressed do
 	(
-		if chk_kill.state == true do kill elements
+		purge root
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_def) (random c_gap_min c_gap_def) (random orbits_min orbits_def) (random o_gap_min o_gap_def) (random ceiling_min ceiling_def) (random sun_min sun_def) (random links_min links_def)
 		select root
-		purge
 	)
 	on btn_c_2 pressed do
 	(
-		if chk_kill.state == true do kill elements
+		purge root
 		procreate s_x s_y s_z spn_size.value (random circles_def circles_max) (random c_gap_def c_gap_max) (random orbits_def orbits_max) (random o_gap_def o_gap_max) (random ceiling_def ceiling_max) (random sun_def sun_max) (random links_def links_max)
 		select root
-		purge
 	)
 	on btn_c_3 pressed do
 	(
-		if chk_kill.state == true do kill elements
+		purge root
 		procreate s_x s_y s_z spn_size.value (random circles_min circles_max) (random c_gap_min c_gap_max) (random orbits_min orbits_max) (random o_gap_min o_gap_max) (random ceiling_min ceiling_max) (random sun_min sun_max) (random links_min links_max)
 		select root
-		purge
 	)
 )
 
