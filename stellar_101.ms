@@ -49,14 +49,18 @@ fn tone arr n rnd =
 	)
 )
 
-fn life arr dir spd =
+fn life arr spd =
 (
 	for a = 1 to arr.count do
 	(
+		rnd = random 1 2
+		if rnd == 1 then dir = -1
+			else if rnd == 2 then dir = 1
+				
 		with animate on
 		(
 		   at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
-		   at time 50 rotate arr[a] (angleAxis (spd * dir) [0, 0, 1])
+		   at time 50 rotate arr[a] (angleAxis (spd) [0, 0, dir])
 		)
 		
 		ctr = getXYZControllers arr[a].rotation.controller
@@ -191,10 +195,7 @@ fn procreate x y z size circles circle_gap orbits orbit_gap ceiling sun links =
 		append top c
 			
 		-- animate
-		rnd = random 1 2
-		if rnd == 1 then dir = -1
-			else if rnd == 2 then dir = 1
-		life tracks dir ((random 1 10) * 15)
+		life tracks ((random 1 10) * 15)
 			
 		-- set orbit rotation
 		r1 = random -120 120
