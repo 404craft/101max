@@ -1,5 +1,5 @@
 -- parametric model of a solar system
--- can be used for showcasing spaceships
+-- can be used for showcasing spaceships as in https://vimeo.com/40504508
 
 global root = undefined
 global elements = #()
