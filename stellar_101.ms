@@ -98,6 +98,7 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 	
 	if stellar.ckb_alone.state != true do
 	(
+		len = 1.5
 		-- base circles
 		for c = 1 to circles do
 		(
@@ -107,8 +108,9 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 			m = sweep current_built_in_shape: 2
 			addModifier clone m
 			classof clone
-			m[4].length = 1.5
+			m[4].length = len
 			m[4].width = 1.5 * c
+			clone.pos.z = clone.pos.z + (len *0.5)
 			origin clone root
 			append base clone
 		)
@@ -117,7 +119,7 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 		for l = 1 to (links*2) do
 		(
 			rot = l * (360 / (links*2))
-			clone = box pos:root.pos length: 1.5 width: 0.75 height: rad name: ("stellar_link_" + l as string)
+			clone = box pos:[root.pos.x,root.pos.y,root.pos.z+(len * 0.25)] length: 1.5 width: (len * 0.5) height: rad name: ("stellar_link_" + l as string)
 			rotate clone (angleAxis 90 [0,1,0])
 			rotate clone (angleAxis rot [0, 0, 1])
 			origin clone root
