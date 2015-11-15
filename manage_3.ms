@@ -83,7 +83,7 @@ rollout manage3 "" width:112 height:232
 	label m3_lbl_bottom "look@101craft.com" pos:[11,6] width:96 height:14
 	button m3_btn_dens "density" pos:[8,72] width:40 height:16 enabled:true toolTip:"assign random density"
 	button m3_btn_rotate "rotate" pos:[8,40] width:40 height:16 toolTip:"assign random rotation"
-	button m3_btn_omega "bloom" pos:[40,200] width:64 height:24 toolTip:"randomize everything with a single click"
+	button m3_btn_omega "bloom" pos:[32,200] width:72 height:24 toolTip:"randomize everything with a single click"
 	pickbutton m3_btn_dis_src "terrain" pos:[8,160] width:48 height:16 message:"" toolTip:"select source terrain"
 	button m3_btn_dis_exe "plant" pos:[56,176] width:48 height:16 toolTip:"distribute trees along terrain"
 		
@@ -101,10 +101,10 @@ rollout manage3 "" width:112 height:232
 	checkbutton m3_show_chk_05 "" pos:[72,136] width:16 height:16 checked:true state:true
 	checkbutton m3_show_chk_06 "" pos:[88,136] width:16 height:16 checked:true state:true
 	
-	button m3_btn_vcm "" pos:[24,200] width:16 height:24 toolTip:"viewport canopy mode"
-	button m3_btn_lod "" pos:[8,200] width:16 height:24 toolTip:"level-of-detail"
+	button m3_btn_vcm "" pos:[16,200] width:16 height:24 toolTip:"viewport canopy mode"
+	button m3_btn_lod "" pos:[8,200] width:8 height:24 toolTip:"level-of-detail"
 	spinner m3_spn_dis_dens "" pos:[56,160] width:48 height:16 range:[0,1,1]
-	
+
 	on m3_btn_seed pressed do -- assign random seed
 	(
 	select3()
@@ -119,7 +119,6 @@ rollout manage3 "" width:112 height:232
 	select3()
 	instancemgr.makeobjectsunique $ #individual
 	)
-	
 	on m3_btn_ins_src picked sourceObj do -- define source tree of the new instance array
 	(
 	select3()
@@ -133,13 +132,11 @@ rollout manage3 "" width:112 height:232
 	m3_spn_seed.value = sourceObj.seed
 	m3_spn_rotate.value = sourceObj.rotation.z		
 	)
-	
 	on m3_btn_ins_exe pressed do -- re-instance unique trees with source tree
 	(
 	select3()
 	if targetObj[1] != undefined do for o in selection do o.baseobject = targetObj[1].baseobject
 	)
-	
 	on m3_btn_height pressed do -- assign random height
 	(
 	select3()
@@ -225,7 +222,6 @@ rollout manage3 "" width:112 height:232
 	tStats[1] = m3_spn_height.value
 	for n = 1 to selection.count do selection[n].height = m3_spn_height.value
 	)
-	
 	on m3_btn_prune pressed do
 	(
 	select3()
@@ -240,19 +236,16 @@ rollout manage3 "" width:112 height:232
 	select3()
 	for n = 1 to selection.count do selection[n].pruning = m3_spn_prune.value
 	)
-	
 	on m3_spn_seed changed val do
 	(
 	select3()
 	for n = 1 to selection.count do selection[n].seed = m3_spn_seed.value
 	)
-	
 	on m3_spn_dens changed val do
 	(
 	select3()
 	for n = 1 to selection.count do selection[n].density = m3_spn_dens.value
 	)
-	
 	on m3_show_chk_01 changed state do
 	(
 		select3()
