@@ -94,12 +94,12 @@ rollout manage3 "" width:112 height:232
 	spinner m3_spn_seed "" pos:[48,88] width:56 height:16 range:[0,1.67772e+007,0] type:#integer scale:0.1
 	spinner m3_spn_dens "" pos:[48,72] width:56 height:16 range:[0,1,0]
 	
-	checkbutton m3_show_chk_01 "" pos:[8,136] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_02 "" pos:[24,136] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_03 "" pos:[40,136] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_04 "" pos:[56,136] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_05 "" pos:[72,136] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_06 "" pos:[88,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_01 "" pos:[8,136] width:16 height:16 checked:true state:true toolTip:"leaves"
+	checkbutton m3_show_chk_02 "" pos:[24,136] width:16 height:16 checked:true state:true toolTip:"fruit"
+	checkbutton m3_show_chk_03 "" pos:[40,136] width:16 height:16 checked:true state:true toolTip:"flowers"
+	checkbutton m3_show_chk_04 "" pos:[56,136] width:16 height:16 checked:true state:true toolTip:"trunk"
+	checkbutton m3_show_chk_05 "" pos:[72,136] width:16 height:16 checked:true state:true toolTip:"branches"
+	checkbutton m3_show_chk_06 "" pos:[88,136] width:16 height:16 checked:true state:true toolTip:"roots"
 	
 	button m3_btn_vcm "" pos:[16,200] width:16 height:24 toolTip:"viewport canopy mode"
 	button m3_btn_lod "" pos:[8,200] width:8 height:24 toolTip:"level-of-detail"
