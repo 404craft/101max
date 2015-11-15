@@ -1,7 +1,6 @@
 -- tree randomizer
 -- manage trees en-masse in your scene
--- distribute trees along target verts
--- limited functionality plugin
+-- distribute trees along target object's vertices
 
 try(destroydialog ::manage3)catch()
 
@@ -24,14 +23,14 @@ rollout manage3 "" width:112 height:232
 (
 	local targetObj = #()
 	
-	button m3_btn_seed "seed" pos:[8,88] width:40 height:16 toolTip:"select foliage and assign random seed"
-	button m3_btn_unique "differ" pos:[56,112] width:48 height:16 toolTip:"select trees and make them unique"
+	button m3_btn_seed "seed" pos:[8,88] width:40 height:16 toolTip:"assign random seed"
+	button m3_btn_unique "differ" pos:[56,112] width:48 height:16 toolTip:"make trees unique to each other"
 	pickbutton m3_btn_ins_src "tree" pos:[8,176] width:48 height:16 toolTip:"select source tree"
-	button m3_btn_ins_exe "stem" pos:[8,112] width:48 height:16 toolTip:"re-instance selected trees to source tree"
-	button m3_btn_height "height" pos:[8,24] width:40 height:16 toolTip:"select foliage and assign random height"
+	button m3_btn_ins_exe "stem" pos:[8,112] width:48 height:16 toolTip:"re-instance selected trees with source tree"
+	button m3_btn_height "height" pos:[8,24] width:40 height:16 toolTip:"assign random height"
 	label m3_lbl_bottom "look@101craft.com" pos:[12,5] width:96 height:14
-	button m3_btn_dens "density" pos:[8,72] width:40 height:16 enabled:true toolTip:"select foliage and assign random density"
-	button m3_btn_rotate "rotate" pos:[8,40] width:40 height:16 toolTip:"select foliage and assign random rotation"
+	button m3_btn_dens "density" pos:[8,72] width:40 height:16 enabled:true toolTip:"assign random density"
+	button m3_btn_rotate "rotate" pos:[8,40] width:40 height:16 toolTip:"assign random rotation"
 	button m3_btn_omega "bloom" pos:[40,200] width:64 height:24 toolTip:"randomize everything with a single click"
 	pickbutton m3_btn_dis_src "terrain" pos:[8,160] width:48 height:16 message:"" toolTip:"select source terrain"
 	button m3_btn_dis_exe "plant" pos:[56,176] width:48 height:16 toolTip:"distribute trees along terrain"
