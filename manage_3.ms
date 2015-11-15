@@ -17,6 +17,58 @@ fn element3 tar =
 	tar.showbranches = manage3.m3_show_chk_05.state
 	tar.showroots = manage3.m3_show_chk_06.state
 )
+
+fn bloom target = 
+(
+			if superclassof target == geometryclass then 
+			(
+				local gLimit = 512
+				if target.verts.count < gLimit then
+				(
+				select3 ()
+				nLimit = target.verts.count * manage3.m3_spn_dis_dens.value
+				nLimit = nLimit as integer
+				nTimes = nLimit - selection.count
+				if nTimes < 1 then nTimes = 1
+					else nTimes = nTimes as integer
+				if selection.count > 1 then sTree = $ as array
+					else sTree = $
+				
+				iTree = #()
+				if nTimes > 0 do for i = 1 to nTimes do 
+				(
+				if selection.count > 1 then nTree = instance $[1]
+					else nTree = instance $
+				append iTree nTree
+				)
+				select (join iTree sTree)
+				for n =1 to nLimit do for t = 1 to selection.count do selection[n].pos = target.verts[n].pos
+				sTree = undefined
+				iTree = undefined
+				nTree = undefined
+				)
+				else messagebox ("geometry exceeds " +gLimit as string)
+			)
+			
+			else if superclassof target == shape then
+			(
+			nTimes = (numknots target) - selection.count
+			if selection.count > 1 then sPost = $ as array
+				else sPost = $
+			iPost = #()
+			if nTimes > 0 do for i = 1 to nTimes do
+			(
+			if selection.count > 1 then nPost = instance $[1]
+				else nPost = instance $
+			append iPost nPost
+			)
+			select (join iPost sPost)
+			for n = 1 to (numknots target) do for t = 1 to selection.count do selection[n].pos = getKnotPoint target 1 n
+			sPost = undefined
+			iPost = undefined
+			nPost = undefined
+			)
+)
 select3 ()
 
 rollout manage3 "" width:112 height:232
@@ -131,8 +183,6 @@ rollout manage3 "" width:112 height:232
 		m3_spn_seed.value = selection[n].seed
 		
 		rotate selection[n] (eulerangles 0 0 (random 0 m3_spn_rotate.value as integer))
-			
-		if sTerrain != undefined do for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
 		)
 	)
 	on m3_btn_dis_src picked sourceTerrain do -- pick source terrain i.e. environment geometry
@@ -154,7 +204,6 @@ rollout manage3 "" width:112 height:232
 		(
 		m3_btn_dis_src.text = sourceTerrain.name
 		sTerrain = sourceTerrain
-		/*if (for m in sPath.modifiers where classof m == normalize_spl collect m).count == 0 do addmodifier sPath (normalize_spl ())*/
 		)
 		else messagebox ("select geometry")	
 	)
@@ -163,56 +212,7 @@ rollout manage3 "" width:112 height:232
 	(
 		if sTerrain != undefined then
 		(
-			if superclassof sTerrain == geometryclass then 
-			(
-				local gLimit = 512
-				if sTerrain.verts.count < gLimit then
-				(
-				select3 ()
-				nLimit = sTerrain.verts.count * m3_spn_dis_dens.value
-				nLimit = nLimit as integer
-				nTimes = nLimit - selection.count
-				if nTimes < 1 then nTimes = 1
-					else nTimes = nTimes as integer
-				-- err
-				if selection.count > 1 then sTree = $ as array
-					else sTree = $
-				
-				iTree = #()
-				if nTimes > 0 do for i = 1 to nTimes do 
-				(
-				-- err
-				if selection.count > 1 then nTree = instance $[1]
-					else nTree = instance $
-				append iTree nTree -- err
-				)
-				select (join iTree sTree) -- err
-				for n =1 to nLimit do for t = 1 to selection.count do selection[n].pos = sTerrain.verts[n].pos
-				sTree = undefined
-				iTree = undefined
-				nTree = undefined
-				)
-				else messagebox ("geometry exceeds " +gLimit as string)
-			)
-			
-			else if superclassof sTerrain == shape then
-			(
-			nTimes = (numknots sTerrain) - selection.count
-			if selection.count > 1 then sPost = $ as array
-				else sPost = $
-			iPost = #()
-			if nTimes > 0 do for i = 1 to nTimes do
-			(
-			if selection.count > 1 then nPost = instance $[1]
-				else nPost = instance $
-			append iPost nPost
-			)
-			select (join iPost sPost)
-			for n = 1 to (numknots sTerrain) do for t = 1 to selection.count do selection[n].pos = getKnotPoint sTerrain 1 n
-			sPost = undefined
-			iPost = undefined
-			nPost = undefined
-			)
+			bloom sTerrain
 		)
 		else messagebox ("select terrain")
 	)
