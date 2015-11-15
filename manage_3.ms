@@ -25,7 +25,7 @@ fn bloom target =
 				local gLimit = 512
 				if target.verts.count < gLimit then
 				(
-				select3 ()
+				select3()
 				nLimit = target.verts.count * manage3.m3_spn_dis_dens.value
 				nLimit = nLimit as integer
 				nTimes = nLimit - selection.count
@@ -69,7 +69,7 @@ fn bloom target =
 			nPost = undefined
 			)
 )
-select3 ()
+select3()
 
 rollout manage3 "" width:112 height:232
 (
@@ -107,7 +107,7 @@ rollout manage3 "" width:112 height:232
 	
 	on m3_btn_seed pressed do -- assign random seed
 	(
-	select3 ()
+	select3()
 		for n = 1 to selection.count do 
 		(
 		selection[n].seed = random 1 16777216
@@ -116,12 +116,13 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_btn_unique pressed do -- make trees unique
 	(
-	select3 ()
+	select3()
 	instancemgr.makeobjectsunique $ #individual
 	)
+	
 	on m3_btn_ins_src picked sourceObj do -- define source tree of the new instance array
 	(
-	select3 ()
+	select3()
 	m3_btn_ins_src.text = sourceObj.name
 	targetObj[1] = sourceObj
 	select (for o in objects where classof o == foliage collect o)
@@ -132,14 +133,16 @@ rollout manage3 "" width:112 height:232
 	m3_spn_seed.value = sourceObj.seed
 	m3_spn_rotate.value = sourceObj.rotation.z		
 	)
+	
 	on m3_btn_ins_exe pressed do -- re-instance unique trees with source tree
 	(
-	select3 ()
+	select3()
 	if targetObj[1] != undefined do for o in selection do o.baseobject = targetObj[1].baseobject
 	)
+	
 	on m3_btn_height pressed do -- assign random height
 	(
-	select3 ()
+	select3()
 	if selection.count > 1 then m3_spn_height.value = $[1].height
 	else m3_spn_height.value = $.height
 	if tStats[1] == undefined do tStats[1] = m3_spn_height.value
@@ -151,7 +154,7 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_btn_dens pressed do -- assign random density
 	(
-	select3 ()
+	select3()
 		for n = 1 to selection.count do
 		(
 		selection[n].density = random 0.0 1.0
@@ -160,12 +163,12 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_btn_rotate pressed do -- assign random rotation
 	(
-	select3 ()
+	select3()
 	for n = 1 to selection.count do rotate selection[n] (eulerangles 0 0 (random 0 m3_spn_rotate.value as integer))
 	)
 	on m3_btn_omega pressed do -- alpha & omega: hit once randomize everything
 	(
-	select3 ()
+	select3()
 		for n = 1 to selection.count do 
 		(
 		instancemgr.makeobjectsunique $ #individual
@@ -218,11 +221,14 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_spn_height changed val do
 	(
+	select3()
 	tStats[1] = m3_spn_height.value
 	for n = 1 to selection.count do selection[n].height = m3_spn_height.value
 	)
+	
 	on m3_btn_prune pressed do
 	(
+	select3()
 		for n = 1 to selection.count do
 		(
 		selection[n].pruning = random -0.1 1.0
@@ -231,16 +237,22 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_spn_prune changed val do
 	(
+	select3()
 	for n = 1 to selection.count do selection[n].pruning = m3_spn_prune.value
 	)
+	
 	on m3_spn_seed changed val do
 	(
+	select3()
 	for n = 1 to selection.count do selection[n].seed = m3_spn_seed.value
 	)
+	
 	on m3_spn_dens changed val do
 	(
+	select3()
 	for n = 1 to selection.count do selection[n].density = m3_spn_dens.value
 	)
+	
 	on m3_show_chk_01 changed state do
 	(
 		select3()
@@ -273,6 +285,7 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_btn_vcm pressed do
 	(
+	select3()
 	if selection.count > 1 then vSwitch = $[1].CanopyMode
 		else vSwitch = $.CanopyMode
 	vSwitch += 1
@@ -284,6 +297,7 @@ rollout manage3 "" width:112 height:232
 	)
 	on m3_btn_lod pressed do
 	(
+	select3()
 		if selection.count > 1 then lSwitch = $[1].LevelOfDetail
 		else lSwitch = $.LevelOfDetail
 	lSwitch += 1
