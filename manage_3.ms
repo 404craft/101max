@@ -1,6 +1,7 @@
 -- tree randomizer
 -- manage trees en-masse in your scene
 -- distribute trees along target verts
+-- limited functionality plugin
 
 try(destroydialog ::manage3)catch()
 
@@ -8,43 +9,50 @@ tStats = #()
 sTerrain = undefined
 fn mSet mAtt = (for n = 1 to selection.count do selection[n].attribute)
 fn select3 = select (for o in selection where classof o == foliage collect o)
+fn element3 tar =
+(
+	tar.showleaves = manage3.m3_show_chk_01.state
+	tar.showfruit = manage3.m3_show_chk_02.state
+	tar.showflowers = manage3.m3_show_chk_03.state
+	tar.showtrunk = manage3.m3_show_chk_04.state
+	tar.showbranches = manage3.m3_show_chk_05.state
+	tar.showroots = manage3.m3_show_chk_06.state
+)
 select3 ()
 
-rollout manage3 "" width:152 height:248
+rollout manage3 "" width:112 height:232
 (
 	local targetObj = #()
 	
-	label m3_lbl_top "manage3" pos:[12,8] width:48 height:16
-	button m3_btn_seed "seed" pos:[8,96] width:48 height:16 toolTip:"select foliage and assign random seed"
-	button m3_btn_unique "make unique" pos:[64,8] width:80 height:16 toolTip:"select trees and make them unique"
-	pickbutton m3_btn_ins_src "tree" pos:[8,120] width:64 height:16 toolTip:"select source tree"
-	button m3_btn_ins_exe "connect" pos:[80,120] width:64 height:16 toolTip:"re-instance selected trees to source tree"
-	button m3_btn_height "height" pos:[8,32] width:48 height:16 toolTip:"select foliage and assign random height"
-	label m3_lbl_bottom "@101craft" pos:[12,154] width:52 height:14
-	button m3_btn_dens "density" pos:[8,80] width:48 height:16 enabled:true toolTip:"select foliage and assign random density"
-	button m3_btn_rotate "rotate" pos:[8,48] width:48 height:16 toolTip:"select foliage and assign random rotation"
-	button m3_btn_omega "OMEGA" pos:[48,200] width:96 height:40 toolTip:"randomize everything with a single click"
-	checkbutton m3_btn_show "hide" pos:[8,176] width:40 height:16 toolTip:"leaves on/off"
-	pickbutton m3_btn_dis_src "terrain" pos:[8,136] width:64 height:16 message:"" toolTip:"select source terrain"
-	button m3_btn_dis_exe "distribute" pos:[80,136] width:64 height:16 toolTip:"distribute trees along terrain"
+	button m3_btn_seed "seed" pos:[8,88] width:40 height:16 toolTip:"select foliage and assign random seed"
+	button m3_btn_unique "differ" pos:[56,112] width:48 height:16 toolTip:"select trees and make them unique"
+	pickbutton m3_btn_ins_src "tree" pos:[8,176] width:48 height:16 toolTip:"select source tree"
+	button m3_btn_ins_exe "stem" pos:[8,112] width:48 height:16 toolTip:"re-instance selected trees to source tree"
+	button m3_btn_height "height" pos:[8,24] width:40 height:16 toolTip:"select foliage and assign random height"
+	label m3_lbl_bottom "look@101craft.com" pos:[12,5] width:96 height:14
+	button m3_btn_dens "density" pos:[8,72] width:40 height:16 enabled:true toolTip:"select foliage and assign random density"
+	button m3_btn_rotate "rotate" pos:[8,40] width:40 height:16 toolTip:"select foliage and assign random rotation"
+	button m3_btn_omega "bloom" pos:[40,200] width:64 height:24 toolTip:"randomize everything with a single click"
+	pickbutton m3_btn_dis_src "terrain" pos:[8,160] width:48 height:16 message:"" toolTip:"select source terrain"
+	button m3_btn_dis_exe "plant" pos:[56,176] width:48 height:16 toolTip:"distribute trees along terrain"
 		
-	spinner m3_spn_height "" pos:[64,32] width:80 height:16 range:[0,10000,0]
-	spinner m3_spn_rotate "" pos:[64,48] width:80 height:16 range:[0,359,45]
-	button m3_btn_prune "prune" pos:[8,64] width:48 height:16
-	spinner m3_spn_prune "" pos:[64,64] width:80 height:16 range:[-0.1,1,-0.1]
-	spinner m3_spn_seed "" pos:[64,96] width:80 height:16 range:[0,1.67772e+007,0] type:#integer scale:0.1
-	spinner m3_spn_dens "" pos:[64,80] width:80 height:16 range:[0,1,0]
+	spinner m3_spn_height "" pos:[48,24] width:56 height:16 range:[0,10000,0]
+	spinner m3_spn_rotate "" pos:[48,40] width:56 height:16 range:[0,359,45]
+	button m3_btn_prune "prune" pos:[8,56] width:40 height:16
+	spinner m3_spn_prune "" pos:[48,56] width:56 height:16 range:[-0.1,1,-0.1]
+	spinner m3_spn_seed "" pos:[48,88] width:56 height:16 range:[0,1.67772e+007,0] type:#integer scale:0.1
+	spinner m3_spn_dens "" pos:[48,72] width:56 height:16 range:[0,1,0]
 	
-	checkbutton m3_show_chk_01 "" pos:[48,176] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_02 "" pos:[64,176] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_03 "" pos:[80,176] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_04 "" pos:[96,176] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_05 "" pos:[112,176] width:16 height:16 checked:true state:true
-	checkbutton m3_show_chk_06 "" pos:[128,176] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_01 "" pos:[8,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_02 "" pos:[24,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_03 "" pos:[40,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_04 "" pos:[56,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_05 "" pos:[72,136] width:16 height:16 checked:true state:true
+	checkbutton m3_show_chk_06 "" pos:[88,136] width:16 height:16 checked:true state:true
 	
-	button m3_btn_vcm "" pos:[8,200] width:16 height:40 toolTip:"viewport canopy mode"
-	button m3_btn_lod "" pos:[24,200] width:24 height:40 toolTip:"level-of-detail"
-	spinner m3_spn_dis_dens "" pos:[80,152] width:64 height:16 range:[0,1,1]
+	button m3_btn_vcm "" pos:[24,200] width:16 height:24 toolTip:"viewport canopy mode"
+	button m3_btn_lod "" pos:[8,200] width:16 height:24 toolTip:"level-of-detail"
+	spinner m3_spn_dis_dens "" pos:[56,160] width:48 height:16 range:[0,1,1]
 	
 	on m3_btn_seed pressed do -- assign random seed
 	(
@@ -126,30 +134,6 @@ rollout manage3 "" width:152 height:248
 		rotate selection[n] (eulerangles 0 0 (random 0 m3_spn_rotate.value as integer))
 			
 		if sTerrain != undefined do for n =1 to sTerrain.verts.count do for t = 1 to selection.count do selection[t].pos = sTerrain.verts[t].pos
-		)
-	)
-	on m3_btn_show changed state do -- leaves switch off / on, i.e. for AO rendering
-	(
-	select3 ()
-		if state == true then 
-		(
-		try($.showleaves = off
-		$.showflowers = off
-		$.showfruit = off)catch()
-		m3_btn_show.text = "show"
-		m3_show_chk_01.state = false
-		m3_show_chk_02.state = false
-		m3_show_chk_03.state = false
-		)
-		else if state == false then 
-		(
-		try($.showleaves = on
-		$.showflowers = on
-		$.showfruit = on)catch()
-		m3_btn_show.text = "hide"
-		m3_show_chk_01.state = true
-		m3_show_chk_02.state = true
-		m3_show_chk_03.state = true
 		)
 	)
 	on m3_btn_dis_src picked sourceTerrain do -- pick source terrain i.e. environment geometry
@@ -260,33 +244,33 @@ rollout manage3 "" width:152 height:248
 	)
 	on m3_show_chk_01 changed state do
 	(
-	if state == on then try ($.showleaves = on) catch()
-	else try($.showleaves = off) catch()
+		select3()
+		element3 $
 	)
 	on m3_show_chk_02 changed state do
 	(
-	if state == on then try ($.showfruit = on) catch()
-	else try($.showfruit = off) catch()
+		select3()
+		element3 $
 	)
 	on m3_show_chk_03 changed state do
 	(
-	if state == on then try ($.showflowers = on) catch()
-	else try($.showflowers = off) catch()
+		select3()
+		element3 $
 	)
 	on m3_show_chk_04 changed state do
 	(
-	if state == on then try ($.showtrunk = on) catch()
-	else try($.showtrunk = off) catch()	
+		select3()
+		element3 $
 	)
 	on m3_show_chk_05 changed state do
 	(
-	if state == on then try ($.showbranches = on) catch()
-	else try($.showbranches = off) catch()		
+		select3()
+		element3 $	
 	)
 	on m3_show_chk_06 changed state do
 	(
-	if state == on then try ($.showroots = on) catch()
-	else try($.showroots = off) catch()			
+		select3()
+		element3 $		
 	)
 	on m3_btn_vcm pressed do
 	(
