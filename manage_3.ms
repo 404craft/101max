@@ -1,4 +1,4 @@
--- tree randomizer
+-- tree randomization and distribution
 -- manage trees en-masse in your scene
 -- distribute trees along target object's vertices
 
