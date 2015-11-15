@@ -1,6 +1,6 @@
 -- tree randomization and distribution
 -- manage trees en-masse in your scene
--- distribute trees along target object's vertices
+-- distribute trees along target object's vertices i.e. country lane, forest road
 
 try(destroydialog ::manage3)catch()
 
