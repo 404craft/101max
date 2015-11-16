@@ -42,7 +42,7 @@ fn tone arr n rnd =
 	)
 )
 
-fn life arrA arrB spd =
+fn spark arrA arrB spd =
 (
 	for a = 1 to arrA.count do
 	(
@@ -232,11 +232,11 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 			)
 		)
 	--animate moons
-	life m_track m_orbit ((random 1 10) * 15)
+	spark m_track m_orbit ((random 5 10) * 30)
 	)
 
 	-- animate planets
-	life p_track p_orbit ((random 1 10) * 15)
+	spark p_track p_orbit ((random 1 10) * 15)
 	if alone != true do
 	(
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
