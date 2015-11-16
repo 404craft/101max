@@ -3,7 +3,10 @@
 
 global root = undefined
 global elements = #()
-global tracks = #()
+global p_track = #()
+global p_orbit = #()
+global m_track = #()
+global m_orbit = #()
 global base = #()
 global top = #()
 global planets = #()
@@ -39,9 +42,9 @@ fn tone arr n rnd =
 	)
 )
 
-fn life arr spd =
+fn life arrA arrB spd =
 (
-	for a = 1 to arr.count do
+	for a = 1 to arrA.count do
 	(
 		rnd = random 1 2
 		if rnd == 1 then dir = -1
@@ -49,11 +52,11 @@ fn life arr spd =
 				
 		with animate on
 		(
-		   at time 0 rotate arr[a] (angleAxis 0 [0, 0, 1])
-		   at time 50 rotate arr[a] (angleAxis (spd) [0, 0, dir])
+		   at time 0 rotate arrA[a] (angleAxis 0 [0, 0, 1])
+		   at time 50 rotate arrA[a] (angleAxis (spd) [0, 0, dir])
 		)
 		
-		ctr = getXYZControllers arr[a].rotation.controller
+		ctr = getXYZControllers arrA[a].rotation.controller
 		for c in ctr do
 		(	
 			for k in c.keys do
@@ -62,7 +65,18 @@ fn life arr spd =
 			k.outTangentType = #linear
 			)
 		)
-		setAfterORT arr[a].rotation.controller #relativeRepeat
+		setAfterORT arrA[a].rotation.controller #relativeRepeat
+		
+		-- set orbit rotation
+		r1 = random -120 120
+		r2 = random -30 30
+		rotate arrA[a] (angleAxis r1 [0, 0, 1])
+		rotate arrA[a] (angleAxis r2 [0, 1, 0])
+		
+	arrB[a].rotation.controller = Orientation_Constraint ()
+	arrB[a].rotation.controller.appendTarget arrA[a] 100
+	arrB[a].rotation.controller.local_world = 1
+	arrB[a].rotation.controller.relative = on
 	)
 )
 
@@ -76,12 +90,12 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store =
+fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array =
 (
 		-- orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
 		origin d source
-		append tracks d
+		append d_array d
 		append top d
 	
 		rnd = random 0.5 period
@@ -95,6 +109,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		m[4].steps = 3
 		m[4].radius = wire * 0.75
 		origin orbit d
+		append o_array orbit
 		append top orbit
 		
 		-- planets
@@ -110,23 +125,6 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		--c.position.x = c.position.x + ceiling
 		origin c orbit
 		append top c
-		
-		
-		-- animate
-		life tracks ((random 1 10) * 15)
-			
-		-- set orbit rotation
-		r1 = random -120 120
-		r2 = random -30 30
-		rotate d (angleAxis r1 [0, 0, 1])
-		rotate d (angleAxis r2 [0, 1, 0])
-		
-		-- orbit orientation
-		orbit.rotation.controller = Orientation_Constraint ()
-		orbit.rotation.controller.appendTarget d 100
-		orbit.rotation.controller.local_world = 1
-		orbit.rotation.controller.relative = on 
-		
 )
 
 fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
@@ -135,7 +133,10 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 		
 	root = undefined
 	elements = #()
-	tracks = #()
+	p_track = #()
+	p_orbit = #()
+	m_track = #()
+	m_orbit = #()
 	base = #()
 	top = #()
 	planets = #()
@@ -216,9 +217,10 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 	--orbits
 	for o = 1 to orbits do
 	(
-	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true
+	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit
 	)
-
+	
+	--optionally create moons
 	if lunar do
 	(
 		for p = 1 to planets.count do
@@ -226,11 +228,15 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 			moons = random 0 3
 			for m = 1 to moons do
 			(
-			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false
+			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit
 			)
 		)
+	--animate moons
+	life m_track m_orbit ((random 1 10) * 15)
 	)
-	
+
+	-- animate planets
+	life p_track p_orbit ((random 1 10) * 15)
 	if alone != true do
 	(
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
