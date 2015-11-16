@@ -122,7 +122,6 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		-- orbit holders
 		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
 		rotate c (angleAxis 90 [0, 1, 0])
-		--c.position.x = c.position.x + ceiling
 		origin c orbit
 		append top c
 )
