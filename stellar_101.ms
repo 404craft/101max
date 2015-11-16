@@ -76,9 +76,62 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
+fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store =
 (
-	if stellar.ckb_alone.state == true do ceiling = 0.0
+		-- orbit roots / dummies
+		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
+		origin d source
+		append tracks d
+		append top d
+	
+		rnd = random 0.5 period
+		rim = rnd+(sun*decay)+o*orbit_gap
+		
+		-- orbits
+		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + o as string)
+		m = sweep current_built_in_shape: 4
+		addModifier orbit m
+		classof orbit
+		m[4].steps = 3
+		m[4].radius = wire * 0.75
+		origin orbit d
+		append top orbit
+		
+		-- planets
+		rnd = random mass (sun-(sun*0.25)) 
+		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string)
+		origin p orbit
+		if store do append planets p
+		append top p
+		
+		-- orbit holders
+		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
+		rotate c (angleAxis 90 [0, 1, 0])
+		--c.position.x = c.position.x + ceiling
+		origin c orbit
+		append top c
+		
+		
+		-- animate
+		life tracks ((random 1 10) * 15)
+			
+		-- set orbit rotation
+		r1 = random -120 120
+		r2 = random -30 30
+		rotate d (angleAxis r1 [0, 0, 1])
+		rotate d (angleAxis r2 [0, 1, 0])
+		
+		-- orbit orientation
+		orbit.rotation.controller = Orientation_Constraint ()
+		orbit.rotation.controller.appendTarget d 100
+		orbit.rotation.controller.local_world = 1
+		orbit.rotation.controller.relative = on 
+		
+)
+
+fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
+(
+	if alone do ceiling = 0.0
 		
 	root = undefined
 	elements = #()
@@ -96,7 +149,7 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 	rootZ = root.pos.z
 	append base root
 	
-	if stellar.ckb_alone.state != true do
+	if alone != true do
 	(
 		len = 1.5
 		-- base circles
@@ -143,7 +196,7 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 	)
 	-- sun root
 	s_r = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_core_root")
-	if stellar.ckb_alone.state == false then origin s_r r
+	if alone == false then origin s_r r
 		else if stellar.ckb_alone.state == true then origin s_r root
 	append top s_r
 	
@@ -152,7 +205,7 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 	origin s s_r
 	append top s
 	
-	if stellar.ckb_alone.state != true do
+	if alone != true do
 	(
 	-- rod cylinder base
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(wire * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
@@ -163,55 +216,22 @@ fn procreate pos size circles circle_gap orbits orbit_gap ceiling sun links wire
 	--orbits
 	for o = 1 to orbits do
 	(
-		-- orbit roots / dummies
-		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_orbit_root_" + o as string)
-		origin d s_r
-		append tracks d
-		append top d
-		rnd = random 0.5 10.0
-		rim = rnd+(sun*2)+o*orbit_gap
-		
-		-- orbits
-		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: ("stellar_orbit_" + o as string)
-		m = sweep current_built_in_shape: 4
-		addModifier orbit m
-		classof orbit
-		m[4].steps = 3
-		m[4].radius = wire * 0.75
-		origin orbit d
-		append top orbit
-		
-		-- planets
-		rnd = random 5.0 (sun-(sun*0.25)) 
-		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: ("stellar_orbit_planet_" + o as string)
-		origin p orbit
-		append planets p
-		append top p
-		
-		-- orbit holders
-		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: ("stellar_orbit_holder_" + o as string)
-		rotate c (angleAxis 90 [0, 1, 0])
-		--c.position.x = c.position.x + ceiling
-		origin c orbit
-		append top c
-		
-		-- animate
-		life tracks ((random 1 10) * 15)
-			
-		-- set orbit rotation
-		r1 = random -120 120
-		r2 = random -30 30
-		rotate d (angleAxis r1 [0, 0, 1])
-		rotate d (angleAxis r2 [0, 1, 0])
-		
-		-- orbit orientation
-		orbit.rotation.controller = Orientation_Constraint ()
-		orbit.rotation.controller.appendTarget d 100
-		orbit.rotation.controller.local_world = 1
-		orbit.rotation.controller.relative = on	
+	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true
+	)
+
+	if lunar do
+	(
+		for p = 1 to planets.count do
+		(
+			moons = random 0 3
+			for m = 1 to moons do
+			(
+			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false
+			)
+		)
 	)
 	
-	if stellar.ckb_alone.state != true do
+	if alone != true do
 	(
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
 	origin c s
@@ -249,8 +269,9 @@ rollout stellar "" width:112 height:160
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
-	checkbutton chk_kill "annihilate" pos:[8,96] width:88 height:24 toolTip:"delete current before creating next" state:false
-	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system"
+	checkbutton chk_kill "annihilate" pos:[8,96] width:80 height:24 toolTip:"delete current before creating next" state:false
+	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system" state:false
+	checkbutton ckb_moons "" pos:[88,96] width:8 height:24 toolTip:"create planetary moons" state:false
 	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
 	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
 	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
@@ -259,25 +280,25 @@ rollout stellar "" width:112 height:160
 	on btn_create pressed do
 	(
 		purge root
-		procreate s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
+		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
 		purge root
-		procreate s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
+		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		select root
 	)
 	on btn_c_2 pressed do
 	(
 		purge root
-		procreate s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
+		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		select root
 	)
 	on btn_c_3 pressed do
 	(
 		purge root
-		procreate s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
+		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		select root
 	)
 )
