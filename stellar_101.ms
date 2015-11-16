@@ -24,7 +24,6 @@ fn tone arr n rnd =
 (  
 	for a = 1 to arr.count do 
 	(
-	-- mat = Arch___Design__mi()
 	mat = standard()
 	mat.name = "m_" + arr[a] as string
 	mod = 255.0 / arr.count
@@ -90,7 +89,7 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array =
+fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array p_array =
 (
 		-- orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
@@ -111,6 +110,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		origin orbit d
 		append o_array orbit
 		append top orbit
+		append p_array orbit
 		
 		-- planets
 		rnd = random mass (sun-(sun*0.25)) 
@@ -118,12 +118,14 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		origin p orbit
 		if store do append planets p
 		append top p
+		append p_array p
 		
 		-- orbit holders
 		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
 		rotate c (angleAxis 90 [0, 1, 0])
 		origin c orbit
 		append top c
+		append p_array c
 )
 
 fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
@@ -212,11 +214,11 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 	origin c s
 	append top c
 	)
-	
+	superior = #()
 	--orbits
 	for o = 1 to orbits do
 	(
-	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit
+	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit superior
 	)
 	
 	--optionally create moons
@@ -224,11 +226,15 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 	(
 		for p = 1 to planets.count do
 		(
+			inferior = #()
+			--append inferior planets[p]
 			moons = random 0 3
 			for m = 1 to moons do
 			(
-			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit
+			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit inferior
 			)
+			-- tone planets
+			tone inferior 3 (random 0 255)
 		)
 	--animate moons
 	spark m_track m_orbit ((random 5 10) * 30)
@@ -246,7 +252,7 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 	elements = join base top
 	tone base 1 0
 	tone top 2 0
-	tone planets 3 (random 0 255)
+	tone superior 2 0
 )
 
 try(destroydialog ::stellar)catch()
