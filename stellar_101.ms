@@ -199,7 +199,7 @@ fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling su
 	-- sun root
 	s_r = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_core_root")
 	if alone == false then origin s_r r
-		else if stellar.ckb_alone.state == true then origin s_r root
+		else if alone == true then origin s_r root
 	append top s_r
 	
 	-- sun sphere
