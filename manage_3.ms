@@ -18,8 +18,9 @@ fn element3 tar =
 	tar.showroots = manage3.m3_show_chk_06.state
 )
 
-fn bloom target = 
+fn bloom target method density = 
 (
+			--geometry class
 			if superclassof target == geometryclass then 
 			(
 				local gLimit = 512
@@ -50,23 +51,43 @@ fn bloom target =
 				else messagebox ("geometry exceeds " +gLimit as string)
 			)
 			
+			--spline class
 			else if superclassof target == shape then
 			(
-			nTimes = (numknots target) - selection.count
-			if selection.count > 1 then sPost = $ as array
-				else sPost = $
-			iPost = #()
-			if nTimes > 0 do for i = 1 to nTimes do
-			(
-			if selection.count > 1 then nPost = instance $[1]
-				else nPost = instance $
-			append iPost nPost
-			)
-			select (join iPost sPost)
-			for n = 1 to (numknots target) do for t = 1 to selection.count do selection[n].pos = getKnotPoint target 1 n
-			sPost = undefined
-			iPost = undefined
-			nPost = undefined
+				if selection.count > 1 then sPost = $ as array
+					else sPost = $
+				
+				--distribute along path / method 1
+				if method then
+				(
+					span = 0.005 * (curvelength target)
+				    step = (1.1 - density) / span
+					
+					for n = 0.0 to 1.0 by step do
+					(
+						pos = lengthInterp target n
+						nPost = instance sPost
+						nPost.pos = pos
+					)
+				)
+				
+				--distribute around vertices / method 2
+				else if method == false do
+				(
+					nTimes = (numknots target) - selection.count
+					iPost = #()
+					if nTimes > 0 do for i = 1 to nTimes do
+					(
+					if selection.count > 1 then nPost = instance $[1]
+						else nPost = instance $
+					append iPost nPost
+					)
+					select (join iPost sPost)
+					for n = 1 to (numknots target) do for t = 1 to selection.count do selection[n].pos = getKnotPoint target 1 n
+					sPost = undefined
+					iPost = undefined
+					nPost = undefined
+				)
 			)
 )
 select3()
@@ -85,7 +106,7 @@ rollout manage3 "" width:112 height:232
 	button m3_btn_rotate "rotate" pos:[8,40] width:40 height:16 toolTip:"assign random rotation"
 	button m3_btn_omega "bloom" pos:[32,200] width:72 height:24 toolTip:"randomize everything with a single click"
 	pickbutton m3_btn_dis_src "terrain" pos:[8,160] width:48 height:16 message:"" toolTip:"select source terrain"
-	button m3_btn_dis_exe "plant" pos:[56,176] width:48 height:16 toolTip:"distribute trees along terrain"
+	button m3_btn_dis_exe "plant" pos:[56,176] width:40 height:16 toolTip:"distribute trees along terrain"
 		
 	spinner m3_spn_height "" pos:[48,24] width:56 height:16 range:[0,10000,0]
 	spinner m3_spn_rotate "" pos:[48,40] width:56 height:16 range:[0,359,45]
@@ -103,6 +124,7 @@ rollout manage3 "" width:112 height:232
 	
 	button m3_btn_vcm "" pos:[16,200] width:16 height:24 toolTip:"viewport canopy mode"
 	button m3_btn_lod "" pos:[8,200] width:8 height:24 toolTip:"level-of-detail"
+	checkbutton m3_ckb_dis_method "" pos:[96,176] width:8 height:16 toolTip:"type of distribution" checked:true state:true
 	spinner m3_spn_dis_dens "" pos:[56,160] width:48 height:16 range:[0,1,1]
 
 	on m3_btn_seed pressed do -- assign random seed
@@ -212,7 +234,7 @@ rollout manage3 "" width:112 height:232
 	(
 		if sTerrain != undefined then
 		(
-			bloom sTerrain
+			bloom sTerrain m3_ckb_dis_method.state m3_spn_dis_dens.value
 		)
 		else messagebox ("select terrain")
 	)
