@@ -72,7 +72,7 @@ fn bloom target method density =
 					)
 				)
 				
-				--distribute around vertices / method 2
+				--distribute around vertices i.e. normalize spline first / method 2
 				else if method == false do
 				(
 					nTimes = (numknots target) - selection.count
