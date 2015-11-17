@@ -61,7 +61,7 @@ fn bloom target method density =
 				--distribute along path / method 1
 				if method then
 				(
-					span = 0.005 * (curvelength target)
+					span = 0.05 * (curvelength target)
 				    step = (1.1 - density) / span
 					
 					for n = 0.0 to 1.0 by step do
