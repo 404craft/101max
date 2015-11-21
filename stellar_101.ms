@@ -113,8 +113,10 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		append top orbit
 		append p_array orbit
 
+		c = random 0 2
+		
 		-- planet
-		if (astral == false OR asteroids.count > 0) do
+		if (astral == false OR asteroids.count > 0 OR c > 0) do
 		(
 		rnd = random mass (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string)
@@ -125,7 +127,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		)
 
 		-- asteroid belt
-		if (astral == true AND asteroids.count == 0) do
+		if (astral == true AND asteroids.count == 0 AND c == 0) do
 		(
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + "asteroid_root" + o as string)
 			origin d orbit
@@ -137,7 +139,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 				(
 				r = random 0.5 5
 				spread = random 5 20
-				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r wirecolor: yellow
+				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + "asteroid_" + i as string)
 					try
 					(
 						for i in asteroids do
