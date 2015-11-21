@@ -128,7 +128,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		append p_array c
 )
 
-fn procreate lunar alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
+fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
 (
 	if alone do ceiling = 0.0
 		
@@ -280,9 +280,10 @@ rollout stellar "" width:112 height:160
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
-	checkbutton chk_kill "annihilate" pos:[8,96] width:80 height:24 toolTip:"delete current before creating next" state:false
+	checkbutton chk_kill "annihilate" pos:[8,96] width:72 height:24 toolTip:"delete current before creating next" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system" state:false
-	checkbutton ckb_moons "" pos:[88,96] width:8 height:24 toolTip:"create planetary moons" state:false
+	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"create planetary moons" state:false
+	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"create asteroid belt" state:false
 	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
 	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
 	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
@@ -290,26 +291,26 @@ rollout stellar "" width:112 height:160
 
 	on btn_create pressed do
 	(
-		purge root stellar.chk_kill.state
-		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
+		purge root chk_kill.state
+		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
-		purge root stellar.chk_kill.state
-		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
+		purge root chk_kill.state
+		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		select root
 	)
 	on btn_c_2 pressed do
 	(
-		purge root stellar.chk_kill.state
-		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
+		purge root chk_kill.state
+		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		select root
 	)
 	on btn_c_3 pressed do
 	(
-		purge root stellar.chk_kill.state
-		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
+		purge root chk_kill.state
+		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		select root
 	)
 )
