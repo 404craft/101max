@@ -42,7 +42,7 @@ fn tone arr n rnd =
 	)
 )
 
-fn spark arrA arrB spd =
+fn spark arrA arrB spd matrix constrain =
 (
 	for a = 1 to arrA.count do
 	(
@@ -52,8 +52,8 @@ fn spark arrA arrB spd =
 				
 		with animate on
 		(
-		   at time 0 rotate arrA[a] (angleAxis 0 [0, 0, 1])
-		   at time 50 rotate arrA[a] (angleAxis (spd) [0, 0, dir])
+		   at time 0 rotate arrA[a] (angleAxis 0 matrix)
+		   at time 50 rotate arrA[a] (angleAxis (spd) [matrix.x*dir, matrix.y*dir, matrix.z*dir])
 		)
 		
 		ctr = getXYZControllers arrA[a].rotation.controller
@@ -73,10 +73,13 @@ fn spark arrA arrB spd =
 		rotate arrA[a] (angleAxis r1 [0, 0, 1])
 		rotate arrA[a] (angleAxis r2 [0, 1, 0])
 		
-	arrB[a].rotation.controller = Orientation_Constraint ()
-	arrB[a].rotation.controller.appendTarget arrA[a] 100
-	arrB[a].rotation.controller.local_world = 1
-	arrB[a].rotation.controller.relative = on
+		if constrain == true do
+		(
+		arrB[a].rotation.controller = Orientation_Constraint ()
+		arrB[a].rotation.controller.appendTarget arrA[a] 100
+		arrB[a].rotation.controller.local_world = 1
+		arrB[a].rotation.controller.relative = on
+		)
 	)
 )
 
@@ -129,7 +132,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		-- asteroid belt
 		if (astral == true AND asteroids.count == 0 AND c == 0) do
 		(
-			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + "asteroid_root" + o as string)
+			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
 			origin d orbit
 			append top d
 			append p_array p
@@ -139,17 +142,12 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 				(
 				r = random 0.5 5
 				spread = random 5 20
-				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + "asteroid_" + i as string)
+				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
 					try
 					(
 						for i in asteroids do
 						(
-							if (intersects i n == true) do 
-							(
-								print (i.name + "intersects with" + n.name)
-								delete n
-							)
-							
+							if (intersects i n == true) do delete n
 						)
 						
 						if IsValidNode n == true do 
@@ -280,11 +278,14 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 			tone inferior 3 (random 0 255)
 		)
 	--animate moons
-	spark m_track m_orbit ((random 5 10) * 30)
+	spark m_track m_orbit ((random 5 10) * 30) [0,0,1] true
 	)
-
+	
+	--animate asteroids
+	spark asteroids asteroids ((random 1 10) * 60) [0,1,0] false
+	
 	-- animate planets
-	spark p_track p_orbit ((random 1 10) * 15)
+	spark p_track p_orbit ((random 1 10) * 15) [0,0,1] true
 	if alone != true do
 	(
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
