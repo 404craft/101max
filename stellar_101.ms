@@ -3,13 +3,14 @@
 
 global root = undefined
 global elements = #()
-global p_track = #()
 global p_orbit = #()
+global p_track = #()
 global m_track = #()
 global m_orbit = #()
 global base = #()
 global top = #()
 global planets = #()
+global moons = #()
 global asteroids = #()
 global rad = 0
 
@@ -21,12 +22,16 @@ fn purge tar chk =
 	try(if chk == true do kill elements)catch()
 )
 
-fn tone arr n rnd =
+fn tone arr n rnd opa dye =
 (  
 	for a = 1 to arr.count do 
 	(
 	mat = standard()
+	mat.opacity = opa
 	mat.name = "m_" + arr[a] as string
+		
+	if dye == 0 then
+	(
 	mod = 255.0 / arr.count
 	a1 = (255-a*mod as integer)
 	a2 = (0+a*mod as integer)
@@ -38,11 +43,53 @@ fn tone arr n rnd =
 			else if n == 3 then (g = a1; b = a2)
 	c = color r g b 0
 	mat.diffuse = c
+	)
+	
+	else if dye == 1 then
+	(
+		mat.diffuseMap = noise()
+		mat.diffuseMap.color1 = color (random 150 255) (random 100 200) 0 0
+		mat.diffuseMap.color2 = color (random 200 255) (random 200 255) 0 0
+		mat.diffuseMap.size = random 10.0 20.0
+		mat.diffuseMap.type = 1
+	)
+	
+	else if dye == 2 do
+	(
+		check = random 0 1
+		if check == 0 then
+		(
+			mat.diffuseMap = Wood()
+			mat.diffuseMap.thickness = random 10.0 30.0
+			mat.diffuseMap.color1 = random white black
+			mat.diffuseMap.color2 = random white black
+		)
+		else if check == 1 do
+		(
+			mat.diffuseMap = planet()
+			mat.diffuseMap.oceanPercent = random 0.1 25.0
+			mat.diffuseMap.continentSize = random 50.0 125.0
+			mat.diffuseMap.islandFactor = random 5.0 10.0
+
+			wtr = random white black
+			--water colors
+			mat.diffuseMap.color1 = wtr
+			mat.diffuseMap.color2 = color (wtr.r-wtr.r*0.2) (wtr.g-wtr.g*0.2) (wtr.b-wtr.b*0.2) (wtr.a-wtr.a*0.2)
+			mat.diffuseMap.color3 = color (wtr.r-wtr.r*0.1) (wtr.g-wtr.g*0.1) (wtr.b-wtr.b*0.1) (wtr.a-wtr.a*0.1)
+			--land colors
+			mat.diffuseMap.color4 = random white black
+			mat.diffuseMap.color5 = random white black
+			mat.diffuseMap.color6 = random white black
+			mat.diffuseMap.color7 = random white black
+			mat.diffuseMap.color8 = random white black
+		)
+	)
+		
 	try(arr[a].material = mat)catch()
 	)
 )
 
-fn spark arrA arrB spd matrix constrain =
+fn spark arrA arrB spd matrix constrain roll =
 (
 	for a = 1 to arrA.count do
 	(
@@ -67,12 +114,15 @@ fn spark arrA arrB spd matrix constrain =
 		)
 		setAfterORT arrA[a].rotation.controller #relativeRepeat
 		
+		if roll == true do
+		(
 		-- set orbit rotation
 		r1 = random -120 120
 		r2 = random -30 30
 		rotate arrA[a] (angleAxis r1 [0, 0, 1])
 		rotate arrA[a] (angleAxis r2 [0, 1, 0])
-		
+		)
+			
 		if constrain == true do
 		(
 		arrB[a].rotation.controller = Orientation_Constraint ()
@@ -93,7 +143,7 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array p_array astral =
+fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral =
 (
 		-- orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
@@ -124,7 +174,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		rnd = random mass (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string)
 		origin p orbit
-		if store do append planets p
+		append form p
 		append top p
 		append p_array p
 		)
@@ -140,11 +190,11 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		if (astral == true AND asteroids.count == 0 AND c == 0) do
 		(
 			-- optionally adjust orbit and orbit holder
-			--m[4].radius *= 0.5
-			--stick.radius *= 0.5
+			m[4].radius *= 0.75
+			stick.radius *= 0.75
 			
 			-- or switch them off for rendering
-			orbit.renderable = off
+			--orbit.renderable = off
 			stick.renderable = off
 			
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
@@ -158,7 +208,6 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 				r = random 1 5
 				spread = random 5 18
 				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
-				--n = GeoSphere pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) radius: r baseType: 0 segs: 1 hemisphere: on
 					try
 					(
 						for i in asteroids do
@@ -177,7 +226,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		)
 )
 
-fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
+fn procreate dye lunar astral alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
 (
 	if alone do ceiling = 0.0
 		
@@ -190,6 +239,7 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 	base = #()
 	top = #()
 	planets = #()
+	moons = #()
 	asteroids = #()
 	rad = 0
 	
@@ -253,22 +303,22 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 	append top s_r
 	
 	-- sun sphere
-	s = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
-	origin s s_r
-	append top s
+	core = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
+	origin core s_r
+	append top core
 	
 	if alone != true do
 	(
 	-- rod cylinder base
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(wire * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
-	origin c s
+	origin c core
 	append top c
 	)
 	superior = #()
 	--orbits
 	for o = 1 to orbits do
 	(
-	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit superior astral
+	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" planets p_track p_orbit superior astral
 	)
 	
 	--optionally create moons
@@ -278,34 +328,48 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 		(
 			inferior = #()
 			--append inferior planets[p]
-			moons = random 0 3
-			for m = 1 to moons do
+			check = random 0 3
+			for m = 1 to check do
 			(
-			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit inferior false
+			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" moons m_track m_orbit inferior false
 			)
 			-- tone planets
-			tone inferior 3 (random 0 255)
+			tone inferior 3 (random 0 255) 100 0
 		)
 	--animate moons
-	spark m_track m_orbit ((random 5 10) * 30) [0,0,1] true
+	spark moons moons ((random 5 10) * 60) [0,0,1] false false
+	spark m_track m_orbit ((random 5 10) * 30) [0,0,1] true true
 	)
 	
 	--animate asteroids
-	spark asteroids asteroids ((random 1 10) * 60) [0,1,0] false
+	spark asteroids asteroids ((random 1 10) * 60) [0,1,0] false true
 	
 	-- animate planets
-	spark p_track p_orbit ((random 1 10) * 15) [0,0,1] true
+	spark planets planets ((random 5 10) * 30) [0,0,1] false false
+	spark p_track p_orbit ((random 1 10) * 15) [0,0,1] true true
 	if alone != true do
 	(
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: (sun*2) name: "stellar_holder"
 	origin c s
 	append top c
 	)
-	
 	elements = join base top
-	tone base 1 0
-	tone top 2 0
-	tone superior 2 0
+	if dye == true then
+	(
+	suns = #()
+	append suns core
+		
+	tone elements 1 0 50 0
+	tone planets 2 0 100 2
+	tone moons 2 0 100 2
+	tone suns 1 0 100 1
+	)
+	else if dye == false do
+	(
+	tone base 1 0 100 0
+	tone top 2 0 100 0
+	tone superior 2 0 100 0
+	)
 )
 
 try(destroydialog ::stellar)catch()
@@ -332,10 +396,11 @@ rollout stellar "" width:112 height:160
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
-	checkbutton chk_kill "annihilate" pos:[8,96] width:72 height:24 toolTip:"delete current before creating next" state:false
+	checkbutton chk_kill "annihilate" pos:[16,96] width:64 height:24 toolTip:"delete current before creating next" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system" state:false
 	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"create planetary moons" state:false
 	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"create asteroid belt" state:false
+	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture system" state:false
 	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
 	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
 	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
@@ -344,25 +409,25 @@ rollout stellar "" width:112 height:160
 	on btn_create pressed do
 	(
 		purge root chk_kill.state
-		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
+		procreate ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
 		purge root chk_kill.state
-		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
+		procreate ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		select root
 	)
 	on btn_c_2 pressed do
 	(
 		purge root chk_kill.state
-		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
+		procreate ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		select root
 	)
 	on btn_c_3 pressed do
 	(
 		purge root chk_kill.state
-		procreate ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
+		procreate ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		select root
 	)
 )
