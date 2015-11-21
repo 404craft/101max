@@ -129,9 +129,22 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		append p_array p
 		)
 
+		-- orbit holder
+		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
+		rotate stick (angleAxis 90 [0, 1, 0])
+		origin stick orbit
+		append top stick
+		append p_array stick
+		
 		-- asteroid belt
 		if (astral == true AND asteroids.count == 0 AND c == 0) do
 		(
+			m[4].radius *= 0.5
+			stick.radius *= 0.5
+			
+			--orbit.renderable = off
+			stick.renderable = off
+			
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
 			origin d orbit
 			append top d
@@ -143,6 +156,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 				r = random 0.5 5
 				spread = random 5 20
 				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
+				--n = GeoSphere pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) radius: r baseType: 0 segs: 1 hemisphere: on
 					try
 					(
 						for i in asteroids do
@@ -159,13 +173,6 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 					)catch()
 				)
 		)
-
-		-- orbit holder
-		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
-		rotate c (angleAxis 90 [0, 1, 0])
-		origin c orbit
-		append top c
-		append p_array c
 )
 
 fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
