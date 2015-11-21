@@ -10,6 +10,7 @@ global m_orbit = #()
 global base = #()
 global top = #()
 global planets = #()
+global asteroids = #()
 global rad = 0
 
 fn purge tar chk =
@@ -89,7 +90,7 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array p_array =
+fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias store d_array o_array p_array astral =
 (
 		-- orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
@@ -100,7 +101,7 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		rnd = random 0.5 period
 		rim = rnd+(sun*decay)+o*orbit_gap
 		
-		-- orbits
+		-- orbit
 		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + o as string)
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
@@ -111,16 +112,37 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		append o_array orbit
 		append top orbit
 		append p_array orbit
-		
-		-- planets
+
+		-- planet
+		if (astral == false OR asteroids.count > 0) do
+		(
 		rnd = random mass (sun-(sun*0.25)) 
 		p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string)
 		origin p orbit
 		if store do append planets p
 		append top p
 		append p_array p
-		
-		-- orbit holders
+		)
+
+		-- asteroid belt
+		if (astral == true AND asteroids.count == 0) do
+		(
+			a = random 15 30
+				for i = 1 to a do
+				(
+				r = random 0.5 5
+				spread = random 5 20
+				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r wirecolor: yellow
+				try(
+				for i in asteroids do
+				(
+				if (intersects i n == true) do (print (i.name + "intersects with" + n.name); delete n)
+				)
+				if IsValidNode n == true do (append asteroids n; append top n))catch()
+				)
+		)
+
+		-- orbit holder
 		c = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
 		rotate c (angleAxis 90 [0, 1, 0])
 		origin c orbit
@@ -141,6 +163,7 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 	base = #()
 	top = #()
 	planets = #()
+	asteroids = #()
 	rad = 0
 	
 	-- root
@@ -218,7 +241,7 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 	--orbits
 	for o = 1 to orbits do
 	(
-	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit superior
+	terra s_r o orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" true p_track p_orbit superior astral
 	)
 	
 	--optionally create moons
@@ -231,7 +254,7 @@ fn procreate lunar astral alone pos size circles circle_gap orbits orbit_gap cei
 			moons = random 0 3
 			for m = 1 to moons do
 			(
-			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit inferior
+			terra planets[p] m (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" false m_track m_orbit inferior false
 			)
 			-- tone planets
 			tone inferior 3 (random 0 255)
@@ -267,7 +290,6 @@ rollout stellar "" width:112 height:160
 	global c_gap = [1.0,10.0,3.0]
 	global orbits = [1,20,5]
 	global o_gap = [5.0,75.0,20.0]
-	
 	global s_pos = [0.0,0.0,0.0]
 	
 	spinner spn_size "" pos:[8,8] width:48 height:16 range:size type:#integer toolTip:"system size"
