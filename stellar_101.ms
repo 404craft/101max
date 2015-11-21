@@ -38,7 +38,7 @@ fn tone arr n rnd =
 			else if n == 3 then (g = a1; b = a2)
 	c = color r g b 0
 	mat.diffuse = c
-	arr[a].material = mat
+	try(arr[a].material = mat)catch()
 	)
 )
 
@@ -127,18 +127,36 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		-- asteroid belt
 		if (astral == true AND asteroids.count == 0) do
 		(
+			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + "asteroid_root" + o as string)
+			origin d orbit
+			append top d
+			append p_array p
+			
 			a = random 15 30
 				for i = 1 to a do
 				(
 				r = random 0.5 5
 				spread = random 5 20
 				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r wirecolor: yellow
-				try(
-				for i in asteroids do
-				(
-				if (intersects i n == true) do (print (i.name + "intersects with" + n.name); delete n)
-				)
-				if IsValidNode n == true do (append asteroids n; append top n))catch()
+					try
+					(
+						for i in asteroids do
+						(
+							if (intersects i n == true) do 
+							(
+								print (i.name + "intersects with" + n.name)
+								delete n
+							)
+							
+						)
+						
+						if IsValidNode n == true do 
+						(
+							append asteroids n
+							append top n
+							origin n d
+						)
+					)catch()
 				)
 		)
 
