@@ -139,10 +139,12 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 		-- asteroid belt
 		if (astral == true AND asteroids.count == 0 AND c == 0) do
 		(
-			m[4].radius *= 0.5
-			stick.radius *= 0.5
+			-- optionally adjust orbit and orbit holder
+			--m[4].radius *= 0.5
+			--stick.radius *= 0.5
 			
-			--orbit.renderable = off
+			-- or switch them off for rendering
+			orbit.renderable = off
 			stick.renderable = off
 			
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
@@ -153,8 +155,8 @@ fn terra source o orbit_gap mass decay period rootX rootY rootZ ceiling sun wire
 			a = random 15 30
 				for i = 1 to a do
 				(
-				r = random 0.5 5
-				spread = random 5 20
+				r = random 1 5
+				spread = random 5 18
 				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
 				--n = GeoSphere pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) radius: r baseType: 0 segs: 1 hemisphere: on
 					try
