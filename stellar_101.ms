@@ -12,12 +12,12 @@ global top = #()
 global planets = #()
 global rad = 0
 
-fn purge tar =
+fn purge tar chk =
 (
 	if tar != undefined then s_pos = tar.pos
 	else if root == undefined then s_pos = [0.0,0.0,0.0]
 
-	try(if stellar.chk_kill.state == true do kill elements)catch()
+	try(if chk == true do kill elements)catch()
 )
 
 fn tone arr n rnd =
@@ -290,25 +290,25 @@ rollout stellar "" width:112 height:160
 
 	on btn_create pressed do
 	(
-		purge root
+		purge root stellar.chk_kill.state
 		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		select root
 	)
 	on btn_c_1 pressed do
 	(
-		purge root
+		purge root stellar.chk_kill.state
 		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		select root
 	)
 	on btn_c_2 pressed do
 	(
-		purge root
+		purge root stellar.chk_kill.state
 		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		select root
 	)
 	on btn_c_3 pressed do
 	(
-		purge root
+		purge root stellar.chk_kill.state
 		procreate stellar.ckb_moons.state stellar.ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		select root
 	)
