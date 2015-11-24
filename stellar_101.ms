@@ -41,7 +41,7 @@ fn tone arr n rnd opa dye =
 	if n == 1 then (r = a1; g = a2)
 		else if n == 2 then (g = a1; b = a2)
 			else if n == 3 then (g = a1; b = a2)
-				else if n == 4 then (r = a1; g = a1; b = a1)
+				else if n == 4 then (r = a1 = g = b)
 	c = color r g b 0
 	mat.diffuse = c
 	)
@@ -414,7 +414,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	if dye == true then
 	(
 	append suns core
-	--tone elements 1 0 50 0
+	--tone elements 4 0 50 0
 	tone planets 2 0 100 2
 	tone moons 2 0 100 2
 	tone suns 1 0 100 1
