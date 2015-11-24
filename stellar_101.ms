@@ -41,6 +41,7 @@ fn tone arr n rnd opa dye =
 	if n == 1 then (r = a1; g = a2)
 		else if n == 2 then (g = a1; b = a2)
 			else if n == 3 then (g = a1; b = a2)
+				else if n == 4 then (r = a1; g = a1; b = a1)
 	c = color r g b 0
 	mat.diffuse = c
 	)
@@ -161,7 +162,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 	
 		rnd = random 0.5 period
 		rim = rnd+(sun*decay)+o*orbit_gap
-		if (comet == true AND o == orbits) do rim *=1.15
+
 		-- orbit
 		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + o as string)
 		m = sweep current_built_in_shape: 4
@@ -180,15 +181,17 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 		-- planet
 		if (astral == false OR asteroids.count > 0 OR c > 0 or o == orbits) do
 		(
-		rnd = random mass (sun-(sun*0.25)) 
+			do rnd = random mass (sun-(sun*0.25))
+				while rnd < wire * 2.0
 			
 			if (comet == true AND o == orbits) do
 			(
 				r = random 2.5 4.0
-				p = sphere radius:r smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + "comet_" + o as string)
+				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + o as string + "_comet")
 				origin p orbit
 				append top p
-				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:2 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off growth_time:10f fade_time:10f seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 iconsize:16.822 iconhidden:off metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
+				append c_head p
+				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 iconsize:16.822 iconhidden:off metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
 				cometa.life = 15f
 				cometa.life_variation= 3f
 				cometa.off_axis = 0
@@ -198,12 +201,15 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 				cometa.speed = random 7 10
 				cometa.speed_variation = 0
 				cometa.viewtype = 2
-				cometa.standardparticle = 7
+				cometa.standardparticle = 1
 				cometa.interparticle_collisions_on = 0
 				cometa.interparticle_collision_steps = 2
 				cometa.interparticle_collision_bounce = 100 
 				cometa.interparticle_collision_bounce_variation = 0
-				cometa.name = (prefix + alias + o as string)
+				cometa.name = (prefix + alias + o as string + "_comet_particles")
+				origin p orbit
+				cometa.growth_time = 5f
+				cometa.fade_time = 20f
 				cometa.viewpercent = 100
 				origin cometa p
 				append top cometa
@@ -220,7 +226,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 		)
 
 		-- orbit holder
-		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + "orbit_holder_" + o as string)
+		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + o as string + "_orbit_holder" )
 		rotate stick (angleAxis 90 [0, 1, 0])
 		origin stick orbit
 		append top stick
@@ -245,7 +251,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			a = random 15 30
 				for i = 1 to a do
 				(
-				r = random 1 5
+				r = random 1 4
 				spread = random 5 18
 				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
 					try
@@ -346,12 +352,13 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	core = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
 	origin core s_r
 	append top core
-	
+	suns = #()
 	if alone != true do
 	(
 	-- rod cylinder base
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(wire * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
 	origin c core
+	append suns c
 	append top c
 	)
 	superior = #()
@@ -402,20 +409,18 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	append top c
 	)
 	elements = join base top
+	tone base 1 0 100 0
+	tone top 2 0 100 0
 	if dye == true then
 	(
-	suns = #()
 	append suns core
-	
-	tone elements 1 0 50 0
+	--tone elements 1 0 50 0
 	tone planets 2 0 100 2
 	tone moons 2 0 100 2
 	tone suns 1 0 100 1
 	)
 	else if dye == false do
 	(
-	tone base 1 0 100 0
-	tone top 2 0 100 0
 	tone superior 2 0 100 0
 	)
 )
