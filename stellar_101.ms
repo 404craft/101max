@@ -190,7 +190,6 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + o as string + "_comet")
 				origin p orbit
 				append top p
-				append c_head p
 				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 iconsize:16.822 iconhidden:off metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
 				cometa.life = 15f
 				cometa.life_variation= 3f
@@ -222,6 +221,16 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			append form p
 			append top p
 			append p_array p
+			
+			--optionally create a ring around planet
+			r = random 0 2
+				if r == 0 AND form == planets do
+				(
+				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.5) radius2:(p.radius*1.1) height:0.35 mapcoords:on name: (prefix + alias + o as string + "_ring")
+				origin ring p
+				append p_array ring
+				append top ring
+				)
 			)
 		)
 
