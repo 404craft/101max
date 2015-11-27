@@ -152,24 +152,24 @@ fn origin child parent =
 	child.parent = parent
 )
 
-fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral comet =
+fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral comet =
 (
 		-- orbit roots / dummies
-		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + o as string)
+		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + iteration as string)
 		origin d source
 		append d_array d
 		append top d
 	
 		rnd = random 0.5 period
-		rim = rnd+(sun*decay)+o*orbit_gap
+		rim = rnd+(sun*decay)+iteration*orbit_gap
 
 		-- orbit
-		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + o as string)
+		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + iteration as string)
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
 		classof orbit
 		m[4].steps = 3
-		if (comet == true AND o == orbits) do wire *= 0.5
+		if (comet == true AND iteration == orbits) do wire *= 0.5
 		m[4].radius = wire * 0.75
 		origin orbit d
 		append o_array orbit
@@ -179,15 +179,15 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 		c = random 0 2
 		
 		-- planet
-		if (astral == false OR asteroids.count > 0 OR c > 0 or o == orbits) do
+		if (astral == false OR asteroids.count > 0 OR c > 0 or iteration == orbits) do
 		(
 			do rnd = random mass (sun-(sun*0.25))
 				while rnd < (wire * 2.0)
 			
-			if (comet == true AND o == orbits) do
+			if (comet == true AND iteration == orbits) do
 			(
 				r = random 2.5 4.0
-				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + o as string + "_comet")
+				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + iteration as string + "_comet")
 				origin p orbit
 				append top p
 				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 iconsize:16.822 iconhidden:off metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
@@ -205,7 +205,8 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 				cometa.interparticle_collision_steps = 2
 				cometa.interparticle_collision_bounce = 100 
 				cometa.interparticle_collision_bounce_variation = 0
-				cometa.name = (prefix + alias + o as string + "_comet_particles")
+				cometa.iconHidden = on
+				cometa.name = (prefix + alias + iteration as string + "_comet_particles")
 				origin p orbit
 				cometa.growth_time = 5f
 				cometa.fade_time = 20f
@@ -214,9 +215,9 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 				append top cometa
 			)
 		
-			if (comet == false) OR (comet == true AND o < orbits) do
+			if (comet == false) OR (comet == true AND iteration < orbits) do
 			(
-			p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string)
+			p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string)
 			origin p orbit
 			append form p
 			append top p
@@ -226,7 +227,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			r = random 0 2
 				if r == 0 AND form == planets do
 				(
-				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.4) radius2:(p.radius*1.075) height:0.35 mapcoords:on name: (prefix + alias + o as string + "_ring")
+				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.4) radius2:(p.radius*1.075) height:0.35 mapcoords:on name: (prefix + alias + iteration as string + "_ring")
 				origin ring p
 				append p_array ring
 				append top ring
@@ -235,14 +236,14 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 		)
 
 		-- orbit holder
-		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + o as string + "_orbit_holder" )
+		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + iteration as string + "_orbit_holder" )
 		rotate stick (angleAxis 90 [0, 1, 0])
 		origin stick orbit
 		append top stick
 		append p_array stick
 		
 		-- asteroid belt
-		if (astral == true AND asteroids.count == 0 AND c == 0 AND o != orbits) do
+		if (astral == true AND asteroids.count == 0 AND c == 0 AND iteration != orbits) do
 		(
 			-- optionally adjust orbit and orbit holder
 			m[4].radius *= 0.75
@@ -252,7 +253,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			--orbit.renderable = off
 			--stick.renderable = off
 			
-			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
+			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string + "_asteroid_belt" )
 			origin d orbit
 			append top d
 			append p_array p
@@ -262,12 +263,12 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 				(
 				r = random 1 4
 				spread = random 5 18
-				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + o as string + "_asteroid_" + i as string)
+				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + iteration as string + "_asteroid_" + i as string)
 					try
 					(
-						for i in asteroids do
+						for asteroid in asteroids do
 						(
-							if (intersects i n == true) do delete n
+							if (intersects asteroid n == true) do delete n
 						)
 						
 						if IsValidNode n == true do 
@@ -408,7 +409,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	spark planets planets 30 [0,0,1] false false
 	aim p_track
 	-- comet's direction
-	if cometa != undefined do rotate cometa (angleAxis 90 [dir[orbits],0,0])
+	if isvalidnode cometa == true do rotate cometa (angleAxis 90 [dir[orbits],0,0])
 	spark p_track p_orbit 15 [0,0,1] true true
 	
 	if alone != true do
