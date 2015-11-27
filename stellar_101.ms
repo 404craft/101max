@@ -57,15 +57,15 @@ fn tone arr n rnd opa dye =
 	
 	else if dye == 2 do
 	(
-		check = random 0 1
-		if check == 0 then
+		r = random 0 1
+		if r == 0 then
 		(
 			mat.diffuseMap = Wood()
 			mat.diffuseMap.thickness = random 10.0 30.0
 			mat.diffuseMap.color1 = random white black
 			mat.diffuseMap.color2 = random white black
 		)
-		else if check == 1 do
+		else if r == 1 do
 		(
 			mat.diffuseMap = planet()
 			mat.diffuseMap.oceanPercent = random 0.1 25.0
@@ -109,7 +109,7 @@ fn spark arrA arrB spd matrix constrain roll =
 		with animate on
 		(
 		   at time 0 rotate arrA[a] (angleAxis 0 matrix)
-		   at time 50 rotate arrA[a] (angleAxis (spd) [matrix.x*dir[a], matrix.y*dir[a], matrix.z*dir[a]])
+		   at time 50 rotate arrA[a] (angleAxis ((random 1 10)*spd) [matrix.x*dir[a], matrix.y*dir[a], matrix.z*dir[a])
 		)
 		
 		ctr = getXYZControllers arrA[a].rotation.controller
@@ -182,7 +182,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 		if (astral == false OR asteroids.count > 0 OR c > 0 or o == orbits) do
 		(
 			do rnd = random mass (sun-(sun*0.25))
-				while rnd < wire * 2.0
+				while rnd < (wire * 2.0)
 			
 			if (comet == true AND o == orbits) do
 			(
@@ -226,7 +226,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			r = random 0 2
 				if r == 0 AND form == planets do
 				(
-				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.5) radius2:(p.radius*1.1) height:0.35 mapcoords:on name: (prefix + alias + o as string + "_ring")
+				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.4) radius2:(p.radius*1.075) height:0.35 mapcoords:on name: (prefix + alias + o as string + "_ring")
 				origin ring p
 				append p_array ring
 				append top ring
@@ -250,7 +250,7 @@ fn terra source o orbits orbit_gap mass decay period rootX rootY rootZ ceiling s
 			
 			-- or switch them off for rendering
 			--orbit.renderable = off
-			stick.renderable = off
+			--stick.renderable = off
 			
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + o as string + "_asteroid_belt" )
 			origin d orbit
@@ -385,8 +385,8 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 		(
 			inferior = #()
 			--append inferior planets[p]
-			check = random 0 3
-			for m = 1 to check do
+			r = random 0 3
+			for m = 1 to r do
 			(
 			terra planets[p] m orbits (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" moons m_track m_orbit inferior false false
 			)
@@ -395,21 +395,21 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 		)
 	--animate moons
 	aim moons
-	spark moons moons ((random 5 10) * 60) [0,0,1] false false
+	spark moons moons 60 [0,0,1] false false
 	aim m_track
-	spark m_track m_orbit ((random 5 10) * 30) [0,0,1] true true
+	spark m_track m_orbit 30 [0,0,1] true true
 	)
 	--animate asteroids
 	aim asteroids
-	spark asteroids asteroids ((random 1 10) * 60) [0,1,0] false true
+	spark asteroids asteroids 60 [0,1,0] false true
 
 	-- animate planets
 	aim planets
-	spark planets planets ((random 5 10) * 30) [0,0,1] false false
+	spark planets planets 30 [0,0,1] false false
 	aim p_track
 	-- comet's direction
-	try(rotate cometa (angleAxis 90 [dir[orbits],0,0]))catch()
-	spark p_track p_orbit ((random 1 10) * 15) [0,0,1] true true
+	if cometa != undefined do rotate cometa (angleAxis 90 [dir[orbits],0,0])
+	spark p_track p_orbit 15 [0,0,1] true true
 	
 	if alone != true do
 	(
