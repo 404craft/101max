@@ -109,7 +109,7 @@ fn spark arrA arrB spd matrix constrain roll =
 		with animate on
 		(
 		   at time 0 rotate arrA[a] (angleAxis 0 matrix)
-		   at time 50 rotate arrA[a] (angleAxis ((random 1 10)*spd) [matrix.x*dir[a], matrix.y*dir[a], matrix.z*dir[a])
+		   at time 50 rotate arrA[a] (angleAxis ((random 1 10)*spd) [matrix.x*dir[a], matrix.y*dir[a], matrix.z*dir[a]])
 		)
 		
 		ctr = getXYZControllers arrA[a].rotation.controller
