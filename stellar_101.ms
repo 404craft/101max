@@ -33,8 +33,8 @@ fn tone arr n rnd opa dye =
 	if dye == 0 then
 	(
 	mod = 255.0 / arr.count
-	a1 = (255-a*mod as integer)
-	a2 = (0+a*mod as integer)
+	a1 = (255.0-a*mod)
+	a2 = (0.0+a*mod)
 	r = 255
 	g = 255
 	b = 255
@@ -191,14 +191,14 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + iteration as string + "_comet")
 				origin p orbit
 				append top p
-				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 iconsize:16.822 iconhidden:off metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
+				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:2 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
 				cometa.life = 15f
 				cometa.life_variation= 3f
 				cometa.off_axis = 0
 				cometa.axis_spread = random 7 10
 				cometa.off_plane = 0
 				cometa.plane_spread = 0
-				cometa.speed = random 7 10
+				cometa.speed = random 7 12
 				cometa.speed_variation = 0
 				cometa.viewtype = 2
 				cometa.standardparticle = 1
@@ -206,7 +206,8 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				cometa.interparticle_collision_steps = 2
 				cometa.interparticle_collision_bounce = 100 
 				cometa.interparticle_collision_bounce_variation = 0
-				cometa.iconHidden = on
+				cometa.iconsize = 15.0
+				cometa.iconHidden = off
 				cometa.name = (prefix + alias + iteration as string + "_comet_particles")
 				origin p orbit
 				cometa.growth_time = 5f
@@ -257,9 +258,12 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string + "_asteroid_belt" )
 			origin d orbit
 			append top d
-			append p_array p
+			append p_array d
 
-			for c = 0.0 to 1.0 by 0.05 do
+			r = random 0.0 2.0
+			if r > 1.0 do r = 1.0
+			
+			for c = 0.0 to r by 0.02 do
 			(
 				m.enabled = false
 				pos = lengthInterp orbit c
@@ -267,8 +271,8 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				a = random 15 30
 				for i = 1 to a do
 				(
-				r = random 1 4
-				spread = random 5 18
+				r = random 1 2
+				spread = random 5.0 18.0
 				n = box pos:(p = random [pos.x-spread,pos.y-spread,pos.z-spread*0.25] [pos.x+spread,pos.y+spread,pos.z+spread*0.25]) length:r width:r height:r name: (prefix + alias + iteration as string + "_asteroid")
 				append asteroids n
 				origin n d
@@ -295,7 +299,6 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			if id == 0 do append tmp asteroid
 			)
 			asteroids = tmp
-			top += asteroids
 			delete isteroids
 		)
 )
@@ -437,6 +440,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	append top c
 	)
 	elements = join base top
+	tone asteroids 2 0 100 0
 	tone base 1 0 100 0
 	tone top 2 0 100 0
 	if dye == true then
@@ -451,6 +455,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	(
 	tone superior 2 0 100 0
 	)
+	elements += asteroids
 )
 
 try(destroydialog ::stellar)catch()
