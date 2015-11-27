@@ -154,6 +154,7 @@ fn origin child parent =
 
 fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral comet =
 (
+		iteration = iteration as integer
 		-- orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + iteration as string)
 		origin d source
@@ -348,13 +349,13 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 		append base b
 		
 		-- rod cylinder
-		r = cylinder pos:root.pos radius:(wire * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
-		origin r b
-		append base r
+		rod = cylinder pos:root.pos radius:(wire * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
+		origin rod b
+		append base rod
 	)
 	-- sun root
 	s_r = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_core_root")
-	if alone == false then origin s_r r
+	if alone == false then origin s_r rod
 		else if alone == true then origin s_r root
 	append top s_r
 	
@@ -465,9 +466,9 @@ rollout stellar "" width:112 height:160
 	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"asteroid belt" state:false
 	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture planets" state:false
 	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"comet" state:false
-	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
-	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
-	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
+	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"new system based on random extreme values"
+	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"new system based on random upper extreme values"
+	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"new system based on random lower extreme values"
 	label lbl_101 "101craft" pos:[59,8] width:43 height:16
 
 	on btn_create pressed do
