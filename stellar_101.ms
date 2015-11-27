@@ -191,7 +191,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + iteration as string + "_comet")
 				origin p orbit
 				append top p
-				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:2 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
+				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
 				cometa.life = 15f
 				cometa.life_variation= 3f
 				cometa.off_axis = 0
@@ -207,7 +207,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				cometa.interparticle_collision_bounce = 100 
 				cometa.interparticle_collision_bounce_variation = 0
 				cometa.iconsize = 15.0
-				cometa.iconHidden = off
+				cometa.iconHidden = on
 				cometa.name = (prefix + alias + iteration as string + "_comet_particles")
 				origin p orbit
 				cometa.growth_time = 5f
@@ -224,7 +224,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			append form p
 			append top p
 			append p_array p
-			
+			q
 			--optionally create a ring around planet
 			r = random 0 2
 				if r == 0 AND form == planets do
@@ -271,7 +271,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				a = random 15 30
 				for i = 1 to a do
 				(
-				r = random 1 2
+				r = random 1 3
 				spread = random 5.0 18.0
 				n = box pos:(p = random [pos.x-spread,pos.y-spread,pos.z-spread*0.25] [pos.x+spread,pos.y+spread,pos.z+spread*0.25]) length:r width:r height:r name: (prefix + alias + iteration as string + "_asteroid")
 				append asteroids n
