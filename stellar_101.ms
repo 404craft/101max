@@ -258,28 +258,45 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			origin d orbit
 			append top d
 			append p_array p
-			
-			a = random 15 30
+
+			for c = 0.0 to 1.0 by 0.05 do
+			(
+				m.enabled = false
+				pos = lengthInterp orbit c
+				
+				a = random 15 30
 				for i = 1 to a do
 				(
 				r = random 1 4
 				spread = random 5 18
-				n = box pos: (p = random [rootX+rim-spread,rootY-spread,(rootZ+ceiling)-spread*0.25] [rootX+rim+spread,rootY+spread,(rootZ+ceiling)+spread*0.25]) length:r width:r height:r name: (prefix + alias + iteration as string + "_asteroid_" + i as string)
-					try
-					(
-						for asteroid in asteroids do
-						(
-							if (intersects asteroid n == true) do delete n
-						)
-						
-						if IsValidNode n == true do 
-						(
-							append asteroids n
-							append top n
-							origin n d
-						)
-					)catch()
+				n = box pos:(p = random [pos.x-spread,pos.y-spread,pos.z-spread*0.25] [pos.x+spread,pos.y+spread,pos.z+spread*0.25]) length:r width:r height:r name: (prefix + alias + iteration as string + "_asteroid")
+				append asteroids n
+				origin n d
 				)
+				m.enabled = true
+			)
+			
+			isteroids = #()
+			for asteroid in asteroids do
+			(
+				for v = 1 to asteroids.count do
+				(
+					if asteroid != asteroids[v] do
+					(
+						if (intersects asteroid asteroids[v] == true) do append isteroids asteroid
+					)
+				)
+			)
+			
+			tmp = #()
+			for asteroid in asteroids do
+			(
+			id = finditem isteroids asteroid
+			if id == 0 do append tmp asteroid
+			)
+			asteroids = tmp
+			top += asteroids
+			delete isteroids
 		)
 )
 
