@@ -460,11 +460,11 @@ rollout stellar "" width:112 height:160
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
 	checkbutton chk_kill "annihilate" pos:[24,96] width:56 height:24 toolTip:"delete current before creating next" state:false
-	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"create a standalone system" state:false
-	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"create planetary moons" state:false
-	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"create asteroid belt" state:false
-	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture system" state:false
-	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"create a comet" state:false
+	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"standalone system" state:false
+	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"planetary moons" state:false
+	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"asteroid belt" state:false
+	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture planets" state:false
+	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"comet" state:false
 	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"create new system based on random extreme values"
 	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"create new system based on random upper extreme values"
 	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"create new system based on random lower extreme values"
