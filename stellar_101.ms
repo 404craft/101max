@@ -1,25 +1,36 @@
 -- parametric model of a solar system
 -- can be used for showcasing spaceships as in https://vimeo.com/40504508#t=0m5s
 
-global root = undefined
-global elements = #()
-global p_orbit = #()
-global p_track = #()
-global m_track = #()
-global m_orbit = #()
-global base = #()
-global top = #()
-global planets = #()
-global moons = #()
-global asteroids = #()
-global rad = 0
+global root
+global elements
+global p_track
+global p_orbit
+global m_track
+global m_orbit
+global base
+global top
+global planets
+global moons
+global asteroids
+global rad
+global s_pos
+	
 
-fn purge tar chk =
+fn purge tar chk arr =
 (
-	if tar != undefined then s_pos = tar.pos
-	else if root == undefined then s_pos = [0.0,0.0,0.0]
-
-	try(if chk == true do kill elements)catch()
+	if isvalidnode tar == false then s_pos = [0.0,0.0,0.0]
+		
+	else if isvalidnode tar == true do 
+	(	
+	s_pos = tar.pos
+		if chk == true do
+		(
+			for a = 1 to arr.count do 
+			(	
+			if isvalidnode arr[a] == true do delete arr[a]
+			)
+		)
+	)
 )
 
 fn tone arr n rnd opa dye =
@@ -142,24 +153,19 @@ fn spark arrA arrB spd matrix constrain roll =
 	)
 )
 
-fn kill arr =
-(
-	for a = 1 to arr.count do delete arr[a]
-)
-
 fn origin child parent =
 (
 	child.parent = parent
 )
 
-fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral comet =
+fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array t_array astral comet =
 (
 		iteration = iteration as integer
 		--orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + iteration as string)
 		origin d source
 		append d_array d
-		append top d
+		append t_array d
 	
 		rnd = random 0.5 period
 		rim = rnd+(sun*decay)+iteration*orbit_gap
@@ -174,7 +180,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 		m[4].radius = wire * 0.75
 		origin orbit d
 		append o_array orbit
-		append top orbit
+		append t_array orbit
 		append p_array orbit
 
 		c = random 0 2
@@ -190,7 +196,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				r = random 2.5 4.0
 				p = box pos: [rootX+rim,rootY,(rootZ+ceiling)-(r*0.5)] length:r width:r height:r name: (prefix + alias + iteration as string + "_comet")
 				origin p orbit
-				append top p
+				append t_array p
 				global cometa = superspray pos:p.pos size:5.5 size_variation:2.0 birth_rate:1 total_number:100 quantitymethod:0 viewpercent:10 emitter_start:-50f emitter_stop:500f display_until:500f subsampleemittertranslation:on subsamplecreationtime:on subsampleemitterrotation:off seed:12345 metaparticle_tension:1 metaparticle_tension_variation:0 metaballautocoarsness:on metaballrendercoarsness:0.5 mappingtype:0 mapping_time_base:30f mapping_distance_base:100 spin_time:30f spin_time_variation:0 spin_phase:0 spin_phase_variation:0 spinaxistype:0 x_spin_vector:1 y_spin_vector:0 z_spin_vector:0 spin_axis_variation:0 motioninfluence:100 motionmultiplier:1 motionvariation:0 bubble_amplitude:0 bubble_amplitude_variation:0 bubble_period:100000f bubble_period_variation:0 bubble_phase:0 bubble_phase_variation:0 metaballviewcoarsness:1 spawn_affects:100 spawn_multiplier_variation:0 die__x_frames_after_collision:0f
 				cometa.life = 15f
 				cometa.life_variation= 3f
@@ -214,7 +220,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				cometa.fade_time = 20f
 				cometa.viewpercent = 100
 				origin cometa p
-				append top cometa
+				append t_array cometa
 			)
 		
 			if (comet == false) OR (comet == true AND iteration < orbits) do
@@ -222,7 +228,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string)
 			origin p orbit
 			append form p
-			append top p
+			append t_array p
 			append p_array p
 			q
 			--optionally create a ring around planet
@@ -232,7 +238,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				ring = Tube pos:p.pos smooth:on sides:48 capsegs:1 heightsegs:1 radius1:(p.radius*1.4) radius2:(p.radius*1.075) height:0.35 mapcoords:on name: (prefix + alias + iteration as string + "_ring")
 				origin ring p
 				append p_array ring
-				append top ring
+				append t_array ring
 				)
 			)
 		)
@@ -241,7 +247,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + iteration as string + "_orbit_holder" )
 		rotate stick (angleAxis 90 [0, 1, 0])
 		origin stick orbit
-		append top stick
+		append t_array stick
 		append p_array stick
 		
 		--asteroid belt
@@ -257,7 +263,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			
 			d = dummy pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string + "_asteroid_belt" )
 			origin d orbit
-			append top d
+			append t_array d
 			append p_array d
 
 			r = random 0.0 2.0
@@ -306,8 +312,8 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orbit_gap ceiling sun links wire =
 (
 	if alone do ceiling = 0.0
-		
-	root = undefined
+
+	--root = undefined
 	elements = #()
 	p_track = #()
 	p_orbit = #()
@@ -397,7 +403,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	if comet == true do orbits+=1
 	for o = 1 to orbits do
 	(
-	terra s_r o orbits orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" planets p_track p_orbit superior astral comet
+	terra s_r o orbits orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" planets p_track p_orbit superior top astral comet
 	)
 	
 	--optionally create moons
@@ -409,7 +415,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 			r = random 0 3
 			for m = 1 to r do
 			(
-			terra planets[p] m orbits (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" moons m_track m_orbit inferior false false
+			terra planets[p] m orbits (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" moons m_track m_orbit inferior top false false
 			)
 			-- tone planets
 			tone inferior 3 (random 0 255) 100 0
@@ -468,7 +474,6 @@ rollout stellar "" width:112 height:160
 	global c_gap = [1.0,10.0,3.0]
 	global orbits = [1,20,5]
 	global o_gap = [5.0,75.0,20.0]
-	global s_pos = [0.0,0.0,0.0]
 	
 	spinner spn_size "" pos:[8,8] width:48 height:16 range:size type:#integer toolTip:"system size"
 	spinner spn_links "" pos:[56,40] width:48 height:16 enabled:true range:links type:#integer toolTip:"number of diagonal base links"
@@ -486,14 +491,13 @@ rollout stellar "" width:112 height:160
 	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"asteroid belt" state:false
 	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture planets" state:false
 	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"spawn comet" state:false
-	--checkbutton btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"system based on random extreme values"
-	checkbutton btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"random upper extreme values"
 	checkbutton btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"random lower extreme values"
+	checkbutton btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"random upper extreme values"
 	label lbl_101 "101craft" pos:[59,8] width:43 height:16
 
 	on btn_create pressed do
 	(
-		purge root chk_kill.state
+		purge root chk_kill.state elements
 		if (btn_c_1.state == false AND btn_c_2.state == false) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos spn_size.value spn_circles.value spn_c_gap.value spn_orbits.value spn_o_gap.value spn_ceiling.value spn_sun.value spn_links.value spn_wire.value
 		if (btn_c_1.state == true AND btn_c_2.state == false) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		if (btn_c_1.state == false AND btn_c_2.state == true) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
