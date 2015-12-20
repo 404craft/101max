@@ -125,7 +125,7 @@ fn spark arrA arrB spd matrix constrain roll =
 		
 		if roll == true do
 		(
-		-- set orbit rotation
+		--set orbit rotation
 		r1 = random -120 120
 		r2 = random -30 30
 		rotate arrA[a] (angleAxis r1 [0, 0, 1])
@@ -155,7 +155,7 @@ fn origin child parent =
 fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ ceiling sun wire prefix alias form d_array o_array p_array astral comet =
 (
 		iteration = iteration as integer
-		-- orbit roots / dummies
+		--orbit roots / dummies
 		d = dummy pos:[rootX,rootY,rootZ+ceiling] name: (prefix + alias + "orbit_root_" + iteration as string)
 		origin d source
 		append d_array d
@@ -164,7 +164,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 		rnd = random 0.5 period
 		rim = rnd+(sun*decay)+iteration*orbit_gap
 
-		-- orbit
+		--orbit
 		orbit = circle radius:rim pos:[rootX,rootY,rootZ+ceiling] steps:32 name: (prefix + alias + "orbit_" + iteration as string)
 		m = sweep current_built_in_shape: 4
 		addModifier orbit m
@@ -179,7 +179,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 
 		c = random 0 2
 		
-		-- planet
+		--planet
 		if (astral == false OR asteroids.count > 0 OR c > 0 or iteration == orbits) do
 		(
 			do rnd = random mass (sun-(sun*0.25))
@@ -237,21 +237,21 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			)
 		)
 
-		-- orbit holder
+		--orbit holder
 		stick = cylinder pos:[rootX,rootY,rootZ+ceiling] radius:((wire * 0.75) * 0.5) smooth:on heightsegs:1 capsegs:1 sides:16 height:rim name: (prefix + alias + iteration as string + "_orbit_holder" )
 		rotate stick (angleAxis 90 [0, 1, 0])
 		origin stick orbit
 		append top stick
 		append p_array stick
 		
-		-- asteroid belt
+		--asteroid belt
 		if (astral == true AND asteroids.count == 0 AND c == 0 AND iteration != orbits) do
 		(
-			-- optionally adjust orbit and orbit holder
+			--optionally adjust orbit and orbit holder
 			m[4].radius *= 0.75
 			stick.radius *= 0.75
 			
-			-- or switch them off for rendering
+			--or switch them off for rendering
 			--orbit.renderable = off
 			--stick.renderable = off
 			
@@ -320,7 +320,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	asteroids = #()
 	rad = 0
 	
-	-- root
+	--define root
 	root = circle radius:(size*circles*circle_gap*1.5) pos:pos name: "stellar_root"
 	root.steps = 0
 	rootX = root.pos.x
@@ -331,7 +331,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	if alone != true do
 	(
 		len = 1.5
-		-- base circles
+		--base circles
 		for c = 1 to circles do
 		(
 			rnd = random 0.1 3.0
@@ -347,7 +347,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 			append base clone
 		)
 		
-		-- base links
+		--base links
 		for l = 1 to (links*2) do
 		(
 			rot = l * (360 / (links*2))
@@ -358,35 +358,35 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 			append base clone
 		)	
 		
-		-- base hemisphere
+		--base hemisphere
 		s = sphere pos:root.pos radius:(0.5 * sun) smooth:on segs:32 hemisphere:0.5 name: "stellar_base"
 		origin s root
 		append base s
 
-		-- rod cylinder base
+		--rod cylinder base
 		b = cylinder pos:root.pos radius:wire smooth:on heightsegs:1 capsegs:1 sides:16 height: ((0.5 * sun) + 0.1) name: "stellar_rod_base"
 		origin b s
 		append base b
 		
-		-- rod cylinder
+		--rod cylinder
 		rod = cylinder pos:root.pos radius:(wire * 0.75) smooth:on heightsegs:1 capsegs:1 sides:16 height: ceiling name: "stellar_rod"
 		origin rod b
 		append base rod
 	)
-	-- sun root
+	--sun root
 	s_r = dummy pos:[rootX,rootY,rootZ+ceiling] name: ("stellar_core_root")
 	if alone == false then origin s_r rod
 		else if alone == true then origin s_r root
 	append top s_r
 	
-	-- sun sphere
+	--sun sphere
 	core = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
 	origin core s_r
 	append top core
 	suns = #()
 	if alone != true do
 	(
-	-- rod cylinder base
+	--rod cylinder base
 	c = cylinder pos:[rootX,rootY,rootZ+ceiling-(sun+0.1)] radius:(wire * 1.25) smooth:on heightsegs:1 capsegs:1 sides:16 height: (2*sun + 0.2) name: "stellar_rod_sun"
 	origin c core
 	append suns c
@@ -406,7 +406,6 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 		for p = 1 to planets.count do
 		(
 			inferior = #()
-			--append inferior planets[p]
 			r = random 0 3
 			for m = 1 to r do
 			(
@@ -425,11 +424,11 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	aim asteroids
 	spark asteroids asteroids 60 [0,1,0] false true
 
-	-- animate planets
+	--animate planets
 	aim planets
 	spark planets planets 30 [0,0,1] false false
 	aim p_track
-	-- comet's direction
+	--comet's direction
 	if isvalidnode cometa == true do rotate cometa (angleAxis 90 [dir[orbits],0,0])
 	spark p_track p_orbit 15 [0,0,1] true true
 	
@@ -440,22 +439,21 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	append top c
 	)
 	elements = join base top
-	tone asteroids 2 0 100 0
+	try(tone asteroids 2 0 100 0)catch()
 	tone base 1 0 100 0
 	tone top 2 0 100 0
 	if dye == true then
 	(
 	append suns core
-	--tone elements 4 0 50 0
 	tone planets 2 0 100 2
-	tone moons 2 0 100 2
+	try(tone moons 2 0 100 2)catch()
 	tone suns 1 0 100 1
 	)
 	else if dye == false do
 	(
 	tone superior 2 0 100 0
 	)
-	elements += asteroids
+	try(elements += asteroids)catch()
 )
 
 try(destroydialog ::stellar)catch()
@@ -482,15 +480,15 @@ rollout stellar "" width:112 height:160
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
 	button btn_create "procreate" pos:[32,128] width:72 height:24 toolTip:"for He spoke, and it was done"
-	checkbutton chk_kill "annihilate" pos:[24,96] width:56 height:24 toolTip:"delete current before creating next" state:false
+	checkbutton chk_kill "annihilate" pos:[24,96] width:56 height:24 toolTip:"replace current" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"standalone system" state:false
 	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"planetary moons" state:false
 	checkbutton ckb_astral "" pos:[80,96] width:8 height:24 toolTip:"asteroid belt" state:false
 	checkbutton ckb_dye "" pos:[8,96] width:8 height:24 toolTip:"texture planets" state:false
-	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"comet" state:false
-	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"new system based on random extreme values"
-	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"new system based on random upper extreme values"
-	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"new system based on random lower extreme values"
+	checkbutton ckb_comet "" pos:[16,96] width:8 height:24 toolTip:"spawn comet" state:false
+	button btn_c_3 "" pos:[24,128] width:8 height:24 toolTip:"system based on random extreme values"
+	button btn_c_2 "" pos:[16,128] width:8 height:24 toolTip:"system based on random upper extreme values"
+	button btn_c_1 "" pos:[8,128] width:8 height:24 toolTip:"system based on random lower extreme values"
 	label lbl_101 "101craft" pos:[59,8] width:43 height:16
 
 	on btn_create pressed do
