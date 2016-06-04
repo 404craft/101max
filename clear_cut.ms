@@ -1,3 +1,4 @@
+/*
 -- auto-assign random smoothing groups across all faces 
 -- assign smoothing groups different to neighbors
 -- make an object or selected faces coarse
@@ -6,6 +7,7 @@
    will assign same smoothing groups to faces sharing the same vertex which will result
    in creases upon adding a turbosmooth modifier
 -- brute force method
+*/
 
 global a
 
