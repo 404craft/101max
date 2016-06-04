@@ -36,26 +36,28 @@ fn hit f =
 	polyop.setFaceSmoothGroup $ f e
 )
 
-fn check f =
+fn check f debug =
 (
 	fVerts = polyop.getVertsUsingFace $ #{f}
 	fFaces = polyop.getFacesUsingVert $ fVerts
 	
 	s_f = polyop.getFaceSmoothGroup $ f
 	
-	--print ("debug: fn check " + s_f as string)
+	if debug do format "debug: fn check %\n" s_f
+		
 	do
 	(
-	--print ("debug: fn check --- start new do loop ---")
+	if debug do print ("debug: fn check --- start new do loop ---")
+		
 	b = false
 		for i in fFaces where i != f do
 		(
 			s_i = polyop.getFaceSmoothGroup $ i
-			--print ("debug: fn check " + s_i as string)
+			if debug do format "debug: fn check %\n" s_i
 				if (s_i == s_f) do
 				(
 				hit(i)
-				--print ("debug: fn check --- same group restart ---")
+				if debug do print ("debug: fn check --- same group restart ---")
 				a = true
 				b = true
 				)
@@ -64,7 +66,7 @@ fn check f =
 	while b
 )
 
-fn differ =
+fn differ debug =
 (	
 	fArr = undefined
 	fArr = polyop.getNumFaces $
@@ -80,11 +82,11 @@ fn differ =
 		
 		do
 		(
-		-- print("debug: fn differ ---------- big loop start ----------")
+		if debug do print("debug: fn differ ---------- big loop start ----------")
 		a = false
 			for f = 1 to fArr do
 			(
-				check(f)
+				check f debug
 			)
 		)
 		while a
@@ -100,11 +102,11 @@ fn differ =
 		
 		do
 		(
-		-- print("debug: fn differ ---------- big loop start ----------")
+		if debug do print("debug: fn differ ---------- big loop start ----------")
 		a = false
 			for f = 1 to sel.count do
 			(
-				check(sel[f])
+				check sel[f] debug
 			)
 		)
 		while a
@@ -117,17 +119,17 @@ rollout clear_cut "" width:64 height:64
 (
 	button btn_wipe "wipe" pos:[8,8] width:32 height:16 toolTip:"erase smoothing groups"
 	button btn_differ "differ" pos:[8,24] width:48 height:16 toolTip:"assign random smoothing groups"
+	checkbutton ckb_range "•" pos:[40,8] width:16 height:16 toolTip:"clear all or selected faces only"
 	label craft101 "@101craft" pos:[6,44] width:52 height:16
-	checkbutton ckb_range "•" pos:[40,8] width:16 height:16
 
 	on btn_wipe pressed do
 	(
-		-- if the dot is pressed reset smoothing groups on selected faces only
+		-- if the dot has been pressed reset smoothing groups on selected faces only
 		if ckb_range.state == true do
 		(
 			wipe(1)
 		)
-		-- if the dot is unpressed reset object's smoothing groups globally
+		-- if the dot remains unpressed reset object's smoothing groups globally
 		if ckb_range.state == false do
 		(
 			wipe(0)
@@ -135,7 +137,7 @@ rollout clear_cut "" width:64 height:64
 	)
 	on btn_differ pressed do
 	(
-	differ()	
+	differ(false)	
 	)
 )
 createdialog clear_cut
