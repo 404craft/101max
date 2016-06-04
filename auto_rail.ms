@@ -53,7 +53,7 @@ rollout auto_rail "" width:88 height:145
 	
 	on ckb_rule changed state do
 	(
-		case ckb_rule.state of
+		case state of
 		(
 			true: (ckb_rule.text = "divide"; ar_spn_normal.value = 2.0)
 			false: (ckb_rule.text = "normalize"; ar_spn_normal.value = 40.0)
