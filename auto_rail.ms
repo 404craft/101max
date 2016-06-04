@@ -8,29 +8,28 @@ iPost = #()
 ready = true
 rollout auto_rail "" width:88 height:145
 (
-	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 toolTip:"select path"
+	fn selShape o = isKindOf o shape
+	pickbutton ar_pic_path "path" pos:[8,24] width:72 height:16 filter:selShape toolTip:"select path"
 	button ar_btn_assign "confirm" pos:[24,104] width:48 height:16 toolTip:"distribute objects"
 	label ar_lbl_top "auto-rail" pos:[24,5] width:42 height:16
-	label ar_lbl_bottom "@101craft" pos:[17,125] width:56 height:16
 	spinner ar_spn_normal "" pos:[16,80] width:56 height:16 range:[1,100,2] type:#float
 	checkbutton ckb_rule "divide" pos:[8,48] width:72 height:24 enabled:true checked:true
 	button ar_btn_del "•" pos:[8,104] width:16 height:16 toolTip:"delete objects"
-	
+	label ar_lbl_bottom "@101craft" pos:[17,125] width:56 height:16
+
 	on ar_pic_path picked oPath do
 	(
-		if classof oPath == line OR classof oPath == SplineShape then 
-		(
 		ar_pic_path.text = oPath.name
-		)
-		else messagebox ("select spline obj")	
 	)
+	
 	on ar_btn_assign pressed do
 	(
 		try(delete tar_path)catch()
 	)
+	
 	on ar_spn_normal changed val do
 	(
-		if (ready) do
+		if (ready) AND (ar_pic_path.object != undefined) do
 		(
 			ready = false
 			wipe()
@@ -46,14 +45,19 @@ rollout auto_rail "" width:88 height:145
 			distribute tar_path
 		)
 	)
+	
 	on ar_btn_del pressed do
 	(
 		wipe()
 	)
+	
 	on ckb_rule changed state do
 	(
-	if state == true then (ckb_rule.text = "divide"; ar_spn_normal.value = 2.0)
-	else if state == false do (ckb_rule.text = "normalize"; ar_spn_normal.value = 40.0)
+		case ckb_rule.state of
+		(
+			true: (ckb_rule.text = "divide"; ar_spn_normal.value = 2.0)
+			false: (ckb_rule.text = "normalize"; ar_spn_normal.value = 40.0)
+		)
 	)
 )
 
