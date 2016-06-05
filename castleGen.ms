@@ -50,6 +50,7 @@ rollout castleGen "" width:136 height:296
 	
 	on btn5 pressed do
 	(
+	debug = true
 	offsetX = 1000
 	offsetY = 1000
 	maxOps.cloneNodes btn1.object cloneType:#instance newNodes:&platform offset:[-offsetX,-offsetY,0]
@@ -60,6 +61,7 @@ rollout castleGen "" width:136 height:296
 	(
 		(r < 25):
 		(
+			if debug do print ("debug: creating 1/ module home")
 			for n = 1 to spn2.value do
 			(
 				maxOps.cloneNodes btn2.object cloneType:#instance newNodes:&level
@@ -67,24 +69,26 @@ rollout castleGen "" width:136 height:296
 				level.pos.x = platform.pos.x + 103.31
 				level.pos.y = platform.pos.y
 				level.pos.z = platform.pos.z + 290.272*n
+				if debug do format "debug: level % created at %\n" n level.pos
 			)
 		)
 		(r > 24):
 		(
+			if debug do print ("debug: creating 2/ module home")
 			for n = 1 to spn2.value do
 			(
+				m = 1
+				for i = 1 to 2 do
+				(
 				maxOps.cloneNodes btn3.object cloneType:#instance newNodes:&level
 				level = rootParent level[1]
-				level.pos.x = platform.pos.x + 103.31
+				level.pos.x = platform.pos.x + 103.31*m
 				level.pos.y = platform.pos.y
 				level.pos.z = platform.pos.z + 290.272*n
-				
-				maxOps.cloneNodes btn3.object cloneType:#instance newNodes:&level
-				level = rootParent level[1]
-				level.pos.x = platform.pos.x - 103.31
-				level.pos.y = platform.pos.y
-				level.pos.z = platform.pos.z + 290.272*n
-				coordsys local (rotate level 180 z_axis)
+				if m == -1 do coordsys local (rotate level 180 z_axis)
+				m *= -1
+				if debug do format "debug: level %.% created at %\n" n i level.pos
+				)
 			)
 		)
 	)
