@@ -1,3 +1,7 @@
+--new plugin under development
+--procudural fantasy town generator for Water-Home models
+--https://www.cgtrader.com/3d-models/architectural-exterior/house/water-home
+
 try(destroydialog :: castleGen)catch()
 
 rollout castleGen "" width:136 height:296
