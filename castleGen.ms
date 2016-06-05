@@ -90,17 +90,26 @@ rollout castleGen "" width:136 height:296
 		(r > 24):
 		(
 			if debug do print ("debug: creating 2/ module home")
+			i_top = 2
+			highest = #()
 			for n = 1 to spn2.value do
 			(
+				if (i_top !=1 AND n > 1) do
+				(	
+				r = random 0 99
+				if r < (100 / spn2.value) do i_top = 1
+				)
+				
 				m = 1
-				for i = 1 to 2 do
+				for i = 1 to i_top do
 				(
 				maxOps.cloneNodes btn3.object cloneType:#instance newNodes:&level
 				level = rootParent level[1]
 				level.pos.x = platform.pos.x + 103.31*m
 				level.pos.y = platform.pos.y
-				level.pos.z = platform.pos.z + 290.272*n
+				level.pos.z = platform.pos.z + 283.692*n
 				if m == -1 do coordsys local (rotate level 180 z_axis)
+				highest[i] = level
 				m *= -1
 				if debug do format "debug: level %.% created at %\n" n i level.pos
 				)
@@ -111,13 +120,12 @@ rollout castleGen "" width:136 height:296
 			(
 			maxOps.cloneNodes btn5.object cloneType:#instance newNodes:&roof
 			roof = rootParent roof[1]
-			roof.pos.x = platform.pos.x + 103.448*m
-			roof.pos.y = platform.pos.y
-			roof.pos.z = platform.pos.z + 290.272*spn2.value + 0.00701904
+			roof.pos.x = highest[i].pos.x + 0.138*m
+			roof.pos.y = highest[i].pos.y
+			roof.pos.z = highest[i].pos.z + 0.00701904
 			coordsys local
 			(
 			if m == -1 do rotate roof 180 z_axis
-			--r = 1.36*m
 			rotate roof 1.36 y_axis
 			)
 			m *= -1
