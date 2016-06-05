@@ -19,11 +19,12 @@ rollout castleGen "" width:136 height:296
 	pickbutton btn1 "platform" pos:[8,8] width:120 height:24
 	pickbutton btn2 "1/ module" pos:[8,32] width:120 height:24
 	pickbutton btn3 "2/ module " pos:[8,56] width:120 height:24
-	pickbutton btn4 "roof" pos:[8,80] width:120 height:24
-	pickbutton btn5 "crate" pos:[8,104] width:120 height:24
-	button btn6 "create" pos:[8,264] width:120 height:24
-	spinner spn1 "" pos:[8,128] width:56 height:16 range:[0,100,1] type:#integer
-	spinner spn2 "" pos:[72,128] width:56 height:16 range:[0,100,1] type:#integer
+	pickbutton btn4 "1/ roof" pos:[8,80] width:120 height:24
+	pickbutton btn5 "2/ roof" pos:[8,104] width:120 height:24
+	pickbutton btn6 "crate" pos:[8,128] width:120 height:24
+	button btn_create "create" pos:[8,264] width:120 height:24
+	spinner spn1 "" pos:[8,152] width:56 height:16 range:[0,100,1] type:#integer
+	spinner spn2 "" pos:[72,152] width:56 height:16 range:[0,100,1] type:#integer
 
 	on btn1 picked obj do
 	(
@@ -55,7 +56,7 @@ rollout castleGen "" width:136 height:296
 	btn5.text = obj.name
 	)
 	
-	on btn6 pressed do
+	on btn_create pressed do
 	(
 	debug = true
 	offsetX = 1000
@@ -108,16 +109,16 @@ rollout castleGen "" width:136 height:296
 			m = 1
 			for i = 1 to 2 do
 			(
-			maxOps.cloneNodes btn4.object cloneType:#instance newNodes:&roof
+			maxOps.cloneNodes btn5.object cloneType:#instance newNodes:&roof
 			roof = rootParent roof[1]
-			roof.pos.x = platform.pos.x + 103.31*m
+			roof.pos.x = platform.pos.x + 103.448*m
 			roof.pos.y = platform.pos.y
-			roof.pos.z = platform.pos.z + 290.272*spn2.value
+			roof.pos.z = platform.pos.z + 290.272*spn2.value + 0.00701904
 			coordsys local
 			(
 			if m == -1 do rotate roof 180 z_axis
 			--r = 1.36*m
-			rotate roof -1.36 y_axis
+			rotate roof 1.36 y_axis
 			)
 			m *= -1
 			if debug do format "debug: roof % created at %\n" i roof.pos
