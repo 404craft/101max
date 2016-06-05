@@ -4,7 +4,7 @@
 
 try(destroydialog :: castleGen)catch()
 
-rollout castleGen "" width:136 height:296
+rollout castle_gen "" width:136 height:296
 (
 	
 	fn rootParent node = 
@@ -16,7 +16,7 @@ rollout castleGen "" width:136 height:296
 		)
 	)
 		
-	pickbutton btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
+	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
 	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24
 	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24
 	pickbutton btn_2module "2/ module " pos:[64,72] width:56 height:24
@@ -27,13 +27,23 @@ rollout castleGen "" width:136 height:296
 	button btn_create "create" pos:[8,264] width:120 height:24
 	spinner spn_centre "" pos:[8,176] width:56 height:16 range:[0,100,1] type:#integer toolTip:"centre size"
 	spinner spn_levels "" pos:[64,176] width:56 height:16 range:[0,100,1] type:#integer toolTip:"maximum levels"
-	checkbutton ckb_selection "." pos:[8,144] width:16 height:32
+	checkbutton ckb_selection "•" pos:[8,144] width:16 height:32
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 
 	on btn_auto pressed do
 	(
-		for o in objects
+		for o in objects do
+		(
+			case getuserpropbuffer o of
+			(
+				"1/roof":(btn_1roof.picked o; btn_1roof.object = o)
+				"2/roof":(btn_2roof.picked o; btn_2roof.object = o)
+				"1/module":(btn_1module.picked o; btn_1module.object = o)
+				"2/module":(btn_2module.picked o; btn_2module.object = o)
+				"platform":(btn_platform.picked o; btn_platform.object = o)
+			)
+		)
 	)
 	
 	on ckb_selection changed state do
@@ -75,9 +85,15 @@ rollout castleGen "" width:136 height:296
 	on btn_create pressed do
 	(
 		debug = true
-		maxOps.cloneNodes btn_platform.object cloneType:#instance newNodes:&platform offset:[spn_posX.value,spn_posY.value,0]
+		case ckb_selection.state of
+		(
+			true:(location = $.pos)
+			false:(location = [spn_posX.value,spn_posY.value,0])
+		)
+		maxOps.cloneNodes btn_platform.object cloneType:#instance newNodes:&platform
 		platform = rootParent platform[1]
-			
+		platform.pos = location
+		
 		r = random 0 99
 		case of 
 		(
@@ -150,4 +166,4 @@ rollout castleGen "" width:136 height:296
 	)
 )
 
-createDialog castleGen
+createDialog castle_gen
