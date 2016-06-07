@@ -6,6 +6,7 @@ try(destroydialog :: castleGen)catch()
 
 rollout castle_gen "" width:136 height:296
 (
+	global root
 	
 	fn rootParent node = 
 	(
@@ -18,6 +19,7 @@ rollout castle_gen "" width:136 height:296
 
 	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
+		root = undefined
 		case sel of
 		(
 			true:(location = $.pos)
@@ -26,6 +28,10 @@ rollout castle_gen "" width:136 height:296
 		maxOps.cloneNodes plat cloneType:#instance newNodes:&platform
 		platform = rootParent platform[1]
 		platform.pos = location
+		root = dummy pos:platform.pos name: ("waterhome_" + 1 as string + "root")
+		root.rotation = platform.rotation
+		platform.parent = root
+		append roots root
 		
 		r = random 0 99
 		case of 
@@ -40,6 +46,7 @@ rollout castle_gen "" width:136 height:296
 					level.pos.x = platform.pos.x + 103.31
 					level.pos.y = platform.pos.y
 					level.pos.z = platform.pos.z + 290.272*n
+					level.parent = root
 					if debug do format "debug: level % created at %\n" n level.pos
 				)
 				maxOps.cloneNodes roo1 cloneType:#instance newNodes:&roof
@@ -47,6 +54,7 @@ rollout castle_gen "" width:136 height:296
 				roof.pos.x = platform.pos.x + 103.31
 				roof.pos.y = platform.pos.y
 				roof.pos.z = platform.pos.z + 290.272*meridian
+				roof.parent = root
 				if debug do format "debug: roof created at %\n" roof.pos
 			)
 			
@@ -74,6 +82,7 @@ rollout castle_gen "" width:136 height:296
 					if m == -1 do coordsys local (rotate level 180 z_axis)
 					highest[i] = level
 					m *= -1
+					level.parent = root
 					if debug do format "debug: level %.% created at %\n" n i level.pos
 					)
 				)
@@ -92,13 +101,14 @@ rollout castle_gen "" width:136 height:296
 				rotate roof 1.36 y_axis
 				)
 				m *= -1
+				roof.parent = root
 				if debug do format "debug: roof % created at %\n" i roof.pos
 				)
 			)
 		)
 	)
 	
-	fn gen_alley =
+	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		blocks = #()
 		max_blocks = random 7 12
@@ -110,23 +120,23 @@ rollout castle_gen "" width:136 height:296
 			rnd = random 2 4
 			for i = 1 to rnd do
 			(
-					maxOps.cloneNodes $ cloneType:#instance newNodes:&level
-					append blocks level[level.count]
-					obj = $
-					try(obj = blocks[blocks.count-1])catch()
-					if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
-					else if dir != 0 then 
-					(
-					coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [148.38,-dir*645.881,0]
-					dir = 0
-					)	
+				gen_home meridian sel pos plat mod1 roo1 mod2 roo2 debug
+				append blocks root
+ 				obj = blocks[blocks.count]
+ 				try(obj = blocks[blocks.count-1])catch()
+				if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
+				else if dir != 0 then 
+				(
+				coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [148.38,-dir*645.881,0]
+				dir = 0
+				)	
 			)
 			
 			dir = random 0 1
 			if dir == 0 do dir = -1
 			
-			maxOps.cloneNodes $ cloneType:#instance newNodes:&level
-			append blocks level[level.count]
+			gen_home meridian sel pos plat mod1 roo1 mod2 roo2 debug
+			append blocks root
 			coordsys blocks[blocks.count-1]
 			(
 			blocks[blocks.count].pos = [dir*645.881,148.387,0]
@@ -204,7 +214,7 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		gen_home spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,0] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,0] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
