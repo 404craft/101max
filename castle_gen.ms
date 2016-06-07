@@ -15,6 +15,126 @@ rollout castle_gen "" width:136 height:296
 		node
 		)
 	)
+
+	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	(
+		case sel of
+		(
+			true:(location = $.pos)
+			false:(location = [pos.x,pos.y,0])
+		)
+		maxOps.cloneNodes plat cloneType:#instance newNodes:&platform
+		platform = rootParent platform[1]
+		platform.pos = location
+		
+		r = random 0 99
+		case of 
+		(
+			(r < 25):
+			(
+				if debug do print ("debug: creating 1/ module home")
+				for n = 1 to meridian do
+				(
+					maxOps.cloneNodes mod1 cloneType:#instance newNodes:&level
+					level = rootParent level[1]
+					level.pos.x = platform.pos.x + 103.31
+					level.pos.y = platform.pos.y
+					level.pos.z = platform.pos.z + 290.272*n
+					if debug do format "debug: level % created at %\n" n level.pos
+				)
+				maxOps.cloneNodes roo1 cloneType:#instance newNodes:&roof
+				roof = rootParent roof[1]
+				roof.pos.x = platform.pos.x + 103.31
+				roof.pos.y = platform.pos.y
+				roof.pos.z = platform.pos.z + 290.272*meridian
+				if debug do format "debug: roof created at %\n" roof.pos
+			)
+			
+			(r > 24):
+			(
+				if debug do print ("debug: creating 2/ module home")
+				i_top = 2
+				highest = #()
+				for n = 1 to meridian do
+				(
+					if (i_top !=1 AND n > 1) do
+					(	
+					r = random 0 99
+					if r < (100 / meridian) do i_top = 1
+					)
+					
+					m = 1
+					for i = 1 to i_top do
+					(
+					maxOps.cloneNodes mod2 cloneType:#instance newNodes:&level
+					level = rootParent level[1]
+					level.pos.x = platform.pos.x + 103.31*m
+					level.pos.y = platform.pos.y
+					level.pos.z = platform.pos.z + 283.692*n
+					if m == -1 do coordsys local (rotate level 180 z_axis)
+					highest[i] = level
+					m *= -1
+					if debug do format "debug: level %.% created at %\n" n i level.pos
+					)
+				)
+				
+				m = 1
+				for i = 1 to 2 do
+				(
+				maxOps.cloneNodes roo2 cloneType:#instance newNodes:&roof
+				roof = rootParent roof[1]
+				roof.pos.x = highest[i].pos.x + 0.138*m
+				roof.pos.y = highest[i].pos.y
+				roof.pos.z = highest[i].pos.z + 0.00701904
+				coordsys local
+				(
+				if m == -1 do rotate roof 180 z_axis
+				rotate roof 1.36 y_axis
+				)
+				m *= -1
+				if debug do format "debug: roof % created at %\n" i roof.pos
+				)
+			)
+		)
+	)
+	
+	fn gen_alley =
+	(
+		blocks = #()
+		max_blocks = random 7 12
+		print max_blocks
+		dir = 0
+
+		do
+		(
+			rnd = random 2 4
+			for i = 1 to rnd do
+			(
+					maxOps.cloneNodes $ cloneType:#instance newNodes:&level
+					append blocks level[level.count]
+					obj = $
+					try(obj = blocks[blocks.count-1])catch()
+					if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
+					else if dir != 0 then 
+					(
+					coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [148.38,-dir*645.881,0]
+					dir = 0
+					)	
+			)
+			
+			dir = random 0 1
+			if dir == 0 do dir = -1
+			
+			maxOps.cloneNodes $ cloneType:#instance newNodes:&level
+			append blocks level[level.count]
+			coordsys blocks[blocks.count-1]
+			(
+			blocks[blocks.count].pos = [dir*645.881,148.387,0]
+			rotate blocks[blocks.count] 90 z_axis
+			)
+		)
+		while blocks.count < max_blocks
+	)
 		
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
 	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24
@@ -84,85 +204,7 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		debug = true
-		case ckb_selection.state of
-		(
-			true:(location = $.pos)
-			false:(location = [spn_posX.value,spn_posY.value,0])
-		)
-		maxOps.cloneNodes btn_platform.object cloneType:#instance newNodes:&platform
-		platform = rootParent platform[1]
-		platform.pos = location
-		
-		r = random 0 99
-		case of 
-		(
-			(r < 25):
-			(
-				if debug do print ("debug: creating 1/ module home")
-				for n = 1 to spn_levels.value do
-				(
-					maxOps.cloneNodes btn_1module.object cloneType:#instance newNodes:&level
-					level = rootParent level[1]
-					level.pos.x = platform.pos.x + 103.31
-					level.pos.y = platform.pos.y
-					level.pos.z = platform.pos.z + 290.272*n
-					if debug do format "debug: level % created at %\n" n level.pos
-				)
-				maxOps.cloneNodes btn_1roof.object cloneType:#instance newNodes:&roof
-				roof = rootParent roof[1]
-				roof.pos.x = platform.pos.x + 103.31
-				roof.pos.y = platform.pos.y
-				roof.pos.z = platform.pos.z + 290.272*spn_levels.value
-				if debug do format "debug: roof created at %\n" roof.pos
-			)
-			
-			(r > 24):
-			(
-				if debug do print ("debug: creating 2/ module home")
-				i_top = 2
-				highest = #()
-				for n = 1 to spn_levels.value do
-				(
-					if (i_top !=1 AND n > 1) do
-					(	
-					r = random 0 99
-					if r < (100 / spn_levels.value) do i_top = 1
-					)
-					
-					m = 1
-					for i = 1 to i_top do
-					(
-					maxOps.cloneNodes btn_2module.object cloneType:#instance newNodes:&level
-					level = rootParent level[1]
-					level.pos.x = platform.pos.x + 103.31*m
-					level.pos.y = platform.pos.y
-					level.pos.z = platform.pos.z + 283.692*n
-					if m == -1 do coordsys local (rotate level 180 z_axis)
-					highest[i] = level
-					m *= -1
-					if debug do format "debug: level %.% created at %\n" n i level.pos
-					)
-				)
-				
-				m = 1
-				for i = 1 to 2 do
-				(
-				maxOps.cloneNodes btn_2roof.object cloneType:#instance newNodes:&roof
-				roof = rootParent roof[1]
-				roof.pos.x = highest[i].pos.x + 0.138*m
-				roof.pos.y = highest[i].pos.y
-				roof.pos.z = highest[i].pos.z + 0.00701904
-				coordsys local
-				(
-				if m == -1 do rotate roof 180 z_axis
-				rotate roof 1.36 y_axis
-				)
-				m *= -1
-				if debug do format "debug: roof % created at %\n" i roof.pos
-				)
-			)
-		)
+		gen_home spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,0] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
