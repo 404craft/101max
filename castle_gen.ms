@@ -8,6 +8,7 @@ rollout castle_gen "" width:136 height:296
 (
 	global root
 	global roots = #()
+	global modules = #()
 	
 	fn rootParent node = 
 	(
@@ -180,14 +181,11 @@ rollout castle_gen "" width:136 height:296
 		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
 		append parts root
 		
-			if square == true do
-			(
-				for y = 0 to size-1 do
-				(
-				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
-				append parts root
-				)
-			)
+		if square == true do
+		(
+			gen_home meridian sel [pos.x+x*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
+			append parts root
+		)
 		)
 		join roots parts
 	)
@@ -196,7 +194,7 @@ rollout castle_gen "" width:136 height:296
 	(
 		roots = #()
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
-		--gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
 		
 -- 		for i = 1 to 4 do
 -- 		(
@@ -222,7 +220,7 @@ rollout castle_gen "" width:136 height:296
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
 	button btn_create "create" pos:[8,264] width:104 height:24 toolTip:"create structure"
-	button btn_confirm "•" pos:[112,264] width:16 height:24 toolTip:"confirm structure"
+	button btn_confirm "•" pos:[112,264] width:16 height:24 toolTip:"confirm created structure"
 
 	on btn_auto pressed do
 	(
@@ -277,24 +275,23 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		for r =1 to roots.count do
+		for r in roots do
 		(
-			if isvalidnode roots[4] do
+			print roots.count
+			append modules r
+			for child in r.children do
 			(
-				append modules roots[r]
-				for child in roots[r].children do
-				(
-					if isvalidnode child do appendifunique modules child
-				)
+				appendifunique modules child
 			)
 		)
-		try(delete modules)catch()
+		delete modules
+		modules = #()
 		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false
 	)
 	
 	on btn_confirm pressed do
 	(
-		modules = #()
+		roots = #()
 	)
 )
 
