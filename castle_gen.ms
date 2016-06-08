@@ -8,6 +8,8 @@ rollout castle_gen "" width:136 height:296
 (
 	global root
 	global roots = #()
+	global blocks = #()
+	global parts = #()
 	global modules = #()
 	
 	fn rootParent node = 
@@ -133,7 +135,7 @@ rollout castle_gen "" width:136 height:296
 		
 		do
 		(
-			rnd = random 2 4
+			rnd = random 2 3
 			
 			for i = 1 to rnd do
 			(
@@ -193,13 +195,26 @@ rollout castle_gen "" width:136 height:296
 	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		roots = #()
+		local posX, posY
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
-		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
 		
--- 		for i = 1 to 4 do
--- 		(
--- 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
--- 		)
+ 		for i = 0 to 3 do
+ 		(
+ 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+			about blocks[1].pivot
+			(
+				rot = 90*i
+				rotate blocks rot z_axis
+				case i of
+				(
+					0:(posX = 0; posY = 0)
+					1:(posX=-645.881; posY=-645.888)
+					2:(posX=497.493/2; posY=-794.268)
+					3:(posX=(1291.78-148.387)/3; posY=-942.655/3)
+				)
+				move blocks [posX*i,posY*i,0]
+			)
+ 		)
 	)
 		
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
@@ -215,7 +230,7 @@ rollout castle_gen "" width:136 height:296
 	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
 	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels"
 	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
-	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
+	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
