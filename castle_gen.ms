@@ -7,6 +7,7 @@ try(destroydialog :: castle_gen)catch()
 rollout castle_gen "" width:136 height:296
 (
 	global root
+	global roots = #()
 	
 	fn rootParent node = 
 	(
@@ -160,12 +161,14 @@ rollout castle_gen "" width:136 height:296
 			)
 		)
 		while blocks.count < max_blocks
+		join roots blocks
 	)
 	
 	--create town centre
-	fn gen_centre size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		parts = #()
+		
 		for x = 0 to size-1 do
 		(
 			r = random 0 99
@@ -176,7 +179,8 @@ rollout castle_gen "" width:136 height:296
 		if meridian < 1 do meridian = 1
 		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
 		append parts root
-			if x > 3 do
+		
+			if square == true do
 			(
 				for y = 0 to size-1 do
 				(
@@ -185,12 +189,15 @@ rollout castle_gen "" width:136 height:296
 				)
 			)
 		)
+		join roots parts
 	)
 	
-	fn gen_city size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
-		gen_centre size meridian sel pos plat mod1 roo1 mod2 roo2 debug
-		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		roots = #()
+		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		--gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		
 -- 		for i = 1 to 4 do
 -- 		(
 -- 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
@@ -205,13 +212,17 @@ rollout castle_gen "" width:136 height:296
 	pickbutton btn_2roof "2/ roof" pos:[64,48] width:56 height:24
 	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24
 	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24
-	button btn_create "create" pos:[8,264] width:120 height:24
-	spinner spn_centre "" pos:[8,192] width:56 height:16 range:[2,5,2] type:#integer toolTip:"centre size"
+	
+	checkbutton ckb_square "•" pos:[8,192] width:16 height:16 toolTip:"double platform"
+	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
 	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels"
 	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
+	
+	button btn_create "create" pos:[8,264] width:104 height:24 toolTip:"create structure"
+	button btn_confirm "•" pos:[112,264] width:16 height:24 toolTip:"confirm structure"
 
 	on btn_auto pressed do
 	(
@@ -266,9 +277,24 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		--gen_centre spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
-		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
-		gen_city spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		for r =1 to roots.count do
+		(
+			if isvalidnode roots[4] do
+			(
+				append modules roots[r]
+				for child in roots[r].children do
+				(
+					if isvalidnode child do appendifunique modules child
+				)
+			)
+		)
+		try(delete modules)catch()
+		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false
+	)
+	
+	on btn_confirm pressed do
+	(
+		modules = #()
 	)
 )
 
