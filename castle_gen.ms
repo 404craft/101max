@@ -23,7 +23,7 @@ rollout castle_gen "" width:136 height:296
 		case sel of
 		(
 			true:(location = $.pos)
-			false:(location = [pos.x,pos.y,0])
+			false:(location = [pos.x,pos.y,pos.z])
 		)
 		maxOps.cloneNodes plat cloneType:#instance newNodes:&platform
 		platform = rootParent platform[1]
@@ -31,7 +31,6 @@ rollout castle_gen "" width:136 height:296
 		root = dummy pos:platform.pos name: ("waterhome_" + 1 as string + "root")
 		root.rotation = platform.rotation
 		platform.parent = root
-		append roots root
 		
 		r = random 0 99
 		case of 
@@ -155,11 +154,12 @@ rollout castle_gen "" width:136 height:296
 	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24
 	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24
 	button btn_create "create" pos:[8,264] width:120 height:24
-	spinner spn_centre "" pos:[8,176] width:56 height:16 range:[0,100,1] type:#integer toolTip:"centre size"
-	spinner spn_levels "" pos:[64,176] width:56 height:16 range:[0,100,1] type:#integer toolTip:"maximum levels"
-	checkbutton ckb_selection "•" pos:[8,144] width:16 height:32
+	spinner spn_centre "" pos:[8,192] width:56 height:16 range:[0,100,1] type:#integer toolTip:"centre size"
+	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[0,100,1] type:#integer toolTip:"maximum levels"
+	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
+	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 
 	on btn_auto pressed do
 	(
@@ -214,7 +214,7 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,0] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
