@@ -122,14 +122,12 @@ rollout castle_gen "" width:136 height:296
 	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		blocks = #()
-		max_blocks = random 7 12
-		print max_blocks
+		max_blocks = meridian
 		dir = 0
-		meridian -= 1
+		meridian -= 2
 		if meridian < 1 do meridian = 1
 		
--- 		do
-		for n = 1 to meridian do
+        do
  		(
 			rnd = random 2 4
 			
@@ -159,7 +157,7 @@ rollout castle_gen "" width:136 height:296
 			rotate blocks[blocks.count] 90 z_axis
 			)
 		)
--- 		while blocks.count < max_blocks
+ 		while blocks.count < max_blocks
 	)
 		
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
