@@ -17,7 +17,7 @@ rollout castle_gen "" width:136 height:296
 		)
 	)
 
-	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 inhabited debug =
 	(
 		root = undefined
 		case sel of
@@ -33,6 +33,7 @@ rollout castle_gen "" width:136 height:296
 		platform.parent = root
 		
 		r = random 0 99
+		if inhabited do r = 99
 		if meridian > 0 do
 		(
 			case of 
@@ -119,6 +120,7 @@ rollout castle_gen "" width:136 height:296
 		)
 	)
 	
+	--create an alleyway complete with buildings
 	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		blocks = #()
@@ -160,7 +162,8 @@ rollout castle_gen "" width:136 height:296
 		while blocks.count < max_blocks
 	)
 	
-	fn gen_core size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	--create town centre
+	fn gen_centre size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		for x = 1 to size do
 		(
@@ -170,12 +173,12 @@ rollout castle_gen "" width:136 height:296
 			meridian -= 1
 			)
 		if meridian < 1 do meridian = 1
-		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 debug
+		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true debug
 			if x > 3 do
 			(
 				for y = 1 to size do
 				(
-				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 debug
+				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true debug
 				)
 			)
 		)
@@ -250,8 +253,8 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
-		gen_core spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false true
+		gen_centre spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
