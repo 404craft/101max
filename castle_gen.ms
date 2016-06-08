@@ -127,8 +127,8 @@ rollout castle_gen "" width:136 height:296
 		meridian -= 2
 		if meridian < 1 do meridian = 1
 		
-        do
- 		(
+		do
+		(
 			rnd = random 2 4
 			
 			for i = 1 to rnd do
@@ -136,8 +136,8 @@ rollout castle_gen "" width:136 height:296
 				b = blocks.count
 				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 debug
 				append blocks root
- 				obj = blocks[blocks.count]
- 				try(obj = blocks[blocks.count-1])catch()
+				obj = blocks[blocks.count]
+				try(obj = blocks[blocks.count-1])catch()
 				if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
 				else if dir != 0 then 
 				(
@@ -157,7 +157,28 @@ rollout castle_gen "" width:136 height:296
 			rotate blocks[blocks.count] 90 z_axis
 			)
 		)
- 		while blocks.count < max_blocks
+		while blocks.count < max_blocks
+	)
+	
+	fn gen_core size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	(
+		for x = 1 to size do
+		(
+			r = random 0 99
+			if r < 30 do
+			(
+			meridian -= 1
+			)
+		if meridian < 1 do meridian = 1
+		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 debug
+			if x > 3 do
+			(
+				for y = 1 to size do
+				(
+				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 debug
+				)
+			)
+		)
 	)
 		
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
@@ -169,8 +190,8 @@ rollout castle_gen "" width:136 height:296
 	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24
 	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24
 	button btn_create "create" pos:[8,264] width:120 height:24
-	spinner spn_centre "" pos:[8,192] width:56 height:16 range:[0,100,1] type:#integer toolTip:"centre size"
-	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[0,100,1] type:#integer toolTip:"maximum levels"
+	spinner spn_centre "" pos:[8,192] width:56 height:16 range:[2,5,2] type:#integer toolTip:"centre size"
+	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels"
 	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
@@ -229,7 +250,8 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		gen_core spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
