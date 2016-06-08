@@ -17,7 +17,7 @@ rollout castle_gen "" width:136 height:296
 		)
 	)
 
-	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 inhabited debug =
+	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 inhabited prefix iterator debug =
 	(
 		root = undefined
 		case sel of
@@ -28,7 +28,7 @@ rollout castle_gen "" width:136 height:296
 		maxOps.cloneNodes plat cloneType:#instance newNodes:&platform
 		platform = rootParent platform[1]
 		platform.pos = location
-		root = dummy pos:platform.pos name: ("waterhome_" + 1 as string + "root")
+		root = dummy pos:platform.pos name: ("waterhome_" + iterator as string + prefix)
 		root.rotation = platform.rotation
 		platform.parent = root
 		
@@ -136,7 +136,7 @@ rollout castle_gen "" width:136 height:296
 			for i = 1 to rnd do
 			(
 				b = blocks.count
-				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 debug
+				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
 				append blocks root
 				obj = blocks[blocks.count]
 				try(obj = blocks[blocks.count-1])catch()
@@ -151,7 +151,7 @@ rollout castle_gen "" width:136 height:296
 			dir = random 0 1
 			if dir == 0 do dir = -1
 			b = blocks.count
-			gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 debug
+			gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
 			append blocks root
 			coordsys blocks[blocks.count-1]
 			(
@@ -165,7 +165,8 @@ rollout castle_gen "" width:136 height:296
 	--create town centre
 	fn gen_centre size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
-		for x = 1 to size do
+		parts = #()
+		for x = 0 to size-1 do
 		(
 			r = random 0 99
 			if r < 30 do
@@ -173,15 +174,27 @@ rollout castle_gen "" width:136 height:296
 			meridian -= 1
 			)
 		if meridian < 1 do meridian = 1
-		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true debug
+		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
+		append parts root
 			if x > 3 do
 			(
-				for y = 1 to size do
+				for y = 0 to size-1 do
 				(
-				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true debug
+				gen_home meridian sel [pos.x+y*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
+				append parts root
 				)
 			)
 		)
+	)
+	
+	fn gen_city size meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	(
+		gen_centre size meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+-- 		for i = 1 to 4 do
+-- 		(
+-- 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
+-- 		)
 	)
 		
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
@@ -253,8 +266,9 @@ rollout castle_gen "" width:136 height:296
 	
 	on btn_create pressed do
 	(
-		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false true
-		gen_centre spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		--gen_centre spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		--gen_alley spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
+		gen_city spn_centre.value spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object true
 	)
 )
 
