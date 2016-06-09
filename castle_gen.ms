@@ -7,6 +7,7 @@ try(destroydialog :: castle_gen)catch()
 rollout castle_gen "" width:136 height:296
 (
 	global root
+	global a_root
 	global roots = #()
 	global blocks = #()
 	global parts = #()
@@ -37,6 +38,7 @@ rollout castle_gen "" width:136 height:296
 		platform.parent = root
 		
 		r = random 0 99
+		if meridian < 1 AND (random 0 99 > 19) do meridian = 1
 		if inhabited do r = 99
 		if meridian > 0 do
 		(
@@ -125,7 +127,7 @@ rollout castle_gen "" width:136 height:296
 	)
 	
 	--create an alleyway complete with buildings
-	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 iterator debug =
 	(
 		blocks = #()
 		max_blocks = meridian
@@ -135,7 +137,7 @@ rollout castle_gen "" width:136 height:296
 		
 		do
 		(
-			rnd = random 2 3
+			rnd = random 1 2
 			
 			for i = 1 to rnd do
 			(
@@ -147,7 +149,7 @@ rollout castle_gen "" width:136 height:296
 				if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
 				else if dir != 0 then 
 				(
-				coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [148.38,-dir*645.881,0]
+				coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [645.881,dir*148.38,0]
 				dir = 0
 				)	
 			)
@@ -164,6 +166,8 @@ rollout castle_gen "" width:136 height:296
 			)
 		)
 		while blocks.count < max_blocks
+		a_root = dummy pos:blocks[1].pos name: ("waterhome_alley_" + iterator as string)
+		for b = 1 to blocks.count do blocks[b].parent = a_root
 		join roots blocks
 	)
 	
@@ -175,7 +179,7 @@ rollout castle_gen "" width:136 height:296
 		for x = 0 to size-1 do
 		(
 			r = random 0 99
-			if r < 30 do
+			if r < 30 AND parts.count > 0 do
 			(
 			meridian -= 1
 			)
@@ -195,25 +199,28 @@ rollout castle_gen "" width:136 height:296
 	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
 		roots = #()
-		local posX, posY
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
 		
- 		for i = 0 to 3 do
+		m = 1
+		if square do m = 2
+ 		
+		for i = 1 to 4 do
  		(
- 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 debug
-			about blocks[1].pivot
-			(
-				rot = 90*i
-				rotate blocks rot z_axis
-				case i of
-				(
-					0:(posX = 0; posY = 0)
-					1:(posX=-645.881; posY=-645.888)
-					2:(posX=497.493/2; posY=-794.268)
-					3:(posX=(1291.78-148.387)/3; posY=-942.655/3)
-				)
-				move blocks [posX*i,posY*i,0]
-			)
+		x = 0
+		if random 0 3 < 3 do x = 497.493
+			
+ 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 i debug
+			
+		case i of
+		(
+			1:(pos = [parts[1].pos.x+x, parts[1].pos.y+794.268*m, parts[1].pos.z])
+			2:(pos = [parts[1].pos.x-645.888, parts[1].pos.y-148.387, parts[1].pos.z])
+			3:(pos = [parts[1].pos.x+x, parts[1].pos.y-794.268, parts[1].pos.z])
+			4:(pos = [parts[parts.count].pos.x+645.888, parts[parts.count].pos.y+148.387, parts[parts.count].pos.z])
+		)
+		a_root.pos = pos
+		rot = 90*(i-1)
+		rotate a_root rot z_axis
  		)
 	)
 		
@@ -292,7 +299,6 @@ rollout castle_gen "" width:136 height:296
 	(
 		for r in roots do
 		(
-			print roots.count
 			append modules r
 			for child in r.children do
 			(
@@ -302,6 +308,7 @@ rollout castle_gen "" width:136 height:296
 		delete modules
 		modules = #()
 		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false
+	
 	)
 	
 	on btn_confirm pressed do
