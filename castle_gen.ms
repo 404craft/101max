@@ -129,6 +129,7 @@ rollout castle_gen "" width:136 height:296
 	--create an alleyway complete with buildings
 	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 iterator debug =
 	(
+		local r
 		blocks = #()
 		max_blocks = meridian
 		dir = 0
@@ -149,7 +150,7 @@ rollout castle_gen "" width:136 height:296
 				if dir == 0 then coordsys obj blocks[blocks.count].pos = [0,794.268,0]
 				else if dir != 0 then 
 				(
-				coordsys blocks[blocks.count-1] blocks[blocks.count].pos = [645.881,dir*148.38,0]
+				coordsys blocks[blocks.count-1-r] blocks[blocks.count].pos = [645.881,dir*148.38,0]
 				dir = 0
 				)	
 			)
@@ -157,12 +158,18 @@ rollout castle_gen "" width:136 height:296
 			dir = random 0 1
 			if dir == 0 do dir = -1
 			b = blocks.count
-			gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
-			append blocks root
-			coordsys blocks[blocks.count-1]
+			
+			r = random 0 1
+			
+			for n = 0 to r do
 			(
-			blocks[blocks.count].pos = [dir*645.881,148.387,0]
-			rotate blocks[blocks.count] 90 z_axis
+				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
+				append blocks root
+				coordsys blocks[blocks.count-1-n]
+				(
+				blocks[blocks.count].pos = [dir*(645.881-1291.76*n),148.387,0]
+				rotate blocks[blocks.count] 90 z_axis
+				)
 			)
 		)
 		while blocks.count < max_blocks
