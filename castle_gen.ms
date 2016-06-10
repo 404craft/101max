@@ -13,6 +13,22 @@ rollout castle_gen "" width:136 height:296
 	global parts = #()
 	global modules = #()
 	
+	fn deleteBufferNode roo pro =
+	(
+		for r in roo.children do
+		(
+			arr = #()
+			for c in r.children do
+			(
+				if getuserpropbuffer c == pro do
+				(	
+				append arr c
+				)
+			)
+		)
+		delete arr
+	)
+	
 	fn rootParent node = 
 	(
 		if isvalidnode node do 
@@ -61,6 +77,10 @@ rollout castle_gen "" width:136 height:296
 							level.pos.y = platform.pos.y
 							level.pos.z = platform.pos.z + 290.272*n
 							level.parent = root
+							
+							if n > 1 do deleteBufferNode root "1/door"
+								if n == 1 do deleteBufferNode root "1/door/window"
+							
 							if debug do format "debug: level % created at %\n" n level.pos
 						)
 						--create 1/module roof
@@ -270,6 +290,7 @@ rollout castle_gen "" width:136 height:296
 	(
 		spn_posX.enabled = not spn_posX.enabled
 		spn_posY.enabled = not spn_posY.enabled
+		spn_posZ.enabled = not spn_posZ.enabled
 	)
 	
 	on btn_platform picked obj do
