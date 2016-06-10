@@ -15,9 +15,9 @@ rollout castle_gen "" width:136 height:296
 	
 	fn deleteBufferNode roo pro =
 	(
+		arr = #()
 		for r in roo.children do
 		(
-			arr = #()
 			for c in r.children do
 			(
 				if getuserpropbuffer c == pro do
@@ -119,6 +119,30 @@ rollout castle_gen "" width:136 height:296
 						highest[i] = level
 						m *= -1
 						level.parent = root
+							
+						if i_top == 1 do
+						(
+							deleteBufferNode level "2/door/1"
+							deleteBufferNode level "2/door/2"
+						)
+						
+						if i_top == 2 do 
+						(
+							deleteBufferNode level "2/door/2"
+							deleteBufferNode level "2/door/2/window"
+							
+							if n == 1 do
+							(
+							if i == 1 do deleteBufferNode level "2/door/1"
+								if i == 2 do deleteBufferNode level "2/door/1/window"
+							)
+							
+							if n > 1 do
+							(
+								deleteBufferNode level "2/door/1"
+							)
+						)
+
 						if debug do format "debug: level %.% created at %\n" n i level.pos
 						)
 					)
