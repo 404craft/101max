@@ -18,12 +18,11 @@ rollout castle_gen "" width:136 height:296
 		arr = #()
 		for r in roo.children do
 		(
+			if getuserpropbuffer r == pro do append arr r
+				
 			for c in r.children do
 			(
-				if getuserpropbuffer c == pro do
-				(	
-				append arr c
-				)
+				if getuserpropbuffer c == pro do append arr c
 			)
 		)
 		delete arr
@@ -130,6 +129,7 @@ rollout castle_gen "" width:136 height:296
 						(
 							deleteBufferNode level "2/door/2"
 							deleteBufferNode level "2/door/2/window"
+							deleteBufferNode level "2/vines"
 							
 							if n == 1 do
 							(
