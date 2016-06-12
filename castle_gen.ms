@@ -295,12 +295,18 @@ rollout castle_gen "" width:136 height:296
 	(
 		flag = #()
 		roots = #()
+		windward = random 1 179
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
 		
 		m = 1
 		if square do m = 2
  		
-		for i = 1 to 4 do
+		if (random 0 1) == 1 then alleys = 4
+			else (alleys = random 1 3)
+		
+		if debug do format "debug: town has % alleys/n" alleys
+		
+		for i = 1 to alleys do
  		(
 		x = 0
 		if random 0 3 < 3 do x = 497.493
@@ -317,7 +323,7 @@ rollout castle_gen "" width:136 height:296
 		a_root.pos = pos
 		rot = 90*(i-1)
 		rotate a_root rot z_axis
-		for f in flag do turnNode f 30
+		for f in flag do turnNode f windward
  		)
 	)
 		
