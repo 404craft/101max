@@ -7,11 +7,32 @@ try(destroydialog :: castle_gen)catch()
 rollout castle_gen "" width:136 height:296
 (
 	global root
+	global flag = #()
 	global a_root
 	global roots = #()
 	global blocks = #()
 	global parts = #()
 	global modules = #()
+	
+	fn findNode roo pro = 
+	(
+		for r in roo do
+		(
+			if getuserpropbuffer r == pro then append flag r
+		)
+	)
+	
+	fn turnNode obj rot =
+	(
+		obj.rotation = (quat 0 0 0 0)
+		dir = quatToEuler obj.parent.rotation
+		rotate obj (dir.z - rot) z_axis
+		
+		coordsys obj.parent
+		(
+			rotate obj 1.36 y_axis
+		)
+	)
 	
 	fn deleteBufferNode roo pro =
 	(
@@ -37,6 +58,23 @@ rollout castle_gen "" width:136 height:296
 		)
 	)
 
+	fn rename roo nam =
+	(
+		arr = #()
+		append arr roo
+		for r in roo.children do
+		(
+			appendifunique arr r
+				
+			for c in r.children do
+			(
+				appendifunique arr c
+			)
+		)
+		
+		for a in arr do a.name = uniquename nam
+	)
+	
 	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 inhabited prefix iterator debug =
 	(
 		root = undefined
@@ -51,6 +89,7 @@ rollout castle_gen "" width:136 height:296
 		root = dummy pos:platform.pos name: ("waterhome_" + iterator as string + prefix)
 		root.rotation = platform.rotation
 		platform.parent = root
+		rename platform ("waterhome_" + iterator as string + "_plat_")
 		
 		r = random 0 99
 		if meridian < 1 AND (random 0 99 > 19) do meridian = 1
@@ -76,7 +115,7 @@ rollout castle_gen "" width:136 height:296
 							level.pos.y = platform.pos.y
 							level.pos.z = platform.pos.z + 290.272*n
 							level.parent = root
-							
+							rename level ("waterhome_" + iterator as string + "_bloc_")
 							if n > 1 do deleteBufferNode root "1/door"
 								if n == 1 do deleteBufferNode root "1/door/window"
 							
@@ -89,6 +128,8 @@ rollout castle_gen "" width:136 height:296
 						roof.pos.y = platform.pos.y
 						roof.pos.z = platform.pos.z + 290.272*meridian
 						roof.parent = root
+						rename roof ("waterhome_" + iterator as string + "_roof_")
+						findNode roof "1/roof/flag"
 						if debug do format "debug: roof created at %\n" roof.pos
 					)
 				)
@@ -118,6 +159,7 @@ rollout castle_gen "" width:136 height:296
 						highest[i] = level
 						m *= -1
 						level.parent = root
+						rename level ("waterhome_" + iterator as string + "_bloc_")
 							
 						if i_top == 1 do
 						(
@@ -156,6 +198,7 @@ rollout castle_gen "" width:136 height:296
 						roof.pos.x = highest[i].pos.x + 0.138*m
 						roof.pos.y = highest[i].pos.y
 						roof.pos.z = highest[i].pos.z + 0.00701904
+						findNode roof "2/roof/flag"
 						coordsys local
 						(
 						if m == -1 do rotate roof 180 z_axis
@@ -163,6 +206,7 @@ rollout castle_gen "" width:136 height:296
 						)
 						m *= -1
 						roof.parent = root
+						rename roof ("waterhome_" + iterator as string + "_roof_")
 						if debug do format "debug: roof % created at %\n" i roof.pos
 					)
 				)
@@ -249,6 +293,7 @@ rollout castle_gen "" width:136 height:296
 	
 	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
 	(
+		flag = #()
 		roots = #()
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
 		
@@ -272,6 +317,7 @@ rollout castle_gen "" width:136 height:296
 		a_root.pos = pos
 		rot = 90*(i-1)
 		rotate a_root rot z_axis
+		for f in flag do turnNode f 30
  		)
 	)
 		
@@ -306,6 +352,7 @@ rollout castle_gen "" width:136 height:296
 				"1/module":(btn_1module.picked o; btn_1module.object = o)
 				"2/module":(btn_2module.picked o; btn_2module.object = o)
 				"platform":(btn_platform.picked o; btn_platform.object = o)
+				"crate":( btn_crate.picked o;  btn_crate.object = o)
 			)
 		)
 	)
@@ -345,6 +392,12 @@ rollout castle_gen "" width:136 height:296
 	(
 		obj = rootParent obj
 		btn_2roof.text = obj.name
+	)
+	
+	on btn_crate picked obj do
+	(
+		obj = rootParent obj
+		btn_crate.text = obj.name
 	)
 	
 	on btn_create pressed do
