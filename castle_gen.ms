@@ -8,6 +8,7 @@ rollout castle_gen "" width:136 height:296
 (
 	global root
 	global flag = #()
+	global crates = #()
 	global a_root
 	global roots = #()
 	global blocks = #()
@@ -16,11 +17,11 @@ rollout castle_gen "" width:136 height:296
 	
 	fn dropCrate obj roo minX minY maxX maxY =
 	(
-		maxOps.cloneNodes obj cloneType:#instance newNodes:&obj
-		obj = obj[1]
+		maxOps.cloneNodes obj cloneType:#instance newNodes:&nn
+		o = nn[1]
 		s = random 0.5 1.5
-		scale obj [1*s,1*s,1*s]
-		vdis = (distance obj.mesh.verts[1].pos obj.mesh.verts[2].pos) * s
+		scale o [1*s,1*s,1*s]
+		vdis = (distance o.mesh.verts[1].pos o.mesh.verts[2].pos) * s
 		dir = random 0 1
 		if dir == 0 do dir = -1
 		
@@ -28,13 +29,22 @@ rollout castle_gen "" width:136 height:296
 		y = (random minY maxY)*dir
 		z = roo.pos.z + vdis / 2 + 5.78454
 		
-		obj.pos = roo.pos
-		rad = random 0 30
+		o.pos = roo.pos
+		rad = random 0 20
 		
-		rotate obj rad z_axis
-		move obj [x,y,z]
+		rotate o rad z_axis
+		move o [x,y,z]
 		
-		obj.parent = roo
+		for c in crates do
+			if isvalidnode o do
+				if intersects c o  do delete o
+		
+		if isvalidnode o do
+		(
+		append crates o
+		o.parent = roo
+		o.name = roo.name + "_crate"
+		)
 	)
 	
 	fn findNode roo pro = 
@@ -143,6 +153,7 @@ rollout castle_gen "" width:136 height:296
 								if n == 1 do deleteBufferNode root "1/door/window"
 							
 							if debug do format "debug: level % created at %\n" n level.pos
+							dropCrate crate root -60.0 320.0 -160.0 -320.0
 						)
 						--create 1/module roof
 						maxOps.cloneNodes roo1 cloneType:#instance newNodes:&roof
@@ -209,7 +220,7 @@ rollout castle_gen "" width:136 height:296
 						)
 
 						if debug do format "debug: level %.% created at %\n" n i level.pos
-						dropCrate crate root -180 300 180 320
+						dropCrate crate root -180.0 300.0 180.0 320.0
 						)
 					)
 					
@@ -319,6 +330,8 @@ rollout castle_gen "" width:136 height:296
 	(
 		flag = #()
 		roots = #()
+		crates = #()
+		
 		windward = random 1 179
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
 		
