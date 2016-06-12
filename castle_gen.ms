@@ -4,7 +4,7 @@
 
 try(destroydialog :: castle_gen)catch()
 
-rollout castle_gen "" width:136 height:296
+rollout castle_gen "" width:128 height:296
 (
 	global root
 	global flag = #()
@@ -37,7 +37,7 @@ rollout castle_gen "" width:136 height:296
 		
 		for c in crates do
 			if isvalidnode o do
-				if intersects c o  do delete o
+				if intersects c o do delete o
 		
 		if isvalidnode o do
 		(
@@ -136,7 +136,7 @@ rollout castle_gen "" width:136 height:296
 				(
 					r = random 0 99
 					
-					if meridian < 5 AND r > 24 do
+					if meridian < 5 AND r > 24 then
 					(
 						--create 1/module tile
 						if debug do print ("debug: creating 1/ module home")
@@ -165,6 +165,10 @@ rollout castle_gen "" width:136 height:296
 						rename roof ("waterhome_" + iterator as string + "_roof_")
 						findNode roof "1/roof/flag"
 						if debug do format "debug: roof created at %\n" roof.pos
+					)
+					else
+					(
+						if (random 0 1) == 1 do for n = 1 to (random 2 5) do dropCrate crate root 160.0 320.0 -160.0 -320.0
 					)
 				)
 				
@@ -333,21 +337,22 @@ rollout castle_gen "" width:136 height:296
 		crates = #()
 		
 		windward = random 1 179
+		
+		if (random 0 1) == 1 then alleys = 4
+			else (alleys = random 1 3)
+		if debug do format "debug: town has % alleys/n" alleys
+			
+		castle_gen.pb_pending.value += 100 / (alleys+1)
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
 		
 		m = 1
 		if square do m = 2
- 		
-		if (random 0 1) == 1 then alleys = 4
-			else (alleys = random 1 3)
-		
-		if debug do format "debug: town has % alleys/n" alleys
 		
 		for i = 1 to alleys do
  		(
 		x = 0
 		if random 0 3 < 3 do x = 497.493
-			
+		castle_gen.pb_pending.value += 100/ (alleys+1)
  		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 crate i debug
 			
 		case i of
@@ -363,7 +368,8 @@ rollout castle_gen "" width:136 height:296
 		for f in flag do turnNode f windward
  		)
 	)
-		
+	
+	label lbl_101 "101craft" pos:[44,6] width:40 height:14
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
 	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24
 	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24
@@ -381,8 +387,9 @@ rollout castle_gen "" width:136 height:296
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
-	button btn_create "create" pos:[8,264] width:104 height:24 toolTip:"create structure"
-	button btn_confirm "•" pos:[112,264] width:16 height:24 toolTip:"confirm created structure"
+	progressBar pb_pending "" pos:[8,248] width:112 height:16 value:0 color:(color 0 0 255) orient:#horizontal
+	button btn_create "create" pos:[8,264] width:96 height:24 toolTip:"create structure"
+	button btn_confirm "•" pos:[104,264] width:16 height:24 toolTip:"confirm created structure"
 
 	on btn_auto pressed do
 	(
@@ -395,7 +402,7 @@ rollout castle_gen "" width:136 height:296
 				"1/module":(btn_1module.picked o; btn_1module.object = o)
 				"2/module":(btn_2module.picked o; btn_2module.object = o)
 				"platform":(btn_platform.picked o; btn_platform.object = o)
-				"crate":( btn_crate.picked o;  btn_crate.object = o)
+				"crate":(btn_crate.picked o;  btn_crate.object = o)
 			)
 		)
 	)
@@ -455,6 +462,7 @@ rollout castle_gen "" width:136 height:296
 		)
 		delete modules
 		modules = #()
+		pb_pending.value = 0
 		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object false
 	
 	)
