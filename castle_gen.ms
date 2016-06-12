@@ -4,6 +4,9 @@
 
 try(destroydialog :: castle_gen)catch()
 
+-- if units.systemtype != #inches do units.systemtype = #inches
+-- if units.displaytype != #generic do units.displaytype = #generic
+
 rollout castle_gen "" width:128 height:296
 (
 	global root
@@ -15,8 +18,10 @@ rollout castle_gen "" width:128 height:296
 	global parts = #()
 	global modules = #()
 	
-	fn dropCrate obj roo minX minY maxX maxY =
+	fn dropCrate obj roo minX minY maxX maxY num rot =
 	(
+		for n = 1 to num do
+		(
 		maxOps.cloneNodes obj cloneType:#instance newNodes:&nn
 		o = nn[1]
 		s = random 0.5 1.5
@@ -30,8 +35,7 @@ rollout castle_gen "" width:128 height:296
 		z = roo.pos.z + vdis / 2 + 5.78454
 		
 		o.pos = roo.pos
-		rad = random 0 20
-		
+		rad = random 0 rot
 		rotate o rad z_axis
 		move o [x,y,z]
 		
@@ -44,6 +48,7 @@ rollout castle_gen "" width:128 height:296
 		append crates o
 		o.parent = roo
 		o.name = roo.name + "_crate"
+		)
 		)
 	)
 	
@@ -153,7 +158,7 @@ rollout castle_gen "" width:128 height:296
 								if n == 1 do deleteBufferNode root "1/door/window"
 							
 							if debug do format "debug: level % created at %\n" n level.pos
-							dropCrate crate root -60.0 320.0 -160.0 -320.0
+							dropCrate crate root -60.0 320.0 -160.0 -320.0 (random 1 3) 30
 						)
 						--create 1/module roof
 						maxOps.cloneNodes roo1 cloneType:#instance newNodes:&roof
@@ -168,7 +173,7 @@ rollout castle_gen "" width:128 height:296
 					)
 					else
 					(
-						if (random 0 1) == 1 do for n = 1 to (random 2 5) do dropCrate crate root 160.0 320.0 -160.0 -320.0
+						if (random 0 1) == 1 do dropCrate crate root 160.0 320.0 -160.0 -320.0 (random 2 5) 90
 					)
 				)
 				
@@ -224,7 +229,7 @@ rollout castle_gen "" width:128 height:296
 						)
 
 						if debug do format "debug: level %.% created at %\n" n i level.pos
-						dropCrate crate root -180.0 300.0 180.0 320.0
+						dropCrate crate root -180.0 300.0 180.0 320.0 (random 1 2) 20
 						)
 					)
 					
@@ -371,13 +376,13 @@ rollout castle_gen "" width:128 height:296
 	
 	label lbl_101 "101craft" pos:[44,6] width:40 height:14
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
-	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24
-	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24
-	pickbutton btn_2module "2/ module " pos:[64,72] width:56 height:24
-	pickbutton btn_1roof "1/ roof" pos:[8,48] width:56 height:24
-	pickbutton btn_2roof "2/ roof" pos:[64,48] width:56 height:24
-	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24
-	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24
+	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24 toolTip:"platform prefab slot"
+	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24 toolTip:"solitary house prefab slot"
+	pickbutton btn_2module "2/ module " pos:[64,72] width:56 height:24 toolTip:"double house prefab slot"
+	pickbutton btn_1roof "1/ roof" pos:[8,48] width:56 height:24 toolTip:"solitary house roof prefab slot"
+	pickbutton btn_2roof "2/ roof" pos:[64,48] width:56 height:24 toolTip:"double house roof prefab slot"
+	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24 toolTip:"crate prefab slot"
+	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24 toolTip:"barrel prefab slot"
 	
 	checkbutton ckb_square "•" pos:[8,192] width:16 height:16 toolTip:"double platform"
 	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
@@ -388,7 +393,7 @@ rollout castle_gen "" width:128 height:296
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
 	progressBar pb_pending "" pos:[8,248] width:112 height:16 value:0 color:(color 0 0 255) orient:#horizontal
-	button btn_create "create" pos:[8,264] width:96 height:24 toolTip:"create structure"
+	button btn_create "BUILD" pos:[8,264] width:96 height:24 toolTip:"create structure"
 	button btn_confirm "•" pos:[104,264] width:16 height:24 toolTip:"confirm created structure"
 
 	on btn_auto pressed do
