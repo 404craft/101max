@@ -14,6 +14,29 @@ rollout castle_gen "" width:136 height:296
 	global parts = #()
 	global modules = #()
 	
+	fn dropCrate obj roo minX minY maxX maxY =
+	(
+		maxOps.cloneNodes obj cloneType:#instance newNodes:&obj
+		obj = obj[1]
+		s = random 0.5 1.5
+		scale obj [1*s,1*s,1*s]
+		vdis = (distance obj.mesh.verts[1].pos obj.mesh.verts[2].pos) * s
+		dir = random 0 1
+		if dir == 0 do dir = -1
+		
+		x = random minX maxX
+		y = (random minY maxY)*dir
+		z = roo.pos.z + vdis / 2 + 5.78454
+		
+		obj.pos = roo.pos
+		rad = random 0 30
+		
+		rotate obj rad z_axis
+		move obj [x,y,z]
+		
+		obj.parent = roo
+	)
+	
 	fn findNode roo pro = 
 	(
 		for r in roo do
@@ -75,7 +98,7 @@ rollout castle_gen "" width:136 height:296
 		for a in arr do a.name = uniquename nam
 	)
 	
-	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 inhabited prefix iterator debug =
+	fn gen_home meridian sel pos plat mod1 roo1 mod2 roo2 crate inhabited prefix iterator debug =
 	(
 		root = undefined
 		case sel of
@@ -186,6 +209,7 @@ rollout castle_gen "" width:136 height:296
 						)
 
 						if debug do format "debug: level %.% created at %\n" n i level.pos
+						dropCrate crate root -180 300 180 320
 						)
 					)
 					
@@ -215,7 +239,7 @@ rollout castle_gen "" width:136 height:296
 	)
 	
 	--create an alleyway complete with buildings
-	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 iterator debug =
+	fn gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 crate iterator debug =
 	(
 		local r
 		blocks = #()
@@ -231,7 +255,7 @@ rollout castle_gen "" width:136 height:296
 			for i = 1 to rnd do
 			(
 				b = blocks.count
-				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
+				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 crate false "_alley" (blocks.count + 1) debug
 				append blocks root
 				obj = blocks[blocks.count]
 				try(obj = blocks[blocks.count-1])catch()
@@ -251,7 +275,7 @@ rollout castle_gen "" width:136 height:296
 			
 			for n = 0 to r do
 			(
-				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 false "_alley" (blocks.count + 1) debug
+				gen_home (meridian-b) sel pos plat mod1 roo1 mod2 roo2 crate false "_alley" (blocks.count + 1) debug
 				append blocks root
 				coordsys blocks[blocks.count-1-n]
 				(
@@ -267,7 +291,7 @@ rollout castle_gen "" width:136 height:296
 	)
 	
 	--create town centre
-	fn gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug =
 	(
 		parts = #()
 		
@@ -279,24 +303,24 @@ rollout castle_gen "" width:136 height:296
 			meridian -= 1
 			)
 		if meridian < 1 do meridian = 1
-		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
+		gen_home meridian sel [pos.x+x*497.493,pos.y,pos.z] plat mod1 roo1 mod2 roo2 crate true "_centre" (parts.count + 1) debug
 		append parts root
 		
 		if square == true do
 		(
-			gen_home meridian sel [pos.x+x*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 true "_centre" (parts.count + 1) debug
+			gen_home meridian sel [pos.x+x*497.493,pos.y+794.268,pos.z] plat mod1 roo1 mod2 roo2 crate true "_centre" (parts.count + 1) debug
 			append parts root
 		)
 		)
 		join roots parts
 	)
 	
-	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 debug =
+	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug =
 	(
 		flag = #()
 		roots = #()
 		windward = random 1 179
-		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 debug
+		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
 		
 		m = 1
 		if square do m = 2
@@ -311,7 +335,7 @@ rollout castle_gen "" width:136 height:296
 		x = 0
 		if random 0 3 < 3 do x = 497.493
 			
- 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 i debug
+ 		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 crate i debug
 			
 		case i of
 		(
@@ -418,7 +442,7 @@ rollout castle_gen "" width:136 height:296
 		)
 		delete modules
 		modules = #()
-		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object false
+		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object false
 	
 	)
 	
