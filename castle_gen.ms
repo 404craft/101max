@@ -335,16 +335,12 @@ rollout castle_gen "" width:128 height:296
 		join roots parts
 	)
 	
-	fn gen_city size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug =
+	fn gen_city size square meridian alleys windward sel pos plat mod1 roo1 mod2 roo2 crate debug =
 	(
 		flag = #()
 		roots = #()
 		crates = #()
-		
-		windward = random 1 179
-		
-		if (random 0 1) == 1 then alleys = 4
-			else (alleys = random 1 3)
+
 		if debug do format "debug: town has % alleys/n" alleys
 			
 		castle_gen.pb_pending.value += 100 / (alleys+1)
@@ -386,10 +382,16 @@ rollout castle_gen "" width:128 height:296
 	
 	checkbutton ckb_square "•" pos:[8,192] width:16 height:16 toolTip:"double platform"
 	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
-	spinner spn_levels "" pos:[64,192] width:56 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels"
+	checkbutton ckb_levels "•" pos:[64,192] width:16 height:16 toolTip:"random number of levels" checked:true
+	spinner spn_levels "" pos:[80,192] width:40 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels" enabled:false
+	checkbutton ckb_wind "•" pos:[8,208] width:16 height:16 toolTip:"random wind" checked:true
+	spinner spn_wind "" pos:[24,208] width:40 height:16 range:[0,359,35] type:#integer toolTip:"wind direction" enabled:false
+	checkbutton ckb_alleys "•" pos:[64,208] width:16 height:16 toolTip:"random number of alleys" checked:true
+	spinner spn_alleys "" pos:[80,208] width:40 height:16 range:[1,4,4] type:#integer toolTip:"number of alleys" enabled:false
+	
 	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
-	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,1000] type:#float
+	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
 	progressBar pb_pending "" pos:[8,248] width:112 height:16 value:0 color:(color 0 0 255) orient:#horizontal
@@ -455,6 +457,21 @@ rollout castle_gen "" width:128 height:296
 		btn_crate.text = obj.name
 	)
 	
+	on ckb_levels changed state do
+	(
+		spn_levels.enabled = not spn_levels.enabled
+	)
+	
+	on ckb_alleys changed state do
+	(
+		spn_alleys.enabled = not spn_alleys.enabled
+	)
+	
+	on ckb_wind changed state do
+	(
+		spn_wind.enabled = not spn_wind.enabled
+	)
+	
 	on btn_create pressed do
 	(
 		for r in roots do
@@ -468,8 +485,17 @@ rollout castle_gen "" width:128 height:296
 		delete modules
 		modules = #()
 		pb_pending.value = 0
-		gen_city spn_centre.value ckb_square.state spn_levels.value ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object false
-	
+		if ckb_levels.state == false then levels = spn_levels.value
+			else levels = random 2 10
+		if ckb_alleys.state == false then alleys = spn_alleys.value
+			else 
+			(
+				if (random 0 1) == 1 then alleys = 4
+				else (alleys = random 1 3)
+			)
+		if ckb_wind.state == false then windward = spn_wind.value
+			else windward = random 0 359
+		gen_city spn_centre.value ckb_square.state levels alleys windward ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object false
 	)
 	
 	on btn_confirm pressed do
