@@ -2,17 +2,18 @@
 --procudural fantasy town generator for Water-Home models
 --https://www.cgtrader.com/3d-models/architectural-exterior/house/water-home
 
-try(destroydialog :: castle_gen)catch()
+try(destroydialog :: castle_101)catch()
 
 -- if units.systemtype != #inches do units.systemtype = #inches
 -- if units.displaytype != #generic do units.displaytype = #generic
 
-rollout castle_gen "" width:128 height:296
+rollout castle_101 "" width:128 height:296
 (
 	global root
 	global flag = #()
 	global crates = #()
 	global a_root
+	global c_root
 	global roots = #()
 	global blocks = #()
 	global parts = #()
@@ -320,9 +321,11 @@ rollout castle_gen "" width:128 height:296
 			)
 		)
 		while blocks.count < max_blocks
-		a_root = dummy pos:blocks[1].pos name: ("waterhome_alley_" + iterator as string)
+		a_root = dummy pos:blocks[1].pos name: ("watertown_alley_" + iterator as string)
+		scale a_root [1.2,1.2,1.2]
 		for b = 1 to blocks.count do blocks[b].parent = a_root
 		join roots blocks
+		append roots a_root
 	)
 	
 	--create town centre
@@ -347,6 +350,17 @@ rollout castle_gen "" width:128 height:296
 			append parts root
 		)
 		)
+		
+		posX = parts[1].pos.x+(parts[size].pos.x-parts[1].pos.x)/2
+		posY = parts[1].pos.y+(parts[size].pos.y-parts[1].pos.y)/2
+		posZ = pos.z
+		
+		c_root = dummy pos:[posX,posY,posZ] name: ("watertown_center")
+		scale c_root [1.2,1.2,1.2]
+		append roots c_root
+		
+		for p in parts do p.parent = c_root
+		
 		join roots parts
 	)
 	
@@ -358,8 +372,12 @@ rollout castle_gen "" width:128 height:296
 
 		if debug do format "debug: town has % alleys/n" alleys
 
-		castle_gen.pb_pending.value += 100 / (alleys+1)
+		castle_101.pb_pending.value += 100 / (alleys+1)
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
+
+		t_root = dummy pos:c_root.pos name: ("watertown_root")
+		scale t_root [1.5,1.5,1.5]
+		append roots t_root
 		
 		m = 1
 		if square do m = 2
@@ -368,7 +386,7 @@ rollout castle_gen "" width:128 height:296
  		(
 		x = 0
 		if random 0 3 < 3 do x = 497.493
-		castle_gen.pb_pending.value += 100/ (alleys+1)
+		castle_101.pb_pending.value += 100/ (alleys+1)
  		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 crate i debug
 			
 		case i of
@@ -383,7 +401,9 @@ rollout castle_gen "" width:128 height:296
 		rot = 90*(i-1)
 		rotate a_root rot z_axis
 		for f in flag do turnNode f windward
+		a_root.parent = t_root
  		)
+		c_root.parent = t_root
 	)
 	
 	label lbl_101 "101craft" pos:[44,6] width:40 height:14
@@ -517,4 +537,4 @@ rollout castle_gen "" width:128 height:296
 	)
 )
 
-createDialog castle_gen
+createDialog castle_101
