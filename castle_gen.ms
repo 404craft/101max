@@ -16,7 +16,22 @@ rollout castle_gen "" width:128 height:296
 	global roots = #()
 	global blocks = #()
 	global parts = #()
-	global modules = #()
+	global modules
+	
+	fn raze arr1 arr2 =
+	(
+		arr2 = #()
+		for a in arr1 do
+		(
+			append arr2 a
+			for c in a.children do
+			(
+				appendifunique arr2 c
+			)
+		)
+		delete arr2
+		arr2 = #()
+	)
 	
 	fn dropCrate obj roo minX minY maxX maxY num rot =
 	(
@@ -342,7 +357,7 @@ rollout castle_gen "" width:128 height:296
 		crates = #()
 
 		if debug do format "debug: town has % alleys/n" alleys
-			
+
 		castle_gen.pb_pending.value += 100 / (alleys+1)
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
 		
@@ -363,6 +378,7 @@ rollout castle_gen "" width:128 height:296
 			3:(pos = [parts[1].pos.x+x, parts[1].pos.y-794.268, parts[1].pos.z])
 			4:(pos = [parts[parts.count].pos.x+645.888, parts[parts.count].pos.y+148.387, parts[parts.count].pos.z])
 		)
+		
 		a_root.pos = pos
 		rot = 90*(i-1)
 		rotate a_root rot z_axis
@@ -395,7 +411,8 @@ rollout castle_gen "" width:128 height:296
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
 	
 	progressBar pb_pending "" pos:[8,248] width:112 height:16 value:0 color:(color 0 0 255) orient:#horizontal
-	button btn_create "BUILD" pos:[8,264] width:96 height:24 toolTip:"create structure"
+	button btn_erase "•" pos:[8,264] width:16 height:24 toolTip:"erase created structure"
+	button btn_create "BUILD" pos:[24,264] width:80 height:24 toolTip:"create structure"
 	button btn_confirm "•" pos:[104,264] width:16 height:24 toolTip:"confirm created structure"
 
 	on btn_auto pressed do
@@ -474,16 +491,7 @@ rollout castle_gen "" width:128 height:296
 	
 	on btn_create pressed do
 	(
-		for r in roots do
-		(
-			append modules r
-			for child in r.children do
-			(
-				appendifunique modules child
-			)
-		)
-		delete modules
-		modules = #()
+		try(raze roots modules)catch()
 		pb_pending.value = 0
 		if ckb_levels.state == false then levels = spn_levels.value
 			else levels = random 2 10
@@ -501,6 +509,11 @@ rollout castle_gen "" width:128 height:296
 	on btn_confirm pressed do
 	(
 		roots = #()
+	)
+	
+	on btn_erase pressed do
+	(
+		try(raze roots modules)catch()
 	)
 )
 
