@@ -48,7 +48,7 @@ rollout castle_101 "" width:128 height:296
 			controller = a.position.controller
 			if height == 0 do controller = a.visibility.controller
 			movekeys controller (o += offset)
-			if height == 0 do moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 2)
+			if height == 0 do moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 1)
 		)
 		join roots ani
 	)
@@ -404,7 +404,7 @@ rollout castle_101 "" width:128 height:296
 		roots = #()
 		crates = #()
 
-		if debug do format "debug: town has % alleys/n" alleys
+		if debug do format "debug: town has % alleys\n" alleys
 
 		castle_101.pb_pending.value += 100 / (alleys+1)
 		gen_centre size square meridian sel pos plat mod1 roo1 mod2 roo2 crate debug
@@ -415,6 +415,7 @@ rollout castle_101 "" width:128 height:296
 		
 		m = 1
 		if square do m = 2
+		alley = #(1,2,3,4)
 		
 		for i = 1 to alleys do
  		(
@@ -422,17 +423,19 @@ rollout castle_101 "" width:128 height:296
 		if random 0 3 < 3 do x = 497.493
 		castle_101.pb_pending.value += 100/ (alleys+1)
  		gen_alley meridian sel pos plat mod1 roo1 mod2 roo2 crate i debug
-			
-		case i of
+		
+		a = random 1 alley.count
+		
+		case alley[a] of
 		(
 			1:(pos = [parts[1].pos.x+x, parts[1].pos.y+794.268*m, parts[1].pos.z])
 			2:(pos = [parts[1].pos.x-645.888, parts[1].pos.y-148.387, parts[1].pos.z])
 			3:(pos = [parts[1].pos.x+x, parts[1].pos.y-794.268, parts[1].pos.z])
 			4:(pos = [parts[parts.count].pos.x+645.888, parts[parts.count].pos.y+148.387, parts[parts.count].pos.z])
 		)
-		
 		a_root.pos = pos
-		rot = 90*(i-1)
+		rot = 90*(alley[a]-1)
+		deleteitem alley a
 		rotate a_root rot z_axis
 		for f in flag do turnNode f windward
 		a_root.parent = t_root
@@ -440,7 +443,7 @@ rollout castle_101 "" width:128 height:296
 		c_root.parent = t_root
 		
 		--animate blocks in for the purpose of presentation
-		animateIn roots 0 10 100
+		animateIn roots 0 4 100
 	)
 	
 	button btn_101 "101 craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
