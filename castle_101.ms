@@ -30,15 +30,25 @@ rollout castle_101 "" width:128 height:296
 		
 		for a in ani do
 		(
-		a.parent = undefined
-		move a [0,0,height]
-		
-		animate on
-		(
-			at time lframe move a [0,0,-height]
-		)
-
-		movekeys a.position.controller (o += offset)
+			if height > 0 then
+			(
+			a.parent = undefined
+			move a [0,0,height]
+			)
+			
+			animate on
+			(
+				if height == 0 do at time 0 a.visibility = off
+				at time lframe
+				(
+				if height == 0 then a.visibility = on
+					else move a [0,0,-height]
+				)
+			)
+			controller = a.position.controller
+			if height == 0 do controller = a.visibility.controller
+			movekeys controller (o += offset)
+			if height == 0 do moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 2)
 		)
 		join roots ani
 	)
@@ -430,7 +440,7 @@ rollout castle_101 "" width:128 height:296
 		c_root.parent = t_root
 		
 		--animate blocks in for the purpose of presentation
-		--animateIn roots 2000 10 100
+		animateIn roots 0 10 100
 	)
 	
 	button btn_101 "101 craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
