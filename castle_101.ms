@@ -19,6 +19,30 @@ rollout castle_101 "" width:128 height:296
 	global parts = #()
 	global modules
 	
+	fn animateIn arr height offset lframe =
+	(
+		o = 0
+		ani = #()
+		
+		for a in arr do for c in a.children do if isgrouphead c do append ani c
+			
+		join ani crates
+		
+		for a in ani do
+		(
+		a.parent = undefined
+		move a [0,0,height]
+		
+		animate on
+		(
+			at time lframe move a [0,0,-height]
+		)
+
+		movekeys a.position.controller (o += offset)
+		)
+		join roots ani
+	)
+	
 	fn raze arr1 arr2 =
 	(
 		arr2 = #()
@@ -404,9 +428,12 @@ rollout castle_101 "" width:128 height:296
 		a_root.parent = t_root
  		)
 		c_root.parent = t_root
+		
+		--animate blocks in for the purpose of presentation
+		--animateIn roots 2000 10 100
 	)
 	
-	label lbl_101 "101craft" pos:[44,6] width:40 height:14
+	button btn_101 "101 craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
 	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24 toolTip:"platform prefab slot"
 	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24 toolTip:"solitary house prefab slot"
@@ -534,6 +561,11 @@ rollout castle_101 "" width:128 height:296
 	on btn_erase pressed do
 	(
 		try(raze roots modules)catch()
+	)
+	
+	on btn_101 pressed do
+	(
+		shelllaunch "www.101craft.com" ""
 	)
 )
 
