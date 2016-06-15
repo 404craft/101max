@@ -600,4 +600,4 @@ rollout castle_101 "" width:128 height:296
 createDialog castle_101
 
 --disable tooltips
---for c in castle_101.controls do try(if c.tooltip != undefined or c.tooltip != "" do c.tooltip = "")catch()
+--for c in castle_101.controls do try(c.tooltip = "")catch()
