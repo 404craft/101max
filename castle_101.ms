@@ -10,7 +10,7 @@ try(destroydialog :: castle_101)catch()
 rollout castle_101 "" width:128 height:296
 (
 	global root
-	global flag = #()
+	global flags = #()
 	global crates = #()
 	global a_root
 	global c_root
@@ -106,7 +106,7 @@ rollout castle_101 "" width:128 height:296
 	(
 		for r in roo do
 		(
-			if getuserpropbuffer r == pro then append flag r
+			if getuserpropbuffer r == pro then append flags r
 		)
 	)
 	
@@ -398,9 +398,9 @@ rollout castle_101 "" width:128 height:296
 		join roots parts
 	)
 	
-	fn gen_city size square meridian alleys windward sel pos plat mod1 roo1 mod2 roo2 crate debug =
+	fn gen_city size square meridian alleys windward sel pos plat mod1 roo1 mod2 roo2 crate animated offset height debug =
 	(
-		flag = #()
+		flags = #()
 		roots = #()
 		crates = #()
 
@@ -437,16 +437,16 @@ rollout castle_101 "" width:128 height:296
 		rot = 90*(alley[a]-1)
 		deleteitem alley a
 		rotate a_root rot z_axis
-		for f in flag do turnNode f windward
+		for f in flags do turnNode f windward
 		a_root.parent = t_root
  		)
 		c_root.parent = t_root
 		
 		--animate blocks in for the purpose of presentation
-		animateIn roots 0 4 100
+		if animated do animateIn roots height offset 100
 	)
 	
-	button btn_101 "101 craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
+	button btn_101 "look@101craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
 	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
 	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24 toolTip:"platform prefab slot"
 	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24 toolTip:"solitary house prefab slot"
@@ -469,6 +469,10 @@ rollout castle_101 "" width:128 height:296
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
+	
+	checkbutton ckb_animated "•" pos:[8,224] width:16 height:16 toolTip:"animate town"
+	spinner spn_offset "" pos:[24,224] width:40 height:16 enabled:false range:[0,100,10] type:#integer toolTip:"offset between the animation of modules"
+	spinner spn_height "" pos:[64,224] width:56 height:16 enabled:false range:[0,100000,3000] type:#integer toolTip:"initial height for the animation"
 	
 	progressBar pb_pending "" pos:[8,248] width:112 height:16 value:0 color:(color 0 0 255) orient:#horizontal
 	button btn_erase "•" pos:[8,264] width:16 height:24 toolTip:"erase created structure"
@@ -549,6 +553,11 @@ rollout castle_101 "" width:128 height:296
 		spn_wind.enabled = not spn_wind.enabled
 	)
 	
+	on spn_wind changed val do
+	(
+		try(for f in flags do turnNode f val)catch()
+	)
+	
 	on btn_create pressed do
 	(
 		try(raze roots modules)catch()
@@ -563,7 +572,7 @@ rollout castle_101 "" width:128 height:296
 			)
 		if ckb_wind.state == false then windward = spn_wind.value
 			else windward = random 0 359
-		gen_city spn_centre.value ckb_square.state levels alleys windward ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object false
+		gen_city spn_centre.value ckb_square.state levels alleys windward ckb_selection.state [spn_posX.value,spn_posY.value,spn_posZ.value] btn_platform.object btn_1module.object btn_1roof.object btn_2module.object btn_2roof.object btn_crate.object ckb_animated.state spn_offset.value spn_height.value false
 	)
 	
 	on btn_confirm pressed do
@@ -578,7 +587,13 @@ rollout castle_101 "" width:128 height:296
 	
 	on btn_101 pressed do
 	(
-		shelllaunch "www.101craft.com" ""
+		try(shelllaunch "www.101craft.com" "")catch()
+	)
+	
+	on ckb_animated changed state do
+	(
+		spn_offset.enabled = not spn_offset.enabled
+		spn_height.enabled = not spn_height.enabled
 	)
 )
 
