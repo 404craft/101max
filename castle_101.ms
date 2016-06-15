@@ -458,14 +458,14 @@ rollout castle_101 "" width:128 height:296
 	
 	checkbutton ckb_square "•" pos:[8,192] width:16 height:16 toolTip:"double platform"
 	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
-	checkbutton ckb_levels "•" pos:[64,192] width:16 height:16 toolTip:"random number of levels" checked:true
-	spinner spn_levels "" pos:[80,192] width:40 height:16 range:[2,10,2] type:#integer toolTip:"maximum levels" enabled:false
-	checkbutton ckb_wind "•" pos:[8,208] width:16 height:16 toolTip:"random wind" checked:true
-	spinner spn_wind "" pos:[24,208] width:40 height:16 range:[0,359,35] type:#integer toolTip:"wind direction" enabled:false
-	checkbutton ckb_alleys "•" pos:[64,208] width:16 height:16 toolTip:"random number of alleys" checked:true
-	spinner spn_alleys "" pos:[80,208] width:40 height:16 range:[1,4,4] type:#integer toolTip:"number of alleys" enabled:false
+	checkbutton ckb_levels "•" pos:[64,192] width:16 height:16 checked:true toolTip:"random number of levels"
+	spinner spn_levels "" pos:[80,192] width:40 height:16 range:[2,10,2] type:#integer enabled:false toolTip:"maximum levels"
+	checkbutton ckb_wind "•" pos:[8,208] width:16 height:16 checked:true toolTip:"random wind"
+	spinner spn_wind "" pos:[24,208] width:40 height:16 range:[0,359,35] type:#integer enabled:false toolTip:"wind direction"
+	checkbutton ckb_alleys "•" pos:[64,208] width:16 height:16 checked:true toolTip:"random number of alleys"
+	spinner spn_alleys "" pos:[80,208] width:40 height:16 range:[1,4,4] type:#integer enabled:false toolTip:"number of alleys"
 	
-	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48
+	checkbutton ckb_selection "•" pos:[8,144] width:16 height:48 toolTip:"build at selected object's position"
 	spinner spn_posX "" pos:[24,144] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posY "" pos:[24,160] width:96 height:16 enabled:true range:[-100000,100000,5000] type:#float
 	spinner spn_posZ "" pos:[24,176] width:96 height:16 enabled:true range:[-100000,100000,0] type:#float
@@ -598,3 +598,6 @@ rollout castle_101 "" width:128 height:296
 )
 
 createDialog castle_101
+
+--disable tooltips
+--for c in castle_101.controls do try(if c.tooltip != undefined or c.tooltip != "" do c.tooltip = "")catch()
