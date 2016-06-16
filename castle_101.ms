@@ -102,16 +102,29 @@ rollout castle_101 "" width:128 height:296
 		)
 	)
 	
-	fn findNode roo pro = 
+	fn findNode roo pro arr = 
 	(
 		for r in roo do
 		(
-			if getuserpropbuffer r == pro then append flags r
+			if getuserpropbuffer r == pro then append arr r
 		)
+	)
+	
+	fn randomDir =
+	(
+		var = random 0 1
+		if var == 0 do var= -1
+		return var
 	)
 	
 	fn turnNode obj rot =
 	(
+		d = randomDir()
+		rot = rot - (random 0 10)*d
+		
+		if rot < 0 do rot = 0
+			if rot > 359 do rot = 359
+		
 		obj.rotation = (quat 0 0 0 0)
 		dir = quatToEuler obj.parent.rotation
 		rotate obj (dir.z - rot) z_axis
@@ -218,7 +231,7 @@ rollout castle_101 "" width:128 height:296
 						roof.pos.z = platform.pos.z + 290.272*meridian
 						roof.parent = root
 						rename roof ("waterhome_" + iterator as string + "_roof_")
-						findNode roof "1/roof/flag"
+						findNode roof "1/roof/flag" flags
 						if debug do format "debug: roof created at %\n" roof.pos
 					)
 					else
@@ -292,7 +305,7 @@ rollout castle_101 "" width:128 height:296
 						roof.pos.x = highest[i].pos.x + 0.138*m
 						roof.pos.y = highest[i].pos.y
 						roof.pos.z = highest[i].pos.z + 0.00701904
-						findNode roof "2/roof/flag"
+						findNode roof "2/roof/flag" flags
 						coordsys local
 						(
 						if m == -1 do rotate roof 180 z_axis
@@ -437,9 +450,19 @@ rollout castle_101 "" width:128 height:296
 		rot = 90*(alley[a]-1)
 		deleteitem alley a
 		rotate a_root rot z_axis
-		for f in flags do turnNode f windward
 		a_root.parent = t_root
  		)
+		banners = #()
+		for f in flags do
+		(
+			for b in f.children where (for m in b.modifiers where classof m == Bend collect m).count > 0 do append banners b
+
+		turnNode f windward
+		)
+		InstanceMgr.MakeObjectsUnique &banners #individual
+		
+		for b in banners do (d = randomDir(); b.modifiers[1].angle = b.modifiers[1].angle - (random 0 10)*d; b.modifiers[2].angle = b.modifiers[2].angle - (random 0 10)*d)
+		
 		c_root.parent = t_root
 		
 		--animate blocks in for the purpose of presentation
@@ -555,7 +578,11 @@ rollout castle_101 "" width:128 height:296
 	
 	on spn_wind changed val do
 	(
-		try(for f in flags do turnNode f val)catch()
+		try
+		(
+		for f in flags do turnNode f val
+		for b in banners do (d = randomDir(); b.modifiers[1].angle = b.modifiers[1].angle - (random 0 10)*d; b.modifiers[2].angle = b.modifiers[2].angle - (random 0 10)*d)
+		)catch()
 	)
 	
 	on btn_create pressed do
