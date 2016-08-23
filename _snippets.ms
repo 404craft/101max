@@ -1,3 +1,5 @@
+--simple programs used to speed up my workflow
+
 --move list position position controller's animation frames en masse
 for o in selection do
 (
