@@ -177,3 +177,34 @@ for m in scenematerials do
 	catch()
 )
 /*----------------------------------------------------------------------------------------------------------------------*/
+for obj in selection do
+(
+	for m in obj.modifiers do
+	(
+	if m.enabled == false do deletemodifier obj m
+	)
+)
+/*----------------------------------------------------------------------------------------------------------------------*/
+global c = 1
+rollout increname "" width:162 height:71
+(
+	button btn1 "execute" pos:[21,15] width:106 height:46
+	on btn1 pressed do
+	(
+	c += 1
+	$.name = $.name + c as string
+	)
+)
+createdialog increname
+/*----------------------------------------------------------------------------------------------------------------------*/
+render fromframe: 0 toframe: 120 outputFile:("D01" + "_" + ".tga") progressbar: true
+delete lights
+mr = renderers.current
+mr.MaximumSamples = 1
+mr.FinalGatherEnable2 = false
+mr.Enable_Material_Override = true
+render fromframe: 0 toframe: 120 outputFile:("AO1" + "_" + ".tga") progressbar: true
+/*----------------------------------------------------------------------------------------------------------------------*/
+sv = for i in $.selectedVerts collect i.index
+for n=1 to sv.count do $.verts[sv[n]].pos.y = -123.123
+/*----------------------------------------------------------------------------------------------------------------------*/
