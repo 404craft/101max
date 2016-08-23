@@ -1,4 +1,5 @@
---simple programs & one-liners I wrote when working on animations or games at one point or another used to speed up my workflow
+--one-liners, snippets & overall simple programs
+--I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 
 /*----------------------------------------------------------------------------------------------------------------------*/
 --move list position position controller's animation frames en masse
@@ -207,4 +208,43 @@ render fromframe: 0 toframe: 120 outputFile:("AO1" + "_" + ".tga") progressbar: 
 /*----------------------------------------------------------------------------------------------------------------------*/
 sv = for i in $.selectedVerts collect i.index
 for n=1 to sv.count do $.verts[sv[n]].pos.y = -123.123
+/*----------------------------------------------------------------------------------------------------------------------*/
+rollout namesel "" width:128 height:208
+(
+	button btn5 "roof" pos:[8,8] width:112 height:32
+	button btn4 "wall" pos:[8,40] width:112 height:32
+	button btn3 "floor" pos:[8,72] width:112 height:32
+	button btn2 "base" pos:[8,104] width:112 height:32
+	button btn1 "stairs" pos:[8,136] width:112 height:32
+	button btn6 "everything" pos:[8,168] width:112 height:32
+	on btn5 pressed do
+	(
+	select $shingle*
+	)
+	on btn4 pressed do
+	(
+	select $brick*
+	)
+	on btn3 pressed do
+	(
+	select $floor*
+	)
+	on btn2 pressed do
+	(
+	select $base*
+	)
+	on btn1 pressed do
+	(
+	select $stair*
+	)
+	on btn6 pressed do
+	(
+	select $stair*
+	selectmore $base*
+	selectmore $floor*
+	selectmore $brick*
+	selectmore $shingle*
+	)
+)
+createdialog namesel
 /*----------------------------------------------------------------------------------------------------------------------*/
