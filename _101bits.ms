@@ -1,4 +1,4 @@
---simple programs I wrote when working on animations or games at one point or another used to speed up my workflow
+--simple programs & one-liners I wrote when working on animations or games at one point or another used to speed up my workflow
 
 /*----------------------------------------------------------------------------------------------------------------------*/
 --move list position position controller's animation frames en masse
@@ -121,5 +121,59 @@ for n in selection do
 		if n.material.selfIllumAmount == 0 then n.material.selfIllumAmount = 100
 			else n.material.selfIllumAmount = 0
 	)	
+)
+/*----------------------------------------------------------------------------------------------------------------------*/
+c = 0
+alias = 1
+b = 200
+
+rollout stepmat "" width:120 height:72
+(
+	button btn1 "execute" pos:[8,8] width:103 height:58
+	on btn1 pressed  do
+	(
+		mat = Arch___Design__mi ()
+		mat.name = "gray_0" + (alias as string)
+		mat.diff_color = color (b+c) (b+c) (b+c) (b+c)
+		for n in selection do
+		(
+		n.material = mat
+		)
+		alias+=1
+		c+=15
+	)
+)
+createdialog stepmat
+/*----------------------------------------------------------------------------------------------------------------------*/
+for m in scenematerials do print (classof m)
+/*----------------------------------------------------------------------------------------------------------------------*/
+for o in objects do
+(
+	try
+	(
+		if o.material != undefined do
+		(
+			if classof o.material != Arch___Design__mi() do
+			(
+			mat = Arch___Design__mi ()
+			c = o.material.diffuse
+			o.material = mat
+			o.material.diff_color = c
+			)
+		)
+	)
+	catch()
+)
+/*----------------------------------------------------------------------------------------------------------------------*/
+for m in scenematerials do
+(
+	try
+	(
+	--m.specularLevel = 25
+	--m.glossiness = 80
+	m.refl_weight = 0.3
+	m.refl_gloss = 0.75
+	)
+	catch()
 )
 /*----------------------------------------------------------------------------------------------------------------------*/
