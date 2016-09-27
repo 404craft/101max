@@ -2,6 +2,9 @@
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 
 /*----------------------------------------------------------------------------------------------------------------------*/
+--disable tooltips
+for c in rollout_name.controls do try(c.tooltip = "")catch()
+/*----------------------------------------------------------------------------------------------------------------------*/
 --move list position position controller's animation frames en masse
 for o in selection do
 (
