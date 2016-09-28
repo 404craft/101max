@@ -1,6 +1,7 @@
 -- parametric model of a solar system
 -- can be used for showcasing spaceships as in https://vimeo.com/40504508#t=0m5s
 
+global ani
 global root
 global elements
 global p_track
@@ -15,6 +16,34 @@ global asteroids
 global rad
 global s_pos
 	
+fn animateIn arr offset lframe =
+(
+	o = 0
+	for a in ani do
+	(
+		a.inheritVisibility = off
+		animate on
+		(
+			at time 0 a.visibility = off
+			at time lframe
+			(
+			a.visibility = on
+			)
+		)
+		controller = a.visibility.controller
+		movekeys controller (o += offset)
+		moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 1)
+	)
+)
+
+fn order progeny arr =
+(
+	for p in progeny do
+	(
+	append ani p
+	order p.children arr
+	)
+)
 
 fn purge tar chk arr =
 (
@@ -502,6 +531,9 @@ rollout stellar "" width:112 height:160
 		if (btn_c_1.state == true AND btn_c_2.state == false) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[3]) (random circles[1] circles[3]) (random c_gap[1] c_gap[3]) (random orbits[1] orbits[3]) (random o_gap[1] o_gap[3]) (random ceiling[1] ceiling[3]) (random sun[1] sun[3]) (random links[1] links[3]) wire[3]
 		if (btn_c_1.state == false AND btn_c_2.state == true) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[3] size[2]) (random circles[3] circles[2]) (random c_gap[3] c_gap[2]) (random orbits[3] orbits[2]) (random o_gap[3] o_gap[2]) (random ceiling[3] ceiling[2]) (random sun[3] sun[2]) (random links[3] links[2]) wire[3]
 		if (btn_c_1.state == true AND btn_c_2.state == true) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
+		ani = #(root)
+		order root.children ani
+		animateIn ani 1 1
 		select root
 	)
 )
