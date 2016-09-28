@@ -40,7 +40,7 @@ fn order progeny arr =
 (
 	for p in progeny do
 	(
-	append ani p
+	append arr p
 	order p.children arr
 	)
 )
