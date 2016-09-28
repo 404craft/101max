@@ -16,11 +16,14 @@ global asteroids
 global rad
 global s_pos
 	
-fn animateIn arr offset lframe =
+fn boom arr offset lframe =
 (
 	o = 0
 	for a in ani do
 	(
+		ida = finditem asteroids a
+		if ida == 0 do
+		(
 		a.inheritVisibility = off
 		animate on
 		(
@@ -33,6 +36,7 @@ fn animateIn arr offset lframe =
 		controller = a.visibility.controller
 		movekeys controller (o += offset)
 		moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 1)
+		)
 	)
 )
 
@@ -533,7 +537,7 @@ rollout stellar "" width:112 height:160
 		if (btn_c_1.state == true AND btn_c_2.state == true) do procreate ckb_comet.state ckb_dye.state ckb_lunar.state ckb_astral.state ckb_alone.state s_pos (random size[1] size[2]) (random circles[1] circles[2]) (random c_gap[1] c_gap[2]) (random orbits[1] orbits[2]) (random o_gap[1] o_gap[2]) (random ceiling[1] ceiling[2]) (random sun[1] sun[2]) (random links[1] links[2]) wire[3]
 		ani = #(root)
 		order root.children ani
-		animateIn ani 1 1
+		boom ani 1 1
 		select root
 	)
 )
