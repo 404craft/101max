@@ -72,7 +72,7 @@ fn tone arr n rnd opa dye =
 	(
 	mat = standard()
 	mat.opacity = opa
-	mat.name = "m_" + arr[a] as string
+	mat.name = "m_" + arr[a].name
 		
 	if dye == 0 then
 	(
@@ -129,7 +129,6 @@ fn tone arr n rnd opa dye =
 			mat.diffuseMap.color8 = random white black
 		)
 	)
-		
 	try(arr[a].material = mat)catch()
 	)
 )
@@ -490,9 +489,10 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	append top c
 	)
 	elements = join base top
-	try(tone asteroids 2 0 100 0)catch()
+	try(tone asteroids 2 0 90 0)catch()
 	tone base 1 0 100 0
-	tone top 2 0 100 0
+	tone top 2 0 90 0
+	
 	if dye == true then
 	(
 	append suns core
@@ -502,8 +502,9 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	)
 	else if dye == false do
 	(
-	tone superior 2 0 100 0
+	tone superior 2 0 90 0
 	)
+	
 	try(elements += asteroids)catch()
 )
 
@@ -529,7 +530,8 @@ rollout stellar "" width:112 height:160
 	spinner spn_c_gap "" pos:[8,56] width:48 height:16 range:c_gap type:#float toolTip:"gaps between circles"
 	spinner spn_orbits "" pos:[56,72] width:48 height:16 range:orbits type:#integer toolTip:"number of orbits"
 	spinner spn_o_gap "" pos:[8,72] width:48 height:16 range:o_gap type:#float toolTip:"gaps between orbits"
-	button btn_create "procreate" pos:[24,128] width:80 height:24 toolTip:"for He spoke, and it was done"
+	button btn_create "procreate" pos:[24,128] width:72 height:24 toolTip:"for He spoke, and it was done"
+	button btn_recolor "" pos:[96,128] width:10 height:24 toolTip:"convert materials"
 	checkbutton chk_kill "annihilate" pos:[24,96] width:56 height:24 toolTip:"replace current" state:false
 	checkbutton ckb_alone "" pos:[96,96] width:8 height:24 toolTip:"standalone system" state:false
 	checkbutton ckb_lunar "" pos:[88,96] width:8 height:24 toolTip:"planetary moons" state:false
@@ -551,6 +553,37 @@ rollout stellar "" width:112 height:160
 		order root.children ani
 		boom ani 1 1
 		select root
+	)
+	
+	on btn_recolor pressed do
+	(
+		for element in elements do
+		(
+			m = element.material
+			if m != undefined do
+			(
+				if classof m == standard then
+				(
+				mat = arch___design__mi()
+				mat.name = m.name
+				mat.diff_color = m.diffuse
+				mat.refl_weight = m.specularlevel * 0.01
+				mat.refl_gloss = m.glossiness * 0.01
+				mat.refr_weight = (100.0 - m.opacity) * 0.01
+				)
+				
+				else if classof m == arch___design__mi do
+				(
+				mat = standard()
+				mat.name = m.name
+				mat.diffuse = m.diff_color
+				mat.specularlevel = m.refl_weight * 100
+				mat.glossiness = m.refl_gloss * 100
+				mat.opacity = (1.0 - m.refr_weight) * 100.0
+				)
+				element.material = mat
+			)
+		)
 	)
 )
 
