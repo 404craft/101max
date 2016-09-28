@@ -24,18 +24,18 @@ fn boom arr offset lframe =
 		ida = finditem asteroids a
 		if ida == 0 do
 		(
-		a.inheritVisibility = off
-		animate on
-		(
-			at time 0 a.visibility = off
-			at time lframe
+			a.inheritVisibility = off
+			animate on
 			(
-			a.visibility = on
+				at time 0 a.visibility = off
+				at time lframe
+				(
+				a.visibility = on
+				)
 			)
-		)
-		controller = a.visibility.controller
-		movekeys controller (o += offset)
-		moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 1)
+			controller = a.visibility.controller
+			movekeys controller (o += offset)
+			moveKey controller 1 (((getKeyTime controller 2) - (getKeyTime controller 1)) - 1)
 		)
 	)
 )
@@ -256,6 +256,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 				append t_array cometa
 			)
 		
+			--create planetary moon
 			if (comet == false) OR (comet == true AND iteration < orbits) do
 			(
 			p = sphere radius:rnd smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string)
@@ -263,7 +264,12 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 			append form p
 			append t_array p
 			append p_array p
-			q
+				
+			i_p = sphere radius:(rnd*0.4) smooth:on segs:32 pos:[rootX+rim,rootY,rootZ+ceiling] name: (prefix + alias + iteration as string)
+			origin i_p orbit
+			append t_array i_p
+			append p_array i_p	
+				
 			--optionally create a ring around planet
 			r = random 0 2
 				if r == 0 AND form == planets do
@@ -422,6 +428,12 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	core = sphere radius:sun smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_core"
 	origin core s_r
 	append top core
+	
+	--inne core
+	i_core = sphere radius:(sun*0.4) smooth:on segs:32 pos:[rootX,rootY,rootZ+ceiling] name: "stellar_inner_core"
+	origin i_core core
+	append top i_core
+		
 	suns = #()
 	if alone != true do
 	(
@@ -439,7 +451,7 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 	terra s_r o orbits orbit_gap 5.0 2.0 10.0 rootX rootY rootZ ceiling sun wire "stellar_" "planet_" planets p_track p_orbit superior top astral comet
 	)
 	
-	--optionally create moons
+	--optionally create planetary moons
 	if lunar do
 	(
 		for p = 1 to planets.count do
@@ -450,8 +462,8 @@ fn procreate comet dye lunar astral alone pos size circles circle_gap orbits orb
 			(
 			terra planets[p] m orbits (planets[p].radius*1.25) 0.1 0.5 (planets[p].radius * 0.25) planets[p].pos.x planets[p].pos.y planets[p].pos.z 0.0 (planets[p].radius*0.75) (wire*0.5) planets[p].name "_moon_" moons m_track m_orbit inferior top false false
 			)
-			-- tone planets
-			tone inferior 3 (random 0 255) 100 0
+			--tone planets
+			--tone inferior 3 (random 0 255) 100 0
 		)
 	--animate moons
 	aim moons
