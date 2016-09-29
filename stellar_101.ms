@@ -16,6 +16,37 @@ global asteroids
 global rad
 global s_pos
 	
+fn flood arr =
+(
+	for a in arr do
+	(
+		m = a.material
+		if m != undefined do
+		(
+			if classof m == standard then
+			(
+			mat = arch___design__mi()
+			mat.name = m.name
+			mat.diff_color = m.diffuse
+			mat.refl_weight = m.specularlevel * 0.01
+			mat.refl_gloss = m.glossiness * 0.01
+			mat.refr_weight = (100.0 - m.opacity) * 0.01
+			)
+			
+			else if classof m == arch___design__mi do
+			(
+			mat = standard()
+			mat.name = m.name
+			mat.diffuse = m.diff_color
+			mat.specularlevel = m.refl_weight * 100
+			mat.glossiness = m.refl_gloss * 100
+			mat.opacity = (1.0 - m.refr_weight) * 100.0
+			)
+			a.material = mat
+		)
+	)
+)
+	
 fn boom arr offset lframe =
 (
 	o = 0
@@ -210,6 +241,7 @@ fn terra source iteration orbits orbit_gap mass decay period rootX rootY rootZ c
 		m[4].steps = 3
 		if (comet == true AND iteration == orbits) do wire *= 0.5
 		m[4].radius = wire * 0.75
+		if m[4].radius > 1.0 do m[4].radius = 1.0
 		origin orbit d
 		append o_array orbit
 		append t_array orbit
@@ -557,33 +589,7 @@ rollout stellar "" width:112 height:160
 	
 	on btn_recolor pressed do
 	(
-		for element in elements do
-		(
-			m = element.material
-			if m != undefined do
-			(
-				if classof m == standard then
-				(
-				mat = arch___design__mi()
-				mat.name = m.name
-				mat.diff_color = m.diffuse
-				mat.refl_weight = m.specularlevel * 0.01
-				mat.refl_gloss = m.glossiness * 0.01
-				mat.refr_weight = (100.0 - m.opacity) * 0.01
-				)
-				
-				else if classof m == arch___design__mi do
-				(
-				mat = standard()
-				mat.name = m.name
-				mat.diffuse = m.diff_color
-				mat.specularlevel = m.refl_weight * 100
-				mat.glossiness = m.refl_gloss * 100
-				mat.opacity = (1.0 - m.refr_weight) * 100.0
-				)
-				element.material = mat
-			)
-		)
+		flood elements
 	)
 )
 
