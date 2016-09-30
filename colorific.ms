@@ -1,3 +1,7 @@
+--shade wirecolor en masse i.e. color character rigs automatically
+--new plugin under development
+
+
 fn dye arr c =
 (  
 	offset = 1
