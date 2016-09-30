@@ -22,14 +22,14 @@ fn dye arr c =
 				else if arr[a].parent == hasmultiplechildren do
 				(
 					offset = findItem arr hasmultiplechildren
+					c.hue = hasmultiplechildren.wirecolor.hue
 					last = arr[a]
 				)
-				
 			)
 		)
 		
-		c.hue += offset
-		arr[a].wirecolor = c / offset * 2
+		c.hue += offset * 0.25
+		arr[a].wirecolor = c
 	)
 )
 
