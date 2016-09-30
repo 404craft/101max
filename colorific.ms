@@ -28,7 +28,7 @@ fn dye arr c =
 			)
 		)
 		
-		c.hue += offset * 0.25
+		c.hue += offset * 0.3
 		arr[a].wirecolor = c
 	)
 )
@@ -43,12 +43,17 @@ fn order progeny arr =
 )
 
 try(destroydialog ::colorific)catch()
-rollout colorific "" width:64 height:72
+rollout colorific "" width:120 height:112
 (
-	colorPicker cp1 "" pos:[24,24] width:32 height:24
-	button b0 "" pos:[8,8] width:13 height:56
-	button b1 "" pos:[27,48] width:29 height:16 
-	checkbutton c1 "" pos:[27,8] width:29 height:16 checked:true
+	colorPicker cp1 "" pos:[56,32] width:32 height:24
+	button b0 "" pos:[96,8] width:16 height:72
+	button b1 "" pos:[59,64] width:29 height:16 
+ 	checkbutton c1 "" pos:[59,8] width:29 height:16 checked:true
+	spinner spn1 "" pos:[8,88] width:40 height:16
+	slider sld1 "" pos:[8,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
+	slider sld2 "" pos:[24,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
+	slider sld3 "" pos:[40,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
+	checkbutton ckb19 "" pos:[59,88] width:53 height:16 checked:true
 
 	on cp1 changed col do
 	(
@@ -56,11 +61,9 @@ rollout colorific "" width:64 height:72
 		order $.children objs
 		dye objs cp1.color
 	)
-	
 	on b0 pressed do
-	(
+		(
 	)
-	
 	on b1 pressed do
 	(
 		objs = #($)
