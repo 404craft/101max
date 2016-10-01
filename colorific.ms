@@ -50,14 +50,12 @@ fn flood src obj objs col gap =
 (
 	if obj != undefined do
 	(
-		tmp = #()
-		append tmp obj
-		if tmp.count == 1 do
+		for o in obj do
 		(
-		if src == undefined do src = obj
-		if src != undefined AND obj != src do col = src.wirecolor
-		objs = #(obj)
-		if obj.children.count > 0 do order obj.children objs
+		if src == undefined do src = o
+		if src != undefined AND o != src do col = src.wirecolor
+		objs = #(o)
+		order o.children objs
 		dye objs col gap
 		)
 	)	
@@ -70,7 +68,7 @@ try(destroydialog ::colorific)catch()
 rollout colorific "" width:120 height:112
 (
 	colorPicker cp "" pos:[56,32] width:32 height:24 color:[0,0,0]
-	button b_con "-" pos:[96,8] width:16 height:72
+	button b_con "•" pos:[96,8] width:16 height:72
 	checkbutton chk_step "" pos:[59,64] width:29 height:16 checked:true
 	button b_src "-" pos:[58,8] width:29 height:16
 	spinner spn "" pos:[8,88] width:40 height:16 range:[0.1,10,0.3]
@@ -91,7 +89,14 @@ rollout colorific "" width:120 height:112
 	(
 		if $ != undefined then
 		(
-			l_controllers = for o in $ as array where classof o.transform.controller == link_constraint collect o
+			l_controllers = #()
+			for o in $ as array where classof o.transform.controller == link_constraint do
+			(
+				if o.transform.controller.getnumtargets() > 0 do
+				(
+				flood source o objs (o.transform.controller.getnode 1).wirecolor spn.value
+				)
+			)
 			p_controllers = #()
 			for i in $ as array where classof i.pos.controller == position_list do
 			(
@@ -112,7 +117,6 @@ rollout colorific "" width:120 height:112
 					)
 				)
 			)
-			b_con.text = "+"
 		)
 		else if $ == undefined do 
 		(
@@ -136,37 +140,47 @@ rollout colorific "" width:120 height:112
 	on sld1 changed val do
 	(
 	cp.color.r = val
-	flood source $ objs cp.color spn.value
+	flood source selection objs cp.color spn.value
 	)
 	on sld2 changed val do
 	(
 	cp.color.g = val
-	flood source $ objs cp.color spn.value
+	flood source selection objs cp.color spn.value
 	)
 	on sld3 changed val do
 	(
 	cp.color.b = val
-	flood source $ objs cp.color spn.value
+	flood source selection objs cp.color spn.value
 	)
 	on b_ini pressed do
 	(
-		flood source $ objs cp.color spn.value
+		flood source selection objs cp.color spn.value
 	)
 	on b_up pressed do
 	(
-		if $ != undefined AND $.parent != undefined do select $.parent
+		sel = #()
+		for n = 1 to selection.count do if selection[n] != undefined AND selection[n].parent != undefined do
+		(
+			append sel selection[n].parent
+		)
+		select sel
 	)	
 	on b_down pressed do
 	(
-		if $ != undefined AND $.children.count > 0 do select $.children[1]
+		sel = #()
+		for n = 1 to selection.count do if selection[n] != undefined AND selection[n].children.count > 0 do
+		(
+			append sel selection[n].children[1]
+		)
+		select sel
 	)
 	on btn8 pressed do
 	(
-		flood source $ objs cp.color spn.value
+		flood source selection objs cp.color spn.value
 	)
 	on btn9 pressed do
 	(
-		flood source $ objs cp.color spn.value
+		flood source selection objs cp.color spn.value
 	)
 )
 createDialog colorific
