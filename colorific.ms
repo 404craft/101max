@@ -64,7 +64,6 @@ rollout colorific "" width:120 height:112
 	colorPicker cp "" pos:[56,32] width:32 height:24 color:[0,0,0]
 	button b_con "-" pos:[96,8] width:16 height:72
 	checkbutton chk_step "" pos:[59,64] width:29 height:16 checked:true
- 
 	button b_src "-" pos:[58,8] width:29 height:16
 	spinner spn "" pos:[8,88] width:40 height:16 range:[0.1,10,0.3]
 	slider sld1 "" pos:[8,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
@@ -84,8 +83,21 @@ rollout colorific "" width:120 height:112
 	(
 		if $ != undefined then
 		(
-			l_controllers = for o in $ as array where classOf o.transform.controller == Link_Constraint collect o
-			p_controllers = for o in $ as array where classOf o.transform.controller == Link_Constraint collect o
+			l_controllers = for o in $ as array where classof o.transform.controller == link_constraint collect o
+			p_controllers = #()
+			for i in $ as array where classof i.pos.controller == position_list do
+			(
+				--print (i.name + " has position_list")
+				for c = 1 to i.pos.controller.count do 
+				(
+				--print (i.name + "controller " + c as string + i.pos.controller[c] as string)
+				if classof i.pos.controller[c].controller == Position_Constraint do
+				(
+				--print ("appending " + i.name)
+				append p_controllers i
+				)
+				)
+			)
 			b_con.text = "+"
 		)
 		else if $ == undefined do 
