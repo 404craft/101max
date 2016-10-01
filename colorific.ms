@@ -48,11 +48,19 @@ fn order progeny arr =
 
 fn flood src obj objs col gap =
 (
-	if src == undefined do src = obj
-	if src != undefined AND obj != src do col = src.wirecolor
-	objs = #(obj)
-	order obj.children objs
-	dye objs col gap
+	if obj != undefined do
+	(
+		tmp = #()
+		append tmp obj
+		if tmp.count == 1 do
+		(
+		if src == undefined do src = obj
+		if src != undefined AND obj != src do col = src.wirecolor
+		objs = #(obj)
+		if obj.children.count > 0 do order obj.children objs
+		dye objs col gap
+		)
+	)	
 )
 
 global source
@@ -87,15 +95,21 @@ rollout colorific "" width:120 height:112
 			p_controllers = #()
 			for i in $ as array where classof i.pos.controller == position_list do
 			(
-				--print (i.name + " has position_list")
 				for c = 1 to i.pos.controller.count do 
 				(
-				--print (i.name + "controller " + c as string + i.pos.controller[c] as string)
-				if classof i.pos.controller[c].controller == Position_Constraint do
-				(
-				--print ("appending " + i.name)
-				append p_controllers i
-				)
+					if classof i.pos.controller[c].controller == Position_Constraint do
+					(
+					topWeight = 0
+					topIndex = 1
+						for t = 1 to i.pos.controller[c].controller.getnumtargets() do
+						(
+								if (i.pos.controller[c].controller.getWeight t) > topWeight do
+								(
+								topIndex = t
+								)
+						)
+					flood source i objs (i.pos.controller[c].controller.getnode topIndex).wirecolor spn.value
+					)
 				)
 			)
 			b_con.text = "+"
