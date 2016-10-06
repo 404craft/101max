@@ -1,4 +1,5 @@
---adjust geometry wirecolor en masse i.e. color character rigs automatically
+--adjust wirecolor en masse i.e. color & grade object hierarchies automatically
+--universal, easy to use colorizer
 
 fn dye arr col gap adv debug =
 (  
@@ -83,22 +84,25 @@ fn flood src obj objs col gap lot step =
 
 global source = undefined
 global objs = #()
+global collection = #()
 
 try(destroydialog ::colorific)catch()
-rollout colorific "" width:120 height:112
+
+rollout colorific "" width:120 height:136
 (
-	colorPicker cp "" pos:[56,32] width:32 height:24 color:[255,255,0]
-	button b_con "•" pos:[96,8] width:16 height:56
-	checkbutton ckb_step "" pos:[96,64] width:16 height:16
-	checkbutton ckb_lot "" pos:[59,64] width:29 height:16 checked:true
-	button b_src "-" pos:[58,8] width:29 height:16
-	spinner spn "" pos:[8,88] width:40 height:16 range:[0.1,10,0.3]
-	slider sld1 "" pos:[8,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
-	slider sld2 "" pos:[24,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
-	slider sld3 "" pos:[40,8] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1
-	button b_up "«" pos:[59,88] width:16 height:16
-	button b_down "»" pos:[96,88] width:16 height:16
-	button b_ini "•" pos:[75,88] width:21 height:16
+	button btn_101 "look@101craft" pos:[8,8] width:104 height:16 toolTip:"visit 101craft.com"
+	colorPicker cp "" pos:[56,56] width:32 height:24 color:[0,128,255] toolTip:"main color"
+	button b_con "•" pos:[96,32] width:16 height:56 toolTip:"adjust controls"
+	checkbutton ckb_step "" pos:[96,88] width:16 height:16 toolTip:"initial interval"
+	checkbutton ckb_lot "" pos:[59,88] width:29 height:16 checked:true toolTip:"local or global"
+	button b_src "-" pos:[58,32] width:29 height:16 toolTip:"source object"
+	spinner spn "" pos:[8,112] width:40 height:16 range:[0.1,10,0.3] toolTip:"color modifier"
+	slider sld1 "" pos:[8,32] width:16 height:80 range:[0,255,0] type:#integer orient:#vertical ticks:1 toolTip:".red channel"
+	slider sld2 "" pos:[24,32] width:16 height:80 range:[0,255,128] type:#integer orient:#vertical ticks:1 toolTip:".green channel"
+	slider sld3 "" pos:[40,32] width:16 height:80 range:[0,255,255] type:#integer orient:#vertical ticks:1 toolTip:".blue channel"
+	button b_up "«" pos:[59,112] width:16 height:16 toolTip:"up hierarchy"
+	button b_down "»" pos:[96,112] width:16 height:16 toolTip:"down hierarchy"
+	button b_ini "•" pos:[75,112] width:21 height:16 toolTip:"execute"
 	
 	on cp changed col do
 	(
@@ -111,38 +115,57 @@ rollout colorific "" width:120 height:112
 	(
 		if $ != undefined then
 		(
-			l_controllers = #()
-			for o in $ as array where classof o.transform.controller == link_constraint do
+
+			for a in $ as array where classof a.transform.controller == link_constraint do
 			(
-				if o.transform.controller.getnumtargets() > 0 do
+				if a.transform.controller.getnumtargets() > 0 do
 				(
-				o.wirecolor = (o.transform.controller.getnode 1).wirecolor
+				a.wirecolor = (a.transform.controller.getnode 1).wirecolor
 				)
 			)
-			p_controllers = #()
-			for i in $ as array where classof i.pos.controller == position_list do
+
+			for a in $ as array where classof a.pos.controller == position_list do
 			(
-				for c = 1 to i.pos.controller.count do 
+				for b = 1 to a.pos.controller.count do 
 				(
-					if classof i.pos.controller[c].controller == Position_Constraint do
+					if classof a.pos.controller[b].controller == Position_Constraint do
 					(
 					topWeight = 0
 					topIndex = 1
-						for t = 1 to i.pos.controller[c].controller.getnumtargets() do
+						for t = 1 to a.pos.controller[b].controller.getnumtargets() do
 						(
-								if (i.pos.controller[c].controller.getWeight t) > topWeight do
+								if (a.pos.controller[b].controller.getWeight t) > topWeight do
 								(
 								topIndex = t
 								)
 						)
-					i.wirecolor = (i.pos.controller[c].controller.getnode topIndex).wirecolor
+					a.wirecolor = (a.pos.controller[b].controller.getnode topIndex).wirecolor
+					)
+				)
+			)
+
+			for a in $ as array where classof a.rotation.controller == rotation_list do
+			(
+				for b = 1 to a.rotation.controller.count do 
+				(
+					if classof a.rotation.controller[b].controller == Orientation_Constraint do
+					(
+					topWeight = 0
+					topIndex = 1
+						for t = 1 to a.rotation.controller[b].controller.getnumtargets() do
+						(
+								if (a.rotation.controller[b].controller.getWeight t) > topWeight do
+								(
+								topIndex = t
+								)
+						)
+					a.wirecolor = (a.rotation.controller[b].controller.getnode topIndex).wirecolor
 					)
 				)
 			)
 		)
 		else if $ == undefined do 
 		(
-		controls = #()
 		b_con.text = "-"
 		)
 	)
@@ -186,15 +209,40 @@ rollout colorific "" width:120 height:112
 	on b_down pressed do
 	(
 		sel = #()
+		tmp = #()
+		rst = false
+		s = 1
 		for n = 1 to selection.count do if selection[n] != undefined AND selection[n].children.count > 0 do
 		(
-			append sel selection[n].children[1]
+			if selection[n].children.count > 1 do
+			(
+			for c in collection do for i in c do if i == selection[n] then
+			(
+				id = finditem collection c
+				s = collection[id][2] + 1
+				if s > i.children.count do s = 1
+				collection[id][2] = s
+			)
+			else if i != selection[n] do
+			(
+				rst = true
+			)
+			if rst do collection = #()
+			tmp = #(selection[n],s)
+			append collection tmp
+			)
+			append sel selection[n].children[s]
 		)
 		select sel
 	)
 	on b_ini pressed do
 	(
 		flood source selection objs cp.color spn.value ckb_lot.state ckb_step.state
+	)
+	
+	on spn changed val do
+	(
+		flood source selection objs cp.color val ckb_lot.state ckb_step.state
 	)
 )
 createDialog colorific
