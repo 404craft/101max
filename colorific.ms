@@ -89,6 +89,11 @@ fn flood src obj objs col gap lot step mode =
 	(
 		for o in obj do
 		(
+		if isvalidnode src == false do
+		(
+			colorific.b_src.text = "-"
+			src = undefined
+		)
 		if src == undefined do src = o
 		if src != undefined AND o != src do col = src.wirecolor
 		objs = #(o)
