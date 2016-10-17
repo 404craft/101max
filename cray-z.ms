@@ -1,5 +1,5 @@
--- max to zbrush pipeline plug
--- under development
+--max to zbrush pipeline plug
+--under development
 
 sel = selection as array
 count = 1
