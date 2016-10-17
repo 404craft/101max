@@ -1,6 +1,19 @@
 --max to zbrush pipeline plug
 --under development
 
+*/
+ids = selection[1].material.materialidlist.count
+for obj in selection as array do
+(
+	if classof obj != editable_poly do convertto obj editable_poly
+    for n = polyop.getnumfaces obj to 1 by -1 do
+    (
+    id = polyop.getfacematid obj n
+    if id > ids do (print ("err: " + "id nr." + id as string)
+    )
+)
+*/
+
 sel = selection as array
 count = 1
 
@@ -18,11 +31,11 @@ while count <= sel.count do
 )
 select sel
 
-mcnt = selection[1].material.materialidlist.count
+ids = selection[1].material.materialidlist.count
 for obj in selection as array do
 (
 	if classof obj != editable_poly do convertto obj editable_poly
-	for m = 1 to mcnt do
+	for m = 1 to ids do
 	(
 		main = #()
 		for n = polyop.getnumfaces obj to 1 by -1 do
@@ -36,7 +49,7 @@ for obj in selection as array do
 
 tmp = #()
 
-for m = 1 to mcnt do append tmp #()
+for m = 1 to ids do append tmp #()
 	
 for g in geometry do
 (
@@ -44,7 +57,8 @@ for g in geometry do
 
     if polyop.getnumfaces g > 0 do
 	(
-	id = polyop.getfacematid g 1
+	id = polyop.getfacematid g 2
+	if id > ids do (print ("err: " + "id nr." + id as string);id = 1)
     append tmp[id] g
 	)
 )
