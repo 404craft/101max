@@ -1,7 +1,7 @@
 --short for "crayon for zbrush"
 --max to zbrush pipeline plug
---divides all in-scene meshes according to multimaterial ids and exports newly created objects as separate files
---this way you can quickly and efficiently load .objs into separate layers
+--divides all in-scene meshes according to multimaterial ids and exports newly created objects to separate files
+--this way you can load .objs into separate layers
 --under development
 
 /*
