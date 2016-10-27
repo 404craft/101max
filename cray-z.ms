@@ -16,6 +16,77 @@ for obj in selection do
     )
 )
 */
+
+/*
+fn remat mat id sel =
+(
+	for s in sel do
+	(
+		s.material = mat
+		main = #{}
+		epoly = undefined
+		if classof s.modifiers[1] != edit_poly do
+		(
+		addmodifier s (edit_poly name:"Poly Color")
+		)
+		
+		epoly = s.modifiers[1]
+		
+		for n = getnumfaces s to 1 by -1 do
+		(
+			append main n
+		)
+		epoly.setselection #face main
+		epoly.SetOperation #setmaterial
+		epoly.materialIDToSet = id-1
+		epoly.commit()
+	)
+	hide sel
+)
+try(destroydialog ::multimat)catch()
+global t1
+global t2
+global t3
+rollout multimat "" width:88 height:128
+(
+	materialButton btn_mat "material" pos:[8,8] width:72 height:24
+	spinner spn_matid "" pos:[24,40] width:42 height:16 range:[1,100,1] type:#integer
+	button btn_apply "apply" pos:[8,64] width:72 height:24
+	button btn_t1 "t1" pos:[8,96] width:24 height:24
+	button btn_t2 "t2" pos:[32,96] width:24 height:24
+	button btn_t3 "t3" pos:[56,96] width:24 height:24
+	
+	on btn_mat picked mtl do
+	(
+		btn_mat.text = mtl.name
+	)
+	on btn_apply pressed do
+	(
+		remat btn_mat.material spn_matid.value $
+	)
+	on btn_t1 pressed do
+	(
+		for m in $.modifiers where m == t1 or m == t2 or m == t3 do deletemodifier $ m
+		if t1 == undefined do t1 = TurboSmooth iterations: 1
+		addmodifier $ t1
+	)
+	on btn_t2 pressed do
+	(
+		for m in $.modifiers where m == t1 or m == t2 or m == t3 do deletemodifier $ m
+		if t2 == undefined do t2 = TurboSmooth iterations: 2
+		addmodifier $ t2
+	)
+	on btn_t3 pressed do
+	(
+		for m in $.modifiers where m == t1 or m == t2 or m == t3 do deletemodifier $ m
+		if t3 == undefined do t3 = TurboSmooth iterations: 3
+		addmodifier $ t3
+	)
+)
+createdialog multimat
+*/
+
+
 debug = true
 sel = selection as array
 count = 1
