@@ -1,6 +1,7 @@
 --one-liners, snippets & overall simple programs
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 /*----------------------------------------------------------------------------------------------------------------------*/
+--move selected verts chosen position to the first vert in an array
 arr = for i in $.selectedVerts collect i.index
 val = $.verts[arr[1]].pos
 for a in arr do $.verts[a].pos.z = val.z
