@@ -1,6 +1,35 @@
 --one-liners, snippets & overall simple programs
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 /*----------------------------------------------------------------------------------------------------------------------*/
+--tweak biped baked-in animations
+global target
+try(destroydialog ::autoframe)catch()
+rollout autoframe "" width:88 height:112
+(
+	button btn1 "target" pos:[8,8] width:72 height:24
+	button btn2 "keyframes" pos:[8,80] width:72 height:24
+	spinner spn1 "" pos:[8,40] width:72 height:16 range:[0,10000,animationrange.Start] type:#integer
+	spinner spn2 "" pos:[8,56] width:72 height:16 range:[0,10000,animationrange.end] type:#integer
+	on btn1 pressed do
+	(
+	obj = box length:5 width:5 height:5 wirecolor:red
+	obj.transform = $.transform
+	obj.parent = $.parent
+	btn1.text = obj.name
+	target = obj
+	)
+	on btn2 pressed  do
+	(
+		animate on for t in spn1.value to spn2.value by 1 do
+		at time t 
+		(
+			$.transform = target.transform
+		)
+	)
+)
+
+createdialog autoframe
+/*----------------------------------------------------------------------------------------------------------------------*/
 --move selected verts to the first vert in an array along a chosen axis
 arr = for i in $.selectedVerts collect i.index
 val = $.verts[arr[1]].pos
