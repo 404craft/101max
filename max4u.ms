@@ -1,3 +1,6 @@
+--3ds max .fbx to unity mass exporter
+--pipeline plugin
+
 /*
 --check for construction history
 for s in $ as array where superclassof s == GeometryClass do 
