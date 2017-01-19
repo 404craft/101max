@@ -1,4 +1,5 @@
 --3ds max .fbx to unity mass exporter
+--final-check asset inspector
 --pipeline plugin
 
 /*
