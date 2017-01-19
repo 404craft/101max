@@ -15,7 +15,7 @@ resetscale s
 */
 
 sel = selection as array
-tmp = #()
+global tmp = #()
 for s in sel do
 (
 	n = substring s.name 1 (s.name.count-3)
@@ -26,38 +26,71 @@ for s in sel do
 	append arr n
 	append tmp arr
 	)
-	for t = tmp.count to 1 by -1 do
+	for t = 1 to tmp.count do
 	(
-		if t == tmp.count AND tmp[t][1] != n do 
+		if tmp[t][1] != n do 
+		(
+			if t == tmp.count do
 			(
 			print ("2-fired")
 			arr = #()
 			append arr n
 			append tmp arr
+			append tmp[t+1] s
 			)
+		)
+		if tmp[t][1] == n do append tmp[t] s
 	)
-	for t in tmp do 
-		if findItem t n != undefined do appendifunique t s
 )
 
-for t in tmp do
+global c = 1
+hide objects
+try(destroydialog :: max4u)catch()
+rollout max4u "" width:144 height:80
 (
-	--Geometry------------------------------------------------------------------------
-	FBXExporterSetParam "SmoothingGroups" true
-	FBXExporterSetParam "Animation" true
-	FBXExporterSetParam "BakeAnimation" false
-	FBXExporterSetParam "Cameras" false
-	FBXExporterSetParam "Lights" false
-	FBXExporterSetParam "EmbedTextures" false
-	FBXExporterSetParam "AxisConversionMethod" "None"
-	FBXExporterSetParam "UpAxis" "Y" 
-	FBXExporterSetParam "SmoothMeshExport" true
-	FBXExporterSetParam "Preserveinstances" true
-	FBXExporterSetParam "ShowWarnings" true
-	FBXExporterSetParam "GenerateLog" false
-	FBXExporterSetParam "ASCII" false
-	FBXExporterSetParam "FileVersion" "FBX201200"
-	clearSelection()
-	for v = 2 to t.count do selectmore t[v]
-	exportfile (t[1] + ".fbx") #noprompt selectedonly:true
+	button btn1 "<<" pos:[8,8] width:64 height:32
+	button btn2 ">>" pos:[72,8] width:64 height:32
+	button btn3 "EXPORT" pos:[8,40] width:128 height:32
+	on btn1 pressed do
+	(
+	hide objects
+	t = #()
+	for n = 2 to tmp[c].count do append t tmp[c][n]
+	unhide t
+	c+=1
+	if c > tmp.count do c = 1
+	)
+	on btn2 pressed do
+	(
+	hide objects
+	t = #()
+	for n = 2 to tmp[c].count do append t tmp[c][n]
+	unhide t
+	c-=1
+	if c < 1 do c = tmp.count
+	)
+	on btn3 pressed do
+	(
+		for t in tmp do
+		(
+			FBXExporterSetParam "SmoothingGroups" true
+			FBXExporterSetParam "Animation" true
+			FBXExporterSetParam "BakeAnimation" false
+			FBXExporterSetParam "Cameras" false
+			FBXExporterSetParam "Lights" false
+			FBXExporterSetParam "EmbedTextures" false
+			FBXExporterSetParam "AxisConversionMethod" "None"
+			FBXExporterSetParam "UpAxis" "Y" 
+			FBXExporterSetParam "SmoothMeshExport" true
+			FBXExporterSetParam "Preserveinstances" true
+			FBXExporterSetParam "ShowWarnings" true
+			FBXExporterSetParam "GenerateLog" false
+			FBXExporterSetParam "ASCII" false
+			FBXExporterSetParam "FileVersion" "FBX201200"
+			clearSelection()
+			for v = 2 to t.count do selectmore t[v]
+			exportfile (t[1] + ".fbx") #noprompt selectedonly:true
+		)
+	)
 )
+createdialog max4u
