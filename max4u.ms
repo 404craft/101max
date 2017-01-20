@@ -53,24 +53,28 @@ for s in sel do
 global c = 1
 hide objects
 try(destroydialog :: max4u)catch()
-rollout max4u "" width:144 height:264
+rollout max4u "" width:144 height:304
 (
 	button btn1 "<<" pos:[8,8] width:64 height:32
 	button btn2 ">>" pos:[72,8] width:64 height:32
-	button btn3 "export" pos:[8,224] width:128 height:32
+	button btn3 "export" pos:[8,264] width:128 height:32
 	button btn4 "0-scale" pos:[8,152] width:128 height:32
 	button btn5 "0-transform" pos:[8,184] width:128 height:32
 	button btn6 "check construction" pos:[8,48] width:128 height:32
 	button btn7 "check scale" pos:[8,80] width:128 height:32
 	button btn8 "check transform" pos:[8,112] width:128 height:32
+	button btn9 "0" pos:[104,224] width:32 height:32
+	checkButton ckb1 "x" pos:[8,224] width:32 height:32 checked:true
+	checkButton ckb2 "y" pos:[40,224] width:32 height:32 checked:true
+	checkButton ckb3 "z" pos:[72,224] width:32 height:32
 	on btn1 pressed do
 	(
 	hide objects
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
-	select  t
-	--unhide $pilot
+	select t
+	unhide $pilot
 	c+=1
 	if c > tmp.count do c = 1
 	)
@@ -80,8 +84,8 @@ rollout max4u "" width:144 height:264
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
-	select  t
-	--unhide $pilot
+	select t
+	unhide $pilot
 	c-=1
 	if c < 1 do c = tmp.count
 	)
@@ -164,6 +168,21 @@ rollout max4u "" width:144 height:264
 		for s in sel where s.rotation != (quat 0 0 0 1) do 
 		(
 		print (s.name + ":" + (s.rotation as string))
+		)
+	)
+	on btn9 pressed do
+	(
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel do 
+		(
+		x = s.pos.x
+		y = s.pos.y
+		z = s.pos.z
+		if ckb1.state == true do x = 0
+		if ckb2.state == true do y = 0
+		if ckb3.state == true do z = 0
+		s.pos = [x,y,z]
 		)
 	)
 )
