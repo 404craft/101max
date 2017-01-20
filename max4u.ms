@@ -1,4 +1,4 @@
---3ds max .fbx to unity mass exporter
+--3ds max .fbx to unity bulk exporter
 --final-check asset inspector
 --pipeline plugin
 
@@ -13,6 +13,25 @@ for s in $ as array where s.scale != [1,1,1] do
 print s.name
 resetscale s
 )
+
+--correct material names
+print ("------------------------")
+c=1
+for m in scenematerials do (c+=1; print ((c as string) + "_" + m.name))
+
+for m in scenematerials do
+(
+try(
+f = m.diffusemap.filename
+n = substring f 67 f.count
+s = substring n 1 (n.count-4)
+m.name = s
+)catch()
+)
+
+print ("------------------------")
+c=1
+for m in scenematerials do (c+=1; print ((c as string) + "_" + m.name))
 */
 
 sel = selection as array
@@ -58,6 +77,7 @@ rollout max4u "" width:144 height:80
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
+	--unhide $pilot
 	c+=1
 	if c > tmp.count do c = 1
 	)
@@ -67,6 +87,7 @@ rollout max4u "" width:144 height:80
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
+	--unhide $pilot
 	c-=1
 	if c < 1 do c = tmp.count
 	)
