@@ -23,50 +23,58 @@ c=1
 for m in scenematerials do (c+=1; print ((c as string) + "_" + m.name))
 */
 
-sel = selection as array
-global tmp = #()
-for s in sel do
+fn gather = 
 (
-	n = substring s.name 1 (s.name.count-3)
-	if tmp.count == 0 do 
+	if selection.count < 2 then messagebox ("select an array of objects")
+	else
 	(
-	arr = #()
-	append arr n
-	append tmp arr
-	)
-	for t = 1 to tmp.count do
-	(
-		if tmp[t][1] != n do 
+	hide objects
+	sel = selection as array
+	tmp = #()
+		for s in sel do
 		(
-			if t == tmp.count do
+			n = substring s.name 1 (s.name.count-3)
+			if tmp.count == 0 do 
 			(
 			arr = #()
 			append arr n
 			append tmp arr
-			append tmp[t+1] s
+			)
+			for t = 1 to tmp.count do
+			(
+				if tmp[t][1] != n do 
+				(
+					if t == tmp.count do
+					(
+					arr = #()
+					append arr n
+					append tmp arr
+					append tmp[t+1] s
+					)
+				)
+				if tmp[t][1] == n do append tmp[t] s
 			)
 		)
-		if tmp[t][1] == n do append tmp[t] s
 	)
 )
-
 global c = 1
-hide objects
+global tmp = #()
 try(destroydialog :: max4u)catch()
-rollout max4u "" width:144 height:304
+rollout max4u "" width:144 height:336
 (
-	button btn1 "<<" pos:[8,8] width:64 height:32
-	button btn2 ">>" pos:[72,8] width:64 height:32
-	button btn3 "export" pos:[8,264] width:128 height:32
-	button btn4 "0-scale" pos:[8,152] width:128 height:32
-	button btn5 "0-transform" pos:[8,184] width:128 height:32
-	button btn6 "check construction" pos:[8,48] width:128 height:32
-	button btn7 "check scale" pos:[8,80] width:128 height:32
-	button btn8 "check transform" pos:[8,112] width:128 height:32
-	button btn9 "0" pos:[104,224] width:32 height:32
-	checkButton ckb1 "x" pos:[8,224] width:32 height:32 checked:true
-	checkButton ckb2 "y" pos:[40,224] width:32 height:32 checked:true
-	checkButton ckb3 "z" pos:[72,224] width:32 height:32
+	button btn1 "<<" pos:[8,40] width:64 height:32
+	button btn2 ">>" pos:[72,40] width:64 height:32
+	button btn3 "export" pos:[8,296] width:128 height:32
+	button btn4 "0-scale" pos:[8,184] width:128 height:32
+	button btn5 "0-transform" pos:[8,216] width:128 height:32
+	button btn6 "check construction" pos:[8,80] width:128 height:32
+	button btn7 "check scale" pos:[8,112] width:128 height:32
+	button btn8 "check transform" pos:[8,144] width:128 height:32
+	button btn9 "0" pos:[104,256] width:32 height:32
+	checkbutton ckb1 "x" pos:[8,256] width:32 height:32 checked:true
+	checkbutton ckb2 "y" pos:[40,256] width:32 height:32 checked:true
+	checkbutton ckb3 "z" pos:[72,256] width:32 height:32
+	button btn10 "collect" pos:[8,8] width:128 height:32
 	on btn1 pressed do
 	(
 	hide objects
@@ -184,6 +192,10 @@ rollout max4u "" width:144 height:304
 		if ckb3.state == true do z = 0
 		s.pos = [x,y,z]
 		)
+	)
+	on btn10 pressed do
+	(
+		gather()
 	)
 )
 createdialog max4u
