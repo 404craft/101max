@@ -111,6 +111,7 @@ rollout max4u "" width:144 height:264
 	on btn4 pressed do
 	(
 		--reset scale
+		clearlistener()
 		print ("scale reset-------------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
@@ -122,6 +123,7 @@ rollout max4u "" width:144 height:264
 	on btn5 pressed do
 	(
 		--reset transform
+		clearlistener()
 		print ("transform reset---------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
@@ -133,6 +135,7 @@ rollout max4u "" width:144 height:264
 	on btn6 pressed do
 	(
 		--check construction history
+		clearlistener()
 		print ("construction check------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
@@ -142,6 +145,7 @@ rollout max4u "" width:144 height:264
 	on btn7 pressed do
 	(
 		--check scale
+		clearlistener()
 		print ("scale check-------------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
@@ -153,6 +157,7 @@ rollout max4u "" width:144 height:264
 	on btn8 pressed do
 	(
 		--check transform
+		clearlistener()
 		print ("transform check---------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
