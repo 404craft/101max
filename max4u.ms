@@ -3,17 +3,6 @@
 --pipeline plugin
 
 /*
---check for construction history
-for s in $ as array where superclassof s == GeometryClass do 
-	if ((s.modifiers[1] != undefined) AND (s.modifiers[1].name != "Unwrap UVW")) OR (s.modifiers.count > 1) do print s.name
-
---validate scale
-for s in $ as array where s.scale != [1,1,1] do 
-(
-print s.name
-resetscale s
-)
-
 --correct material names
 print ("------------------------")
 c=1
@@ -41,7 +30,6 @@ for s in sel do
 	n = substring s.name 1 (s.name.count-3)
 	if tmp.count == 0 do 
 	(
-	print ("1-fired")
 	arr = #()
 	append arr n
 	append tmp arr
@@ -52,7 +40,6 @@ for s in sel do
 		(
 			if t == tmp.count do
 			(
-			print ("2-fired")
 			arr = #()
 			append arr n
 			append tmp arr
@@ -66,17 +53,23 @@ for s in sel do
 global c = 1
 hide objects
 try(destroydialog :: max4u)catch()
-rollout max4u "" width:144 height:80
+rollout max4u "" width:144 height:264
 (
 	button btn1 "<<" pos:[8,8] width:64 height:32
 	button btn2 ">>" pos:[72,8] width:64 height:32
-	button btn3 "EXPORT" pos:[8,40] width:128 height:32
+	button btn3 "export" pos:[8,224] width:128 height:32
+	button btn4 "0-scale" pos:[8,152] width:128 height:32
+	button btn5 "0-transform" pos:[8,184] width:128 height:32
+	button btn6 "check construction" pos:[8,48] width:128 height:32
+	button btn7 "check scale" pos:[8,80] width:128 height:32
+	button btn8 "check transform" pos:[8,112] width:128 height:32
 	on btn1 pressed do
 	(
 	hide objects
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
+	select  t
 	--unhide $pilot
 	c+=1
 	if c > tmp.count do c = 1
@@ -87,6 +80,7 @@ rollout max4u "" width:144 height:80
 	t = #()
 	for n = 2 to tmp[c].count do append t tmp[c][n]
 	unhide t
+	select  t
 	--unhide $pilot
 	c-=1
 	if c < 1 do c = tmp.count
@@ -112,6 +106,59 @@ rollout max4u "" width:144 height:80
 			clearSelection()
 			for v = 2 to t.count do selectmore t[v]
 			exportfile (t[1] + ".fbx") #noprompt selectedonly:true
+		)
+	)
+	on btn4 pressed do
+	(
+		--reset scale
+		print ("scale reset-------------")
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel where s.scale != [1,1,1] do 
+		(
+		resetscale s
+		)
+	)
+	on btn5 pressed do
+	(
+		--reset transform
+		print ("transform reset---------")
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel where s.rotation != (quat 0 0 0 1) do 
+		(
+		resettransform s
+		)
+	)
+	on btn6 pressed do
+	(
+		--check construction history
+		print ("construction check------")
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel where superclassof s == GeometryClass do 
+		if ((s.modifiers[1] != undefined) AND (s.modifiers[1].name != "Unwrap UVW")) OR (s.modifiers.count > 1) do print s.name
+	)
+	on btn7 pressed do
+	(
+		--check scale
+		print ("scale check-------------")
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel where s.scale != [1,1,1] do 
+		(
+		print (s.name + ":" + (s.scale as string))
+		)
+	)
+	on btn8 pressed do
+	(
+		--check transform
+		print ("transform check---------")
+		sel = $
+		if selection.count > 1 do sel = $ as array
+		for s in sel where s.rotation != (quat 0 0 0 1) do 
+		(
+		print (s.name + ":" + (s.rotation as string))
 		)
 	)
 )
