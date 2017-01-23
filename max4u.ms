@@ -1,6 +1,6 @@
 --3ds max .fbx to unity bulk exporter
 --final-check asset inspector
---material swatch exporter
+--material swatch bulk exporter
 --pipeline plugin
 
 /*
@@ -22,6 +22,24 @@ m.name = s
 print ("------------------------")
 c=1
 for m in scenematerials do (c+=1; print ((c as string) + "_" + m.name))
+
+
+--grab files from folder to export them in bulk as material swatches into unity
+files = getFiles "C:\\Folder\\Folder\\*.dds"
+
+for f in files do
+(
+	p = Plane length:1.0 width:1.0 pos:[0,0,0]
+	mat = StandardMaterial()
+	mat.diffusemap = Bitmaptexture fileName:f
+	
+	n = substring f 64 (f.count-4)
+	s = substring n 1 (n.count-4)
+	mat.name = s
+	p.name = "tmp_" + s
+	
+	p.material = mat
+)
 */
 
 fn gather = 
@@ -162,7 +180,7 @@ rollout max4u "" width:144 height:336
 		print ("scale check-------------")
 		sel = $
 		if selection.count > 1 do sel = $ as array
-		for s in sel where s.scale != [1,1,1] do 
+		for s in sel do 
 		(
 		print (s.name + ":" + (s.scale as string))
 		)
