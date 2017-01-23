@@ -24,7 +24,7 @@ c=1
 for m in scenematerials do (c+=1; print ((c as string) + "_" + m.name))
 
 
---grab files from folder to export them in bulk as material swatches into unity
+--grab files from folder to export them in bulk as material swatches then import swatches into unity
 files = getFiles "C:\\Folder\\Folder\\*.dds"
 
 for f in files do
