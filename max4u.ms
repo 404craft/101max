@@ -1,5 +1,6 @@
 --3ds max .fbx to unity bulk exporter
 --final-check asset inspector
+--material swatch exporter
 --pipeline plugin
 
 /*
