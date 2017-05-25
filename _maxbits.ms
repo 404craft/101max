@@ -1,7 +1,14 @@
 --one-liners, snippets & overall simple programs
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 /*----------------------------------------------------------------------------------------------------------------------*/
---distance between selected spline knots
+--distance between selected vertices
+arr = for i in $.mesh.selectedVerts collect i.index
+v1 = arr[1]
+v2 = arr[2]
+vdis = distance $.mesh.verts[v1].pos $.mesh.verts[v2].pos
+print ("unit:" + vdis as string)
+/*----------------------------------------------------------------------------------------------------------------------*/
+--distance between selected knots
 arr = getKnotSelection $ 1
 v1 = getKnotPoint $ 1 arr[1]
 v2 = getKnotPoint $ 1 arr[2]
