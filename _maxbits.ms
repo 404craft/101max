@@ -1,6 +1,13 @@
 --one-liners, snippets & overall simple programs
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 /*----------------------------------------------------------------------------------------------------------------------*/
+--distance between selected spline knots
+arr = getKnotSelection $ 1
+v1 = getKnotPoint $ 1 arr[1]
+v2 = getKnotPoint $ 1 arr[2]
+vdis = distance v1 v2
+print ("unit:" + vdis as string)
+/*----------------------------------------------------------------------------------------------------------------------*/
 --tweak biped baked-in animations
 global target
 try(destroydialog ::autoframe)catch()
