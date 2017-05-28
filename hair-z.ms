@@ -175,15 +175,15 @@ fn taper_spl val1 val2 =
 	hide a
 	append cpy obj
 	convertto obj editable_poly
-	sc = 1 + val1
-		
+	sc = 1
+			
 	n_verts = polyOp.getNumVerts obj
-	c = (n_verts / 4) / 3
+	n_val = val1 / n_verts
 		
 		for n = 1 to n_verts by 4 do
 		(
 		v_sel = #{n..n+3}
-		sc = sc - (0.05 * c)
+		sc = sc - (n_val * n)
 		scl = [sc, sc, sc]
 		v_arr = for v in v_sel collect polyOp.getVert obj v
 		cnt = [0,0,0]
@@ -196,7 +196,6 @@ fn taper_spl val1 val2 =
 		( 
 			polyOp.moveVert obj v ((v_arr[n+=1]*m))
 		)
-		c+=1
 		)
 	)
 	cpy.wirecolor = blue
@@ -256,8 +255,8 @@ rollout hair_z "" width:144 height:200
 	checkbutton btn8 "confirm" pos:[8,8] width:128 height:16 toolTip:"finalize hairlines"
 
 	spinner spn1 "" pos:[8,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
-	spinner spn2 "" pos:[80,104] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
-	spinner spn3 "" pos:[8,128] width:56 height:16 range:[0,10,0] type:#float scale:0.1
+	spinner spn2 "" pos:[80,104] width:56 height:16 range:[0,10000,32] type:#float scale:0.1
+	spinner spn3 "" pos:[8,128] width:56 height:16 range:[0,10,0.01] type:#float scale:0.01
 
 	
 	on btn1 pressed do
