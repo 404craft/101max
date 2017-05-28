@@ -1,7 +1,6 @@
 --short for "hair for zbrush"
---create geometrical hair from hair & fur
---max to zbrush pipeline plug
---new plugin under development
+--create geometrical hair from hair & fur modifier
+--new max to zbrush pipeline plug under development
 
 global src
 global spl = #()
@@ -46,32 +45,35 @@ fn explode_spl val1 =
 	
 	if val1 == false do
 	(
-		for n = 1 to 10 do
-		(
-			t = copy spl[n]
-			if spl[n] != undefined do append tst t
-		)
-		
-		tst.name = "hair_tst"
-		tst.wirecolor = red
-		hide spl
-		unhide tst
+		test_spl()
 	)
 	hide src
+)
+
+fn test_spl =
+(
+	for n = 1 to 10 do
+	(
+		t = copy spl[n]
+		if spl[n] != undefined do append tst t
+	)
+	
+	tst.name = "hair_tst"
+	tst.wirecolor = red
+	hide spl
+	unhide tst
 )
 
 fn normal_spl val1 val2 =
 (
 	arr1 = tst
 	if val2 == true do arr1 = spl
-		
-	m_vdis = (distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)) * 2
-	m = normalize_spl length:m_vdis
 	
 	if m_normalize == undefined then
 	(
+		m_vdis = normal_dis()
+		m = normalize_spl length:m_vdis
 		addmodifier arr1 m
-		hair_z.spn1.value = m_vdis
 		m_normalize = arr1[1].modifiers[1]
 	)
 	 
@@ -81,32 +83,39 @@ fn normal_spl val1 val2 =
 	)
 )
 
-fn adjust_spl val1 val2 =
+fn normal_dis =
 (
-	m_vdis = distance (getKnotPoint val1[1] 1 1) (getKnotPoint val1[1] 1 2)
+	m_vdis = (distance (getKnotPoint spl[1] 1 1) (getKnotPoint spl[1] 1 2)) * 2
+	hair_z.spn1.value = m_vdis
+	return m_vdis
+)
+
+fn adjust_spl arr1 val1 =
+(
+	m_vdis = distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)
 	
-    for v in val1 do
+    for a in arr1 do
     (
-        for i in v.modifiers.count to 1 by -1 do
+        for i in a.modifiers.count to 1 by -1 do
 		(
-			if v.modifiers[i] == val2 do 
+			if a.modifiers[i] == val1 do 
 			(
-				maxops.CollapseNodeTo v i off
+				maxops.CollapseNodeTo a i off
 				exit
 			)
 		)
 		
-		for n = (numknots v) to 2 by -1 do
+		for n = (numknots a) to 2 by -1 do
 		(
-			vdis = distance (getKnotPoint v 1 n) (getKnotPoint v 1 (n-1))
-			if vdis < m_vdis - (vdis/20) do deleteKnot v 1 n
+			vdis = distance (getKnotPoint a 1 n) (getKnotPoint a 1 (n-1))
+			if vdis < m_vdis - (vdis/20) do deleteKnot a 1 n
 		)
-		if (numknots v) < 3 then 
+		if (numknots a) < 3 then 
 		(
-		deleteitem val1 v
-		delete v
+		deleteitem arr1 a
+		delete a
 		)
-		else updateshape v
+		else updateshape a
     )
 )
 
@@ -234,28 +243,34 @@ fn execute_spl =
 )
 
 try(destroydialog ::hair_z)catch()
-rollout hair_z "" width:128 height:200
+rollout hair_z "" width:144 height:200
 (
-	button btn1 "explode" pos:[8,32] width:112 height:16 toolTip:"separate splines"
-	button btn2 "normalize" pos:[64,56] width:56 height:16 toolTip:"normalize spline"
-	button btn3 "decimate" pos:[8,80] width:112 height:16 toolTip:"remove last knot"
-	button btn4 "sweep" pos:[8,104] width:56 height:16 toolTip:"add sweep modifier"
-	button btn5 "taper" pos:[64,128] width:56 height:16 toolTip:"scale up initial polygons"
-	button btn6 "turbo" pos:[8,152] width:112 height:16 toolTip:"smoothen geometry"
-	button btn7 "reset" pos:[8,176] width:112 height:16 toolTip:"delete all proxies"
-	checkbutton btn8 "confirm" pos:[8,8] width:112 height:16 toolTip:"finalize hairlines"
-	
+	button btn1 "explode" pos:[8,32] width:128 height:16 toolTip:"separate splines"
+	button btn2_1 "normalize" pos:[64,56] width:56 height:16 toolTip:"normalize spline"
+	button btn2_2 "•" pos:[120,56] width:16 height:16 toolTip:"distance between knots"
+	button btn3 "decimate" pos:[8,80] width:128 height:16 toolTip:"remove last knot"
+	button btn4 "sweep" pos:[8,104] width:72 height:16 toolTip:"add sweep modifier"
+	button btn5 "taper" pos:[64,128] width:72 height:16 toolTip:"scale up initial polygons"
+	button btn6 "turbo" pos:[8,152] width:128 height:16 toolTip:"smoothen geometry"
+	button btn7 "reset" pos:[8,176] width:128 height:16 toolTip:"delete all proxies"
+	checkbutton btn8 "confirm" pos:[8,8] width:128 height:16 toolTip:"finalize hairlines"
+
 	spinner spn1 "" pos:[8,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
-	spinner spn2 "" pos:[64,104] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
+	spinner spn2 "" pos:[80,104] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
 	spinner spn3 "" pos:[8,128] width:56 height:16 range:[0,10,0] type:#float scale:0.1
 
+	
 	on btn1 pressed do
 	(
 		explode_spl btn8.state
 	)
-	on btn2 pressed do
+	on btn2_1 pressed do
 	(
 		normal_spl spn1.value btn8.state
+	)
+	on btn2_2 pressed do
+	(
+		normal_dis()
 	)
 	on btn3 pressed do
 	(
@@ -277,12 +292,10 @@ rollout hair_z "" width:128 height:200
 	(
 		reset_spl()
 	)
-	
 	on btn8 changed state do
 	(
-	-- if state == true then btn8.text = "global"
-	--	 else btn8.text = "local"
 		execute_spl()
+		if state == false do test_spl()
 	)
 )
 createdialog hair_z
