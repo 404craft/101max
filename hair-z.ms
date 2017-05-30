@@ -250,7 +250,7 @@ try(destroydialog ::hair_z)catch()
 rollout hair_z "" width:88 height:240
 (
 	button btn1 "explode" pos:[8,32] width:72 height:16 toolTip:"separate splines"
-	checkbutton btn3_2 "•" pos:[8,96] width:16 height:16 toolTip:"erase splines with 2 knots" checked:true
+	checkbutton btn3_2 "×" pos:[8,96] width:16 height:16 toolTip:"erase splines with 2 knots" checked:true
 	button btn5 "taper" pos:[8,112] width:72 height:16 toolTip:"scale up initial polygons"
 	button btn6 "turbo" pos:[8,136] width:72 height:16 toolTip:"smoothen geometry"
 	button btn7 "reset" pos:[8,200] width:72 height:16 toolTip:"delete all proxies"
@@ -264,7 +264,7 @@ rollout hair_z "" width:88 height:240
 	spinner spn1_1 "" pos:[8,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
 	button btn1_2 "•" pos:[64,56] width:16 height:16 toolTip:"distance between knots"
 	spinner spn2_1 "" pos:[8,72] width:56 height:16 range:[0,10000,32] type:#float scale:0.1
-	button btn2_2 "•" pos:[64,72] width:16 height:16 toolTip:"distance between knots"
+	button btn2_2 "¤" pos:[64,72] width:16 height:16 toolTip:"apply selected values"
 
 	spinner spn3 "" pos:[24,96] width:56 height:16 range:[0,10,0.01] type:#float scale:0.01
 	label lbl1 "101craft" pos:[24,220] width:40 height:16
@@ -272,6 +272,34 @@ rollout hair_z "" width:88 height:240
 	on btn1 pressed do
 	(
 		explode_spl btn8.state
+	)
+	on spn1_1 changed val do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
+	)
+	on btn1_2 pressed do
+	(
+		m_vdis = knot_dis true
+		sweep_spl btn8.state m_vdis spn2_1.value
+	)
+	on spn2_1 changed val do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
+	)
+	on btn2_2 pressed do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
+	)
+	on btn3_2 changed state do
+	(
+		if state == false then
+		(
+		btn3_2.text = "+"
+		)
+		else
+		(
+		btn3_2.text = "×"
+		)
 	)
 	on btn5 pressed do
 	(
@@ -308,23 +336,6 @@ rollout hair_z "" width:88 height:240
 		h.name = "hair_group"
 		reset_spl 2 h
 		btn8.state = false
-	)
-	on spn1_1 changed val do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
-	)
-	on btn1_2 pressed do
-	(
-		m_vdis = knot_dis true
-		sweep_spl btn8.state m_vdis spn2_1.value
-	)
-	on spn2_1 changed val do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
-	)
-	on btn2_2 pressed do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
 	)
 )
 createdialog hair_z
