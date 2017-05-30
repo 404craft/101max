@@ -98,6 +98,7 @@ fn sweep_spl val1 val2 val3 =
 			delete cpy
 			cpy = #()
 			unhide arr1
+			if m_turbo != undefined do m_turbo = undefined
 		)
 		if m_sweep != val3 do
 		(
