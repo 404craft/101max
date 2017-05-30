@@ -21,143 +21,73 @@ fn explode_spl val1 =
 	m_spline = undefined
 	m_turbo = undefined
 	
-	src = $
-	src.wirecolor = blue
-	src.name = "hair_src"
-	num = numsplines src
-
-	for n = 1 to num do
+	if classof $ == line AND numsplines $ > 1 do
 	(
-		tar = copy src
-		setFirstSpline tar n
-		
-		for nn = num to 2 by -1 do 
+		src = $
+		src.wirecolor = blue
+		src.name = "hair_src"
+		num = numsplines src
+
+		for n = 1 to num do
 		(
-			deleteSpline tar nn
+			tar = copy src
+			setFirstSpline tar n
+			
+			for nn = num to 2 by -1 do 
+			(
+				deleteSpline tar nn
+			)
+			append spl tar
 		)
-		append spl tar
+		
+		spl.steps = 0
+		spl.optimize = false
+		spl.name = "hair_spl"
+		spl.wirecolor = yellow
+		hair_z.btn1.enabled = false
+		
+		if val1 == false do
+		(
+			for n = 1 to 10 do
+			(
+				t = copy spl[n]
+				if spl[n] != undefined do append tst t
+			)
+			
+			tst.name = "hair_tst"
+			tst.wirecolor = red
+			hide spl
+			unhide tst
+		)
+		hide src
 	)
-	
-	spl.steps = 0
-	spl.optimize = false
-	spl.name = "hair_spl"
-	spl.wirecolor = yellow
-	
-	if val1 == false do
-	(
-		test_spl()
-	)
-	hide src
 )
 
-fn test_spl =
-(
-	for n = 1 to 10 do
-	(
-		t = copy spl[n]
-		if spl[n] != undefined do append tst t
-	)
-	
-	tst.name = "hair_tst"
-	tst.wirecolor = red
-	hide spl
-	unhide tst
-)
-
-fn normal_spl val1 val2 =
+fn sweep_spl val1 val2 val3 =
 (
 	arr1 = tst
-	if val2 == true do arr1 = spl
+	if val1 == true do arr1 = spl
 	
 	if m_normalize == undefined then
 	(
 		select arr1
-		m_vdis = normal_dis()
+		m_vdis = knot_dis true
 		m_normalize = normalize_spl length:m_vdis
 		modpanel.addmodtoselection m_normalize
-		clearselection()
 	)
 	 
 	else if m_normalize != undefined do
 	(
-		m_normalize.length = val1
-	)
-)
-
-fn normal_dis =
-(
-	m_vdis = (distance (getKnotPoint spl[1] 1 1) (getKnotPoint spl[1] 1 2)) * 2
-	hair_z.spn1.value = m_vdis
-	return m_vdis
-)
-
-fn adjust_spl arr1 val1 val2 =
-(
-	m_vdis = distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)
-	
-    for a in arr1 do
-    (
-        for i in a.modifiers.count to 1 by -1 do
-		(
-			if a.modifiers[i] == val1 do 
-			(
-				maxops.CollapseNodeTo a i off
-				exit
-			)
-		)
-		
-		for n = (numknots a) to 2 by -1 do
-		(
-			vdis = distance (getKnotPoint a 1 n) (getKnotPoint a 1 (n-1))
-			if vdis < m_vdis - (vdis/20) do deleteKnot a 1 n
-		)
-		updateshape a
-    )
-	
-	if val2 == true do
-	(
-		for a = arr1.count to 1 by -1 do
-		(
-			if (numknots arr1[a]) < 3 do 
-			(
-			delete arr1[a]
-			deleteitem arr1 a
-			)
-		)
-	)
-)
-
-fn decimate_spl val1 val2 =
-(
-	arr1 = tst
-	if val1 == true do arr1 = spl
-		
-	if m_normalize == undefined do
-	(
-		for n = 1 to arr1.count do
-		(
-		nTimes = (numknots arr1[n])
-		deleteKnot arr1[n] 1 nTimes
-		updateshape arr1[n]
-		)
+		if m_normalize.length != val2 do m_normalize.length = val2
 	)
 	
-	if m_normalize != undefined do
-	(
-		adjust_spl arr1 m_normalize val2
-	)
-)
-
-fn sweep_spl val1 val2 = 
-(
-	arr1 = tst
-	if val2 == true do arr1 = spl
-		
 	if m_sweep == undefined then
 	(
 		select arr1
 		m_sweep = sweep current_built_in_shape:2
 		modpanel.addmodtoselection m_sweep
+		m_sweep[4].width = val3
+		m_sweep[4].length = val3
 		clearselection()
 	)
 	
@@ -169,32 +99,66 @@ fn sweep_spl val1 val2 =
 			cpy = #()
 			unhide arr1
 		)
-	m_sweep[4].width = val1
-	m_sweep[4].length = val1
+		if m_sweep != val3 do
+		(
+		m_sweep[4].width = val3
+		m_sweep[4].length = val3
+		)
 	)
 )
 
-fn taper_spl val1 val2 =
+fn knot_dis val1 =
 (
-	arr1 = tst
-	if val2 == true do arr1 = spl
-		
+	m_vdis = (distance (getKnotPoint spl[1] 1 1) (getKnotPoint spl[1] 1 2)) * 2
+	if val1 == true do hair_z.spn1_1.value = m_vdis
+	return m_vdis
+)
+
+fn adjust_spl arr1 val1 val2 val3 =
+(
+	m_vdis = distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)
+
 	if cpy.count > 0 do 
 	(
 		delete cpy
 		cpy = #()
 	)
 	
-	for a in arr1 do
-	(
-	obj = copy a
-	hide a
-	append cpy obj
-	convertto obj editable_poly
-	sc = 1
-			
-	n_verts = polyOp.getNumVerts obj
-	n_val = val1 / n_verts
+    for a = arr1.count to 1 by -1 do
+    (
+        for i in arr1[a].modifiers.count to 1 by -1 do
+		(
+			if arr1[a].modifiers[i] == val1 do 
+			(
+				maxops.CollapseNodeTo arr1[a] i off
+				exit
+			)
+		)
+		
+		for n = (numknots arr1[a]) to 2 by -1 do
+		(
+			vdis = distance (getKnotPoint arr1[a] 1 n) (getKnotPoint arr1[a] 1 (n-1))
+			if vdis < m_vdis - (vdis/20) do deleteKnot arr1[a] 1 n
+		)
+		updateshape arr1[a]
+		
+		if val3 == true do
+		(
+			if (numknots arr1[a]) < 3 do 
+			(
+			delete arr1[a]
+			deleteitem arr1 a
+			)
+		)
+		
+		obj = copy arr1[a]
+		hide arr1[a]
+		append cpy obj
+		convertto obj editable_poly
+		sc = 1
+				
+		n_verts = polyOp.getNumVerts obj
+		n_val = val2 / n_verts
 		
 		for n = 1 to n_verts by 4 do
 		(
@@ -213,9 +177,30 @@ fn taper_spl val1 val2 =
 			polyOp.moveVert obj v ((v_arr[n+=1]*m))
 		)
 		)
-	)
+    )
 	cpy.wirecolor = blue
 	cpy.name = "hair_cpy"
+)
+
+fn taper_spl val1 val2 val3 =
+(
+	arr1 = tst
+	if val1 == true do arr1 = spl
+		
+	if m_normalize == undefined do
+	(
+		for n = 1 to arr1.count do
+		(
+		nTimes = (numknots arr1[n])
+		deleteKnot arr1[n] 1 nTimes
+		updateshape arr1[n]
+		)
+	)
+	
+	if m_normalize != undefined do
+	(
+		adjust_spl arr1 m_normalize val2 val3
+	)
 )
 
 fn turbo_spl val1 =
@@ -243,6 +228,8 @@ fn reset_spl val1 val2 =
 	
 	if val1 == 1 then select src
 	else if val1 == 2 do select val2
+		
+	hair_z.btn1.enabled = true
 )
 
 fn execute_spl =
@@ -262,52 +249,45 @@ fn execute_spl =
 )
 
 try(destroydialog ::hair_z)catch()
-rollout hair_z "" width:144 height:224
+rollout hair_z "" width:144 height:176
 (
 	button btn1 "explode" pos:[8,32] width:128 height:16 toolTip:"separate splines"
-	button btn2_1 "normalize" pos:[64,56] width:56 height:16 toolTip:"normalize spline"
-	button btn2_2 "•" pos:[120,56] width:16 height:16 toolTip:"distance between knots"
-	button btn3_1 "decimate" pos:[24,80] width:112 height:16 toolTip:"remove last knot"
+	button btn1_2 "•" pos:[8,56] width:16 height:16 toolTip:"distance between knots"
 	checkbutton btn3_2 "•" pos:[8,80] width:16 height:16 toolTip:"erase splines with 2 knots" checked:true
-	button btn4 "sweep" pos:[8,104] width:72 height:16 toolTip:"add sweep modifier"
-	button btn5 "taper" pos:[64,128] width:72 height:16 toolTip:"scale up initial polygons"
-	button btn6 "turbo" pos:[8,152] width:128 height:16 toolTip:"smoothen geometry"
-	button btn7 "reset" pos:[8,200] width:128 height:16 toolTip:"delete all proxies"
+	button btn5 "taper" pos:[80,80] width:56 height:16 toolTip:"scale up initial polygons"
+	button btn6 "turbo" pos:[8,104] width:128 height:16 toolTip:"smoothen geometry"
+	button btn7 "reset" pos:[8,152] width:128 height:16 toolTip:"delete all proxies"
 	checkbutton btn8 "preview" pos:[8,8] width:128 height:16 toolTip:"finalize hairlines"
 
-	button btn9_1 "group" pos:[8,176] width:80 height:16 toolTip:"group hairlines"
-	checkbutton btn9_2 "x" pos:[88,176] width:16 height:16 toolTip:"x to origin" checked:true
-	checkbutton btn9_3 "y" pos:[104,176] width:16 height:16 toolTip:"y to origin" checked:true
-	checkbutton btn9_4 "z" pos:[120,176] width:16 height:16 toolTip:"z to origin" checked:true
+	button btn9_1 "group" pos:[8,128] width:80 height:16 toolTip:"group hairlines"
+	checkbutton btn9_2 "x" pos:[88,128] width:16 height:16 toolTip:"x to origin" checked:true
+	checkbutton btn9_3 "y" pos:[104,128] width:16 height:16 toolTip:"y to origin" checked:true
+	checkbutton btn9_4 "z" pos:[120,128] width:16 height:16 toolTip:"z to origin" checked:true
 	
-	spinner spn1 "" pos:[8,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
-	spinner spn2 "" pos:[80,104] width:56 height:16 range:[0,10000,32] type:#float scale:0.1
-	spinner spn3 "" pos:[8,128] width:56 height:16 range:[0,10,0.01] type:#float scale:0.01
+	spinner spn1_1 "" pos:[24,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
+	spinner spn2 "" pos:[80,56] width:56 height:16 range:[0,10000,32] type:#float scale:0.1
+	spinner spn3 "" pos:[24,80] width:56 height:16 range:[0,10,0.01] type:#float scale:0.01
 	
-
 	on btn1 pressed do
 	(
 		explode_spl btn8.state
 	)
-	on btn2_1 pressed do
+	on btn1_2 pressed do
 	(
-		normal_spl spn1.value btn8.state
+		m_vdis = knot_dis true
+		sweep_spl btn8.state m_vdis spn2.value
 	)
-	on btn2_2 pressed do
+	on spn1_1 changed val do
 	(
-		normal_dis()
+		sweep_spl btn8.state spn1_1.value spn2.value
 	)
-	on btn3_1 pressed do
+	on spn2 changed val do
 	(
-		decimate_spl btn8.state btn3_2.state
-	)
-	on btn4 pressed do
-	(
-		sweep_spl spn2.value btn8.state
+		sweep_spl btn8.state spn1_1.value spn2.value
 	)
 	on btn5 pressed do
 	(
-		taper_spl spn3.value btn8.state
+		taper_spl btn8.state spn3.value btn3_2.state
 	)
 	on btn6 pressed do
 	(
@@ -323,19 +303,23 @@ rollout hair_z "" width:144 height:224
 		if state == false then
 		(
 		btn8.text = "preview"
-		test_spl()
 		)
-		else btn8.text = "final"
+		else
+		(
+		btn8.text = "final"
+		)
 	)
 	on btn9_1 pressed do
 	(
 		h = group cpy
+		cpy.wirecolor = gray
 		cpy = #()
 		if btn9_2.state == true do h.pivot.x = 0
 			if btn9_3.state == true do h.pivot.y = 0
 				if btn9_4.state == true do h.pivot.z = 0
 		h.name = "hair_group"
 		reset_spl 2 h
+		btn8.state = false
 	)
 )
 createdialog hair_z
