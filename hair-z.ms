@@ -142,10 +142,13 @@ fn adjust_spl arr1 val1 val2 val3 =
 		
 		if val3 == true do
 		(
-			if (numknots arr1[a]) < 3 do 
+			if m_normalize != undefined AND validmodifier arr1[a] m_normalize == true do
 			(
-			delete arr1[a]
-			deleteitem arr1 a
+				if (numknots arr1[a]) < 3 do 
+				(
+				delete arr1[a]
+				deleteitem arr1 a
+				)
 			)
 		)
 		
