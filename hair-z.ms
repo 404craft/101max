@@ -133,15 +133,14 @@ fn adjust_spl arr1 val1 val2 val3 =
 			)
 		)
 		
-		if m_normalize != undefined AND validmodifier arr1[a] m_normalize == true do
+		--if m_normalize != undefined AND validmodifier arr1[a] m_normalize == true do //tbc
+		
+		for n = (numknots arr1[a]) to 2 by -1 do
 		(
-			for n = (numknots arr1[a]) to 2 by -1 do
-			(
-				vdis = distance (getKnotPoint arr1[a] 1 n) (getKnotPoint arr1[a] 1 (n-1))
-				if vdis < m_vdis - (vdis/20) do deleteKnot arr1[a] 1 n
-			)
-			updateshape arr1[a]
+			vdis = distance (getKnotPoint arr1[a] 1 n) (getKnotPoint arr1[a] 1 (n-1))
+			if vdis < m_vdis - (vdis/20) do deleteKnot arr1[a] 1 n
 		)
+		updateshape arr1[a]
 		
 		if val3 == true do
 		(
@@ -250,19 +249,19 @@ fn execute_spl =
 )
 
 try(destroydialog ::hair_z)catch()
-rollout hair_z "" width:88 height:240
+rollout hair_z "" width:88 height:232
 (
-	button btn1 "explode" pos:[8,32] width:72 height:16 toolTip:"separate splines" enabled:true
+	button btn1 "explode" pos:[8,32] width:72 height:16 enabled:true toolTip:"separate splines"
 	checkbutton btn3_2 "×" pos:[8,96] width:16 height:16 toolTip:"erase splines with 2 knots" checked:true
 	button btn5 "taper" pos:[8,112] width:72 height:16 toolTip:"scale up initial polygons"
 	button btn6 "turbo" pos:[8,136] width:72 height:16 toolTip:"smoothen geometry"
-	button btn7 "reset" pos:[8,200] width:72 height:16 toolTip:"delete all proxies"
+	button btn7 "reset" pos:[8,192] width:72 height:16 toolTip:"delete all proxies"
 	checkbutton btn8 "preview" pos:[8,8] width:72 height:16 toolTip:"finalize hairlines"
 
-	button btn9_1 "group" pos:[8,160] width:72 height:16 toolTip:"group hairlines"
-	checkbutton btn9_2 "x" pos:[8,176] width:24 height:16 toolTip:"x to origin" checked:true
-	checkbutton btn9_3 "y" pos:[32,176] width:24 height:16 toolTip:"y to origin" checked:true
-	checkbutton btn9_4 "z" pos:[56,176] width:24 height:16 toolTip:"z to origin" checked:true
+	button btn9_1 "group" pos:[8,152] width:72 height:16 toolTip:"group hairlines"
+	checkbutton btn9_2 "x" pos:[8,168] width:24 height:16 toolTip:"x to origin" checked:true
+	checkbutton btn9_3 "y" pos:[32,168] width:24 height:16 toolTip:"y to origin" checked:true
+	checkbutton btn9_4 "z" pos:[56,168] width:24 height:16 toolTip:"z to origin" checked:true
 	
 	spinner spn1_1 "" pos:[8,56] width:56 height:16 range:[0,10000,0] type:#float scale:0.1
 	button btn1_2 "•" pos:[64,56] width:16 height:16 toolTip:"distance between knots"
@@ -270,29 +269,12 @@ rollout hair_z "" width:88 height:240
 	button btn2_2 "¤" pos:[64,72] width:16 height:16 toolTip:"apply selected values"
 
 	spinner spn3 "" pos:[24,96] width:56 height:16 range:[0,10,0.01] type:#float scale:0.01
-	label lbl1 "101craft" pos:[24,220] width:40 height:16
+	label lbl1 "101craft" pos:[24,212] width:40 height:16
 	
 	on btn1 pressed do
 	(
 		explode_spl btn8.state
 		btn1.enabled = false
-	)
-	on spn1_1 changed val do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
-	)
-	on btn1_2 pressed do
-	(
-		m_vdis = knot_dis true
-		sweep_spl btn8.state m_vdis spn2_1.value
-	)
-	on spn2_1 changed val do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
-	)
-	on btn2_2 pressed do
-	(
-		sweep_spl btn8.state spn1_1.value spn2_1.value
 	)
 	on btn3_2 changed state do
 	(
@@ -340,6 +322,23 @@ rollout hair_z "" width:88 height:240
 		h.name = "hair_group"
 		reset_spl 2 h
 		btn8.state = false
+	)
+	on spn1_1 changed val do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
+	)
+	on btn1_2 pressed do
+	(
+		m_vdis = knot_dis true
+		sweep_spl btn8.state m_vdis spn2_1.value
+	)
+	on spn2_1 changed val do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
+	)
+	on btn2_2 pressed do
+	(
+		sweep_spl btn8.state spn1_1.value spn2_1.value
 	)
 )
 createdialog hair_z
