@@ -44,7 +44,6 @@ fn explode_spl val1 =
 		spl.optimize = false
 		spl.name = "hair_spl"
 		spl.wirecolor = yellow
-		hair_z.btn1.enabled = false
 		
 		if val1 == false do
 		(
@@ -249,7 +248,7 @@ fn execute_spl =
 try(destroydialog ::hair_z)catch()
 rollout hair_z "" width:88 height:240
 (
-	button btn1 "explode" pos:[8,32] width:72 height:16 toolTip:"separate splines"
+	button btn1 "explode" pos:[8,32] width:72 height:16 toolTip:"separate splines" enabled:true
 	checkbutton btn3_2 "×" pos:[8,96] width:16 height:16 toolTip:"erase splines with 2 knots" checked:true
 	button btn5 "taper" pos:[8,112] width:72 height:16 toolTip:"scale up initial polygons"
 	button btn6 "turbo" pos:[8,136] width:72 height:16 toolTip:"smoothen geometry"
@@ -272,6 +271,7 @@ rollout hair_z "" width:88 height:240
 	on btn1 pressed do
 	(
 		explode_spl btn8.state
+		btn1.enabled = false
 	)
 	on spn1_1 changed val do
 	(
@@ -339,3 +339,5 @@ rollout hair_z "" width:88 height:240
 	)
 )
 createdialog hair_z
+
+--for h in hair_z.controls do try(h.tooltip = "")catch()
