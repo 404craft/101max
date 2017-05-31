@@ -10,6 +10,7 @@ global m_normalize
 global m_sweep
 global m_spline
 global m_turbo
+global m_vdis
 
 fn explode_spl val1 =
 (
@@ -20,6 +21,7 @@ fn explode_spl val1 =
 	m_sweep = undefined
 	m_spline = undefined
 	m_turbo = undefined
+	m_vdis = undefined
 	
 	if classof $ == line AND numsplines $ > 1 do
 	(
@@ -67,30 +69,32 @@ fn sweep_spl val1 val2 val3 =
 	arr1 = tst
 	if val1 == true do arr1 = spl
 	
+	if m_vdis == undefined do m_vdis = (distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)) * 2
+	
 	if m_normalize == undefined then
 	(
 		select arr1
-		m_vdis = knot_dis true
-		m_normalize = normalize_spl length:m_vdis
-		modpanel.addmodtoselection m_normalize
+		modpanel.addmodtoselection (normalize_spl())
+		if val2 == 0 do val2 = m_vdis
+		m_normalize = arr1[1].modifiers[1]
+		m_normalize.length = val2
 	)
-	 
-	else if m_normalize != undefined do
+	else
 	(
+		if val2 == 0 do val2 = m_vdis
 		m_normalize.length = val2
 	)
 	
 	if m_sweep == undefined then
 	(
-		select arr1
-		m_sweep = sweep current_built_in_shape:2
-		modpanel.addmodtoselection m_sweep
+		modpanel.addmodtoselection (sweep())
+		m_sweep = arr1[1].modifiers[1]
+		m_sweep.current_built_in_shape = 2
 		m_sweep[4].width = val3
 		m_sweep[4].length = val3
 		clearselection()
 	)
-	
-	else if m_sweep != undefined do
+	else
 	(
 		if cpy.count > 0 do 
 		(
@@ -102,19 +106,11 @@ fn sweep_spl val1 val2 val3 =
 		m_sweep[4].width = val3
 		m_sweep[4].length = val3
 	)
-)
-
-fn knot_dis val1 =
-(
-	m_vdis = (distance (getKnotPoint spl[1] 1 1) (getKnotPoint spl[1] 1 2)) * 2
-	if val1 == true do hair_z.spn1_1.value = m_vdis
 	return m_vdis
 )
 
 fn adjust_spl arr1 val1 val2 val3 =
 (
-	m_vdis = distance (getKnotPoint arr1[1] 1 1) (getKnotPoint arr1[1] 1 2)
-
 	if cpy.count > 0 do 
 	(
 		delete cpy
@@ -329,8 +325,7 @@ rollout hair_z "" width:88 height:232
 	)
 	on btn1_2 pressed do
 	(
-		m_vdis = knot_dis true
-		sweep_spl btn8.state m_vdis spn2_1.value
+		spn1_1.value = sweep_spl btn8.state spn1_1.value spn2_1.value
 	)
 	on spn2_1 changed val do
 	(
