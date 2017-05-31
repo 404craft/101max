@@ -133,22 +133,22 @@ fn adjust_spl arr1 val1 val2 val3 =
 			)
 		)
 		
-		for n = (numknots arr1[a]) to 2 by -1 do
+		if m_normalize != undefined AND validmodifier arr1[a] m_normalize == true do
 		(
-			vdis = distance (getKnotPoint arr1[a] 1 n) (getKnotPoint arr1[a] 1 (n-1))
-			if vdis < m_vdis - (vdis/20) do deleteKnot arr1[a] 1 n
+			for n = (numknots arr1[a]) to 2 by -1 do
+			(
+				vdis = distance (getKnotPoint arr1[a] 1 n) (getKnotPoint arr1[a] 1 (n-1))
+				if vdis < m_vdis - (vdis/20) do deleteKnot arr1[a] 1 n
+			)
+			updateshape arr1[a]
 		)
-		updateshape arr1[a]
 		
 		if val3 == true do
 		(
-			if m_normalize != undefined AND validmodifier arr1[a] m_normalize == true do
+			if (numknots arr1[a]) < 3 do 
 			(
-				if (numknots arr1[a]) < 3 do 
-				(
-				delete arr1[a]
-				deleteitem arr1 a
-				)
+			delete arr1[a]
+			deleteitem arr1 a
 			)
 		)
 		
