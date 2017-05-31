@@ -119,6 +119,7 @@ fn adjust_spl arr1 val1 val2 val3 =
 	(
 		delete cpy
 		cpy = #()
+		m_turbo = undefined
 	)
 	
     for a = arr1.count to 1 by -1 do
