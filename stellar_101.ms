@@ -1,4 +1,4 @@
--- parametric model of a solar system
+-- parametric solar system model
 -- can be used for showcasing spaceships as in https://vimeo.com/40504508#t=0m5s
 
 global ani
