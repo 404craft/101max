@@ -1,11 +1,12 @@
 --new plugin under development
 --procudural fantasy town generator for Water-Home models
---https://www.cgtrader.com/3d-models/architectural-exterior/house/water-home
+--compatible with https://www.cgtrader.com/3d-models/exterior/cityscape/water-town
+--download prefabs & create your Water-Town
 
 try(destroydialog :: castle_101)catch()
 
--- if units.systemtype != #inches do units.systemtype = #inches
--- if units.displaytype != #generic do units.displaytype = #generic
+if units.systemtype != #inches do units.systemtype = #inches
+if units.displaytype != #generic do units.displaytype = #generic
 
 rollout castle_101 "" width:128 height:296
 (
@@ -470,14 +471,14 @@ rollout castle_101 "" width:128 height:296
 	)
 	
 	button btn_101 "look@101craft" pos:[8,8] width:112 height:16 toolTip:"visit 101craft.com"
-	button btn_auto "auto-assign" pos:[8,24] width:112 height:24 toolTip:"search the scene to auto-assign watertown prefabs"
-	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24 toolTip:"platform prefab slot"
-	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24 toolTip:"solitary house prefab slot"
-	pickbutton btn_2module "2/ module " pos:[64,72] width:56 height:24 toolTip:"double house prefab slot"
-	pickbutton btn_1roof "1/ roof" pos:[8,48] width:56 height:24 toolTip:"solitary house roof prefab slot"
-	pickbutton btn_2roof "2/ roof" pos:[64,48] width:56 height:24 toolTip:"double house roof prefab slot"
-	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24 toolTip:"crate prefab slot"
-	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24 toolTip:"barrel prefab slot"
+	button btn_auto "grab prefabs" pos:[8,24] width:112 height:24 toolTip:"search scene to auto-assign watertown prefabs"
+	pickbutton btn_platform "platform" pos:[8,96] width:112 height:24 toolTip:"define platform prefab slot"
+	pickbutton btn_1module "1/ module" pos:[8,72] width:56 height:24 toolTip:"define solitary house prefab slot"
+	pickbutton btn_2module "2/ module " pos:[64,72] width:56 height:24 toolTip:"define double house prefab slot"
+	pickbutton btn_1roof "1/ roof" pos:[8,48] width:56 height:24 toolTip:"define solitary house roof prefab slot"
+	pickbutton btn_2roof "2/ roof" pos:[64,48] width:56 height:24 toolTip:"define double house roof prefab slot"
+	pickbutton btn_crate "crate" pos:[8,120] width:56 height:24 toolTip:"define crate prefab slot"
+	pickbutton btn_barrel "barrel" pos:[64,120] width:56 height:24 toolTip:"define barrel prefab slot"
 	
 	checkbutton ckb_square "•" pos:[8,192] width:16 height:16 toolTip:"double platform"
 	spinner spn_centre "" pos:[24,192] width:40 height:16 range:[2,4,2] type:#integer toolTip:"centre size"
@@ -504,6 +505,93 @@ rollout castle_101 "" width:128 height:296
 
 	on btn_auto pressed do
 	(
+		--.obj / fbx missing groups
+		--1/roof
+		if isValidNode $wtr_mod_02_02_08 == false do
+		(
+		obj = #($wtr_mod_02_02_09, $wtr_mod_02_02_10)
+		o = group obj
+		o.name = "wtr_mod_02_02_08"
+		h = $wtr_helper_02_10
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "1/roof/flag"
+			
+		obj = #($wtr_mod_02_02_04, $wtr_mod_02_02_11, $wtr_mod_02_02_12, $wtr_mod_02_02_00, $wtr_mod_02_02_02, $wtr_mod_02_02_06, $wtr_mod_02_02_07, $wtr_mod_02_02_09, $wtr_mod_02_02_10)
+		append obj o
+		o = group obj
+		o.name = "wtr_mod_02_02_03"
+		h = $wtr_helper_02_05
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "1/roof"
+		)
+		
+		--2/roof
+		if isValidNode $wtr_mod_01_02_04 == false do
+		(
+		obj = #($wtr_mod_01_02_06, $wtr_mod_01_02_05)
+		o = group obj
+		o.name = "wtr_mod_01_02_04"
+		h = $wtr_helper_01_10
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/roof/flag"
+			
+		obj = #($wtr_mod_01_02_07, $wtr_mod_01_02_11, $wtr_mod_01_02_12, $wtr_mod_01_02_05, $wtr_mod_01_02_06, $wtr_mod_01_02_09, $wtr_mod_01_02_10, $wtr_mod_01_02_00, $wtr_mod_01_02_02)
+		append obj o
+		o = group obj
+		o.name = "wtr_mod_01_02_03"
+		h = $wtr_helper_01_03
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/roof"
+		)
+		
+		--1/module
+		if isValidNode $wtr_mod_02_01_03 == false do
+		(
+		obj = #($wtr_mod_02_01_04, $wtr_mod_02_01_05, $wtr_mod_02_01_06, $wtr_mod_02_01_07, $wtr_mod_02_01_08, $wtr_mod_02_01_09, $wtr_mod_02_01_10, $wtr_mod_02_01_11, $wtr_mod_02_01_12, $wtr_mod_02_01_13, $wtr_mod_02_01_14, $wtr_mod_02_01_15, $wtr_mod_02_01_19, $wtr_mod_02_01_20, $wtr_mod_02_01_17, $wtr_mod_02_01_18, $wtr_mod_02_01_02, $wtr_mod_02_01_00, $wtr_mod_02_01_22, $wtr_mod_02_01_23, $wtr_mod_02_01_25, $wtr_mod_02_01_26, $wtr_mod_02_01_28, $wtr_mod_02_01_29, $wtr_mod_02_01_31, $wtr_mod_02_01_32, $wtr_mod_02_01_34, $wtr_mod_02_01_35, $wtr_mod_02_01_37, $wtr_mod_02_01_38, $wtr_mod_02_01_40, $wtr_mod_02_01_41)
+		o = group obj
+		o.name = "wtr_mod_02_01_03"
+		h = $wtr_helper_02_08
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "1/module"
+		)
+		
+		--2/module
+		if isValidNode $wtr_mod_01_01_03 == false do
+		(
+		obj = #($wtr_mod_01_01_04, $wtr_mod_01_01_05, $wtr_mod_01_01_06, $wtr_mod_01_01_07, $wtr_mod_01_01_08, $wtr_mod_01_01_09, $wtr_mod_01_01_10, $wtr_mod_01_01_11, $wtr_mod_01_01_12, $wtr_mod_01_01_13, $wtr_mod_01_01_14, $wtr_mod_01_01_15, $wtr_mod_01_01_16, $wtr_mod_01_01_17, $wtr_mod_01_01_19, $wtr_mod_01_01_20, $wtr_mod_01_01_22, $wtr_mod_01_01_23, $wtr_mod_01_01_25, $wtr_mod_01_01_26, $wtr_mod_01_01_43, $wtr_mod_01_01_29, $wtr_mod_01_01_00, $wtr_mod_01_01_02, $wtr_mod_01_01_31, $wtr_mod_01_01_32, $wtr_mod_01_01_34, $wtr_mod_01_01_35, $wtr_mod_01_01_37, $wtr_mod_01_01_38, $wtr_mod_01_01_40, $wtr_mod_01_01_41, $wtr_mod_01_01_44, $wtr_mod_01_01_28)
+		o = group obj
+		o.name = "wtr_mod_01_01_03"
+		h = $wtr_helper_01_08
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/module"
+		)
+		
+		--platform
+		if isValidNode $wtr_walkway_02_01 == false do
+		(
+		obj = #($wtr_walkway_02_00, $wtr_walkway_02_03, $wtr_walkway_02_04, $wtr_walkway_02_05, $wtr_walkway_02_07, $wtr_walkway_02_08, $wtr_walkway_02_09, $wtr_walkway_02_11, $wtr_walkway_02_12, $wtr_walkway_02_14, $wtr_walkway_02_15, $wtr_walkway_02_17, $wtr_walkway_02_18, $wtr_walkway_02_20, $wtr_walkway_02_21, $wtr_walkway_02_23, $wtr_walkway_02_24, $wtr_walkway_02_26, $wtr_walkway_02_27, $wtr_walkway_02_29, $wtr_walkway_02_30, $wtr_walkway_02_32, $wtr_walkway_02_33, $wtr_walkway_02_35, $wtr_walkway_02_36, $wtr_walkway_02_38, $wtr_walkway_02_39, $wtr_walkway_02_41, $wtr_walkway_02_42, $wtr_walkway_02_44, $wtr_walkway_02_45, $wtr_walkway_02_47, $wtr_walkway_02_48, $wtr_walkway_02_50, $wtr_walkway_02_51, $wtr_walkway_02_53, $wtr_walkway_02_54, $wtr_walkway_02_56, $wtr_walkway_02_57, $wtr_walkway_02_59, $wtr_walkway_02_60, $wtr_walkway_02_62, $wtr_walkway_02_63, $wtr_walkway_02_65, $wtr_walkway_02_66, $wtr_walkway_02_68, $wtr_walkway_02_69)
+		o = group obj
+		o.name = "wtr_walkway_02_01"
+		h = $wtr_helper_02_09
+		h.pivot = h.center
+		o.pivot = h.pivot			
+		setuserpropbuffer o "platform"
+		)
+		
+		--crate
+		if getuserpropbuffer $wtr_crate_18 != "crate" do
+		(
+		setuserpropbuffer $wtr_crate_18 "crate"			
+		$wtr_crate_18.pivot = $wtr_crate_18.center
+		)
+		
+		--personal version with defined buffer variables
 		for o in objects do
 		(
 			case getuserpropbuffer o of
