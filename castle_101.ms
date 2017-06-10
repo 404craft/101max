@@ -1,4 +1,3 @@
---new plugin under development
 --procudural fantasy town generator for Water-Home models
 --compatible with https://www.cgtrader.com/3d-models/exterior/cityscape/water-town
 --download prefabs & create your Water-Town
