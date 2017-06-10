@@ -1,3 +1,4 @@
+--new plugin under development
 --procudural fantasy town generator for Water-Home models
 --compatible with https://www.cgtrader.com/3d-models/exterior/cityscape/water-town
 --download prefabs & create your Water-Town
@@ -505,9 +506,9 @@ rollout castle_101 "" width:128 height:296
 	on btn_auto pressed do
 	(
 		--.obj / fbx missing groups
-		--1/roof
 		if isValidNode $wtr_mod_02_02_08 == false do
 		(
+		--1/roof			
 		obj = #($wtr_mod_02_02_09, $wtr_mod_02_02_10)
 		o = group obj
 		o.name = "wtr_mod_02_02_08"
@@ -516,7 +517,7 @@ rollout castle_101 "" width:128 height:296
 		o.pivot = h.pivot
 		setuserpropbuffer o "1/roof/flag"
 			
-		obj = #($wtr_mod_02_02_04, $wtr_mod_02_02_11, $wtr_mod_02_02_12, $wtr_mod_02_02_00, $wtr_mod_02_02_02, $wtr_mod_02_02_06, $wtr_mod_02_02_07, $wtr_mod_02_02_09, $wtr_mod_02_02_10)
+		obj = #($wtr_mod_02_02_08, $wtr_mod_02_02_04, $wtr_mod_02_02_11, $wtr_mod_02_02_12, $wtr_mod_02_02_00, $wtr_mod_02_02_02, $wtr_mod_02_02_06, $wtr_mod_02_02_07)
 		append obj o
 		o = group obj
 		o.name = "wtr_mod_02_02_03"
@@ -524,11 +525,8 @@ rollout castle_101 "" width:128 height:296
 		h.pivot = h.center
 		o.pivot = h.pivot
 		setuserpropbuffer o "1/roof"
-		)
 		
 		--2/roof
-		if isValidNode $wtr_mod_01_02_04 == false do
-		(
 		obj = #($wtr_mod_01_02_06, $wtr_mod_01_02_05)
 		o = group obj
 		o.name = "wtr_mod_01_02_04"
@@ -537,7 +535,7 @@ rollout castle_101 "" width:128 height:296
 		o.pivot = h.pivot
 		setuserpropbuffer o "2/roof/flag"
 			
-		obj = #($wtr_mod_01_02_07, $wtr_mod_01_02_11, $wtr_mod_01_02_12, $wtr_mod_01_02_05, $wtr_mod_01_02_06, $wtr_mod_01_02_09, $wtr_mod_01_02_10, $wtr_mod_01_02_00, $wtr_mod_01_02_02)
+		obj = #($wtr_mod_01_02_04, $wtr_mod_01_02_07, $wtr_mod_01_02_11, $wtr_mod_01_02_12, $wtr_mod_01_02_09, $wtr_mod_01_02_10, $wtr_mod_01_02_00, $wtr_mod_01_02_02)
 		append obj o
 		o = group obj
 		o.name = "wtr_mod_01_02_03"
@@ -545,35 +543,80 @@ rollout castle_101 "" width:128 height:296
 		h.pivot = h.center
 		o.pivot = h.pivot
 		setuserpropbuffer o "2/roof"
-		)
 		
 		--1/module
-		if isValidNode $wtr_mod_02_01_03 == false do
-		(
-		obj = #($wtr_mod_02_01_04, $wtr_mod_02_01_05, $wtr_mod_02_01_06, $wtr_mod_02_01_07, $wtr_mod_02_01_08, $wtr_mod_02_01_09, $wtr_mod_02_01_10, $wtr_mod_02_01_11, $wtr_mod_02_01_12, $wtr_mod_02_01_13, $wtr_mod_02_01_14, $wtr_mod_02_01_15, $wtr_mod_02_01_19, $wtr_mod_02_01_20, $wtr_mod_02_01_17, $wtr_mod_02_01_18, $wtr_mod_02_01_02, $wtr_mod_02_01_00, $wtr_mod_02_01_22, $wtr_mod_02_01_23, $wtr_mod_02_01_25, $wtr_mod_02_01_26, $wtr_mod_02_01_28, $wtr_mod_02_01_29, $wtr_mod_02_01_31, $wtr_mod_02_01_32, $wtr_mod_02_01_34, $wtr_mod_02_01_35, $wtr_mod_02_01_37, $wtr_mod_02_01_38, $wtr_mod_02_01_40, $wtr_mod_02_01_41)
+		obj = #($wtr_mod_02_01_18, $wtr_mod_02_01_17)
+		o = group obj
+		o.name = "wtr_mod_02_01_16"
+		h = $wtr_mod_02_01_17
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "1/door"
+			
+		obj = #($wtr_mod_02_01_00, $wtr_mod_02_01_02)
+		o = group obj
+		o.name = "wtr_mod_02_01_01"
+		h = $wtr_mod_02_01_00
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "1/door/window"
+			
+		obj = #($wtr_mod_02_01_16, $wtr_mod_02_01_01, $wtr_mod_02_01_04, $wtr_mod_02_01_05, $wtr_mod_02_01_06, $wtr_mod_02_01_07, $wtr_mod_02_01_08, $wtr_mod_02_01_09, $wtr_mod_02_01_10, $wtr_mod_02_01_11, $wtr_mod_02_01_12, $wtr_mod_02_01_13, $wtr_mod_02_01_14, $wtr_mod_02_01_15, $wtr_mod_02_01_19, $wtr_mod_02_01_20, $wtr_mod_02_01_22, $wtr_mod_02_01_23, $wtr_mod_02_01_25, $wtr_mod_02_01_26, $wtr_mod_02_01_28, $wtr_mod_02_01_29, $wtr_mod_02_01_31, $wtr_mod_02_01_32, $wtr_mod_02_01_34, $wtr_mod_02_01_35, $wtr_mod_02_01_37, $wtr_mod_02_01_38, $wtr_mod_02_01_40, $wtr_mod_02_01_41)
 		o = group obj
 		o.name = "wtr_mod_02_01_03"
 		h = $wtr_helper_02_08
 		h.pivot = h.center
 		o.pivot = h.pivot
 		setuserpropbuffer o "1/module"
-		)
 		
 		--2/module
-		if isValidNode $wtr_mod_01_01_03 == false do
-		(
-		obj = #($wtr_mod_01_01_04, $wtr_mod_01_01_05, $wtr_mod_01_01_06, $wtr_mod_01_01_07, $wtr_mod_01_01_08, $wtr_mod_01_01_09, $wtr_mod_01_01_10, $wtr_mod_01_01_11, $wtr_mod_01_01_12, $wtr_mod_01_01_13, $wtr_mod_01_01_14, $wtr_mod_01_01_15, $wtr_mod_01_01_16, $wtr_mod_01_01_17, $wtr_mod_01_01_19, $wtr_mod_01_01_20, $wtr_mod_01_01_22, $wtr_mod_01_01_23, $wtr_mod_01_01_25, $wtr_mod_01_01_26, $wtr_mod_01_01_43, $wtr_mod_01_01_29, $wtr_mod_01_01_00, $wtr_mod_01_01_02, $wtr_mod_01_01_31, $wtr_mod_01_01_32, $wtr_mod_01_01_34, $wtr_mod_01_01_35, $wtr_mod_01_01_37, $wtr_mod_01_01_38, $wtr_mod_01_01_40, $wtr_mod_01_01_41, $wtr_mod_01_01_44, $wtr_mod_01_01_28)
+		obj = #($wtr_mod_01_01_32, $wtr_mod_01_01_31)
+		o = group obj
+		o.name = "wtr_mod_01_01_30"
+		h = $wtr_mod_01_01_32
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/door/1"
+			
+		obj = #($wtr_mod_01_01_26, $wtr_mod_01_01_25)
+		o = group obj
+		o.name = "wtr_mod_01_01_24"
+		h = $wtr_mod_01_01_25
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/door/1/window"
+		
+		obj = #($wtr_mod_01_01_44, $wtr_mod_01_01_43)
+		o = group obj
+		o.name = "wtr_mod_01_01_42"
+		h = $wtr_mod_01_01_43
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/door/2"
+		
+		obj = #($wtr_mod_01_01_38, $wtr_mod_01_01_37)
+		o = group obj
+		o.name = "wtr_mod_01_01_36"
+		h = $wtr_mod_01_01_38
+		h.pivot = h.center
+		o.pivot = h.pivot
+		setuserpropbuffer o "2/door/2/window"
+		
+		obj = #($wtr_mod_01_01_15, $wtr_mod_01_01_06, $wtr_mod_01_01_07, $wtr_mod_01_01_08, $wtr_mod_01_01_09, $wtr_mod_01_01_04, $wtr_mod_01_01_14, $wtr_mod_01_01_05)
+		for o in obj do setuserpropbuffer o "1/vines"
+			
+		obj = #($wtr_mod_01_01_11, $wtr_mod_01_01_12, $wtr_mod_01_01_13, $wtr_mod_01_01_10)
+		for o in obj do setuserpropbuffer o "2/vines"
+			
+		obj = #($wtr_mod_01_01_30, $wtr_mod_01_01_24, $wtr_mod_01_01_42, $wtr_mod_01_01_36, $wtr_mod_01_01_04, $wtr_mod_01_01_05, $wtr_mod_01_01_06, $wtr_mod_01_01_07, $wtr_mod_01_01_08, $wtr_mod_01_01_09, $wtr_mod_01_01_10, $wtr_mod_01_01_11, $wtr_mod_01_01_12, $wtr_mod_01_01_13, $wtr_mod_01_01_14, $wtr_mod_01_01_15, $wtr_mod_01_01_16, $wtr_mod_01_01_17, $wtr_mod_01_01_19, $wtr_mod_01_01_20, $wtr_mod_01_01_22, $wtr_mod_01_01_23, $wtr_mod_01_01_29, $wtr_mod_01_01_00, $wtr_mod_01_01_02, $wtr_mod_01_01_34, $wtr_mod_01_01_35, $wtr_mod_01_01_40, $wtr_mod_01_01_41, $wtr_mod_01_01_28)
 		o = group obj
 		o.name = "wtr_mod_01_01_03"
 		h = $wtr_helper_01_08
 		h.pivot = h.center
 		o.pivot = h.pivot
 		setuserpropbuffer o "2/module"
-		)
 		
 		--platform
-		if isValidNode $wtr_walkway_02_01 == false do
-		(
 		obj = #($wtr_walkway_02_00, $wtr_walkway_02_03, $wtr_walkway_02_04, $wtr_walkway_02_05, $wtr_walkway_02_07, $wtr_walkway_02_08, $wtr_walkway_02_09, $wtr_walkway_02_11, $wtr_walkway_02_12, $wtr_walkway_02_14, $wtr_walkway_02_15, $wtr_walkway_02_17, $wtr_walkway_02_18, $wtr_walkway_02_20, $wtr_walkway_02_21, $wtr_walkway_02_23, $wtr_walkway_02_24, $wtr_walkway_02_26, $wtr_walkway_02_27, $wtr_walkway_02_29, $wtr_walkway_02_30, $wtr_walkway_02_32, $wtr_walkway_02_33, $wtr_walkway_02_35, $wtr_walkway_02_36, $wtr_walkway_02_38, $wtr_walkway_02_39, $wtr_walkway_02_41, $wtr_walkway_02_42, $wtr_walkway_02_44, $wtr_walkway_02_45, $wtr_walkway_02_47, $wtr_walkway_02_48, $wtr_walkway_02_50, $wtr_walkway_02_51, $wtr_walkway_02_53, $wtr_walkway_02_54, $wtr_walkway_02_56, $wtr_walkway_02_57, $wtr_walkway_02_59, $wtr_walkway_02_60, $wtr_walkway_02_62, $wtr_walkway_02_63, $wtr_walkway_02_65, $wtr_walkway_02_66, $wtr_walkway_02_68, $wtr_walkway_02_69)
 		o = group obj
 		o.name = "wtr_walkway_02_01"
@@ -581,15 +624,11 @@ rollout castle_101 "" width:128 height:296
 		h.pivot = h.center
 		o.pivot = h.pivot			
 		setuserpropbuffer o "platform"
-		)
 		
 		--crate
-		if getuserpropbuffer $wtr_crate_18 != "crate" do
-		(
 		setuserpropbuffer $wtr_crate_18 "crate"			
 		$wtr_crate_18.pivot = $wtr_crate_18.center
 		)
-		
 		--personal version with defined buffer variables
 		for o in objects do
 		(
