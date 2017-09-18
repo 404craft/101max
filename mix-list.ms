@@ -1,12 +1,18 @@
 --write target biped's mixer tracks into a text file along with animation ranges
 --the text file is located inside the scene folder
 
-global root
-global mix
+global roo
+global mxr
 global tag
-global start
+global srt
 global end
-global count = 0
+global cnt = 0
+
+fn root obj = if isvalidnode obj do 
+(
+while obj.parent != undefined do obj = obj.parent
+obj
+)
 
 fn main = 
 (
@@ -19,15 +25,16 @@ fn main =
 	while files != 0
 	do 
 	(
-		count+=1
-		files = (getfiles (tag + count as string + ".txt")).count
+		cnt+=1
+        fName = tag + cnt as string + ".txt"
+		files = (getfiles (fName)).count
 	)
+    
+	f = createfile (fName)
 	
-	f = createfile (tag + count as string + ".txt")
-	
-	for t = 1 to mix.numtrackgroups do
+	for t = 1 to mxr.numtrackgroups do
 	(
-		tG = gettrackgroup mix t
+		tG = gettrackgroup mxr t
 		tCount = tG.numtracks
 		
 		for tC = 1 to tCount do
@@ -42,14 +49,16 @@ fn main =
 				a = substring a 1 (a.count - 4)
 				s = cClip.globstart as string
 				s_str = substring s 1 (s.count - 1)
-				if cT  == 1 do start = s
+				if cT  == 1 do srt = s
 				end = (cClip.globend as string)
 				e_str = substring end 1 (end.count - 1)
 				format "%-% %\n" s_str e_str a to:f
-				print (s_str + "-" + e_str + " " + a)
+				--print (s_str + "-" + e_str + " " + a)
 			)
 		)
 	)
+    
+    try(shelllaunch fName "")catch()
 )
 
 try(destroydialog :: mix_list)catch()
@@ -61,19 +70,19 @@ rollout mix_list "" width:128 height:96
 	
 	on btn_101 pressed do
 	(
-		try(shelllaunch "www.101craft.com" "")catch()
+		try(shelllaunch "http://101craft.com" "")catch()
 	)
 	
 	on btn_root pressed do
 	(
-		root = $
-		mix = root.controller.mixer
-		btn_root.text = $.name
+		roo = root $
+		mxr = roo.controller.mixer
+		btn_root.text = roo.name
 	)
 	
 	on btn_compile pressed do
 	(
-		tag = (maxfilepath + root.name)
+		tag = (maxfilepath + roo.name)
 		main()
 	)
 )
