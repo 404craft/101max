@@ -59,6 +59,11 @@ rollout mix_list "" width:128 height:96
 	button btn_root "select biped" pos:[8,32] width:112 height:24 toolTip:"select biped root handle"
 	button btn_compile "compile list" pos:[8,64] width:112 height:24 toolTip:"compile mixer's animation list"	
 	
+	on btn_101 pressed do
+	(
+		try(shelllaunch "www.101craft.com" "")catch()
+	)
+	
 	on btn_root pressed do
 	(
 		root = $
