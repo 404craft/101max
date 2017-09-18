@@ -1,5 +1,6 @@
 --write target biped's mixer tracks into a text file along with animation ranges
 --the text file is located inside the scene folder
+--###-### clipName
 
 global roo
 global mxr
