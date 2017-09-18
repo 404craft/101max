@@ -28,7 +28,7 @@ fn main =
 	do 
 	(
 		cnt+=1
-        fName = tag + cnt as string + ".txt"
+        	fName = tag + cnt as string + ".txt"
 		files = (getfiles (fName)).count
 	)
     
