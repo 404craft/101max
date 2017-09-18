@@ -78,8 +78,8 @@ fn gather =
 )
 global c = 1
 global tmp = #()
-try(destroydialog :: max4u)catch()
-rollout max4u "" width:144 height:336
+try(destroydialog :: outspector)catch()
+rollout outspector "" width:144 height:336
 (
 	button btn1 "<<" pos:[8,40] width:64 height:32
 	button btn2 ">>" pos:[72,40] width:64 height:32
@@ -217,4 +217,4 @@ rollout max4u "" width:144 height:336
 		gather()
 	)
 )
-createdialog max4u
+createdialog outspector
