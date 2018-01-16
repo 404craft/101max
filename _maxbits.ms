@@ -1,6 +1,40 @@
 --one-liners, snippets & overall simple programs
 --I wrote the below when working on animations or games at one point or another & used them to speed up my workflow
 /*----------------------------------------------------------------------------------------------------------------------*/
+--water-home scene render setup
+arr = $ as array
+clearselection()
+for o in  arr do if getuserpropbuffer o == "transparent" OR getuserpropbuffer o == "1/vines" do selectmore o
+/*----------------------------------------------------------------------------------------------------------------------*/
+--micro-machines scene setup
+oArray = #($micro_ship_07_grp,$micro_home_10_grp,$micro_wing_07_grp,$crates_03_grp,$micro_home_09_grp,$micro_home_08_grp,$crates_01_grp,$micro_home_07_grp,$micro_ship_05_grp,$micro_ship_06_grp,$micro_wing_07_grp,$micro_wing_08_grp,$micro_wing_09_grp)
+nArray = #()
+
+try(destroydialog ::sceneSetup)catch()
+
+rollout sceneSetup "" width:64 height:64
+(
+	button btn1 "switch" pos:[8,8] width:48 height:48
+	
+	on btn1 pressed do
+	(
+		for o = 1 to oArray.count do 
+		(
+		rQual = 1;
+		if mSwitch == false or mSwitch == undefined then (nArray[o] = "loc_t_" + oArray[o].name; viewport.setCamera $cam_05_t; renderwidth = rQual*1500; renderheight =  rQual*421; select $crates_02_grp; hide $; btn1.text = "t_mod")
+			else (nArray[o] = "loc_f_" + oArray[o].name; viewport.setCamera $cam_05_f; renderwidth = rQual*851; renderheight = rQual*315; select $crates_02_grp; unhide $; btn1.text = "f_mod")
+			for n in objects where n.name == nArray[o] do
+			(
+			oArray[o].transform = n.transform
+			)
+		)
+		if mSwitch == false then mSwitch = true
+			else if mSwitch == true then mSwitch = false
+	)
+)
+
+createdialog sceneSetup
+/*----------------------------------------------------------------------------------------------------------------------*/
 --distance between selected vertices
 arr = for i in $.mesh.selectedVerts collect i.index
 v1 = arr[1]
