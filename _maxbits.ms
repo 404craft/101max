@@ -49,6 +49,15 @@ v2 = getKnotPoint $ 1 arr[2]
 vdis = distance v1 v2
 print ("unit:" + vdis as string)
 /*----------------------------------------------------------------------------------------------------------------------*/
+--simple exporter
+tmp = selection as array
+for t = 1 to tmp.count do
+(
+	tmp[t].name = ("obj_" + t as string)
+	select tmp[t]
+	exportfile (tmp[t].name + ".obj") #noprompt selectedonly:true
+)
+/*----------------------------------------------------------------------------------------------------------------------*/
 --tweak biped baked-in animations
 global target
 try(destroydialog ::autoframe)catch()
